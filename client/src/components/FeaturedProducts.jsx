@@ -10,6 +10,9 @@ const sectionBg = {
 };
 
 const FeaturedProducts = ({ products = [], onView, onAddToCart }) => {
+  // Fallbacks to ensure ProductCard always gets a function
+  const handleView = onView || (() => {});
+  const handleQuickView = onAddToCart || (() => {});
   console.log('FeaturedProducts received products:', products);
   return (
     <Box sx={sectionBg}>
@@ -34,7 +37,7 @@ const FeaturedProducts = ({ products = [], onView, onAddToCart }) => {
         ) : (
           products.map((product) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
-              <ProductCard product={product} onView={onView} onQuickView={onAddToCart} />
+              <ProductCard product={product} onView={handleView} onQuickView={handleQuickView} />
             </Grid>
           ))
         )}
