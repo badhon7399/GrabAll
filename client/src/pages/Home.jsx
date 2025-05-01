@@ -14,7 +14,7 @@ const Home = () => {
 
   useEffect(() => {
     // Fetch featured products from backend
-    axios.get('http://localhost:5000/api/products/featured')
+    axios.get('/api/products/featured')
       .then(res => {
         console.log('API /api/products/featured response:', res.data);
         setFeaturedProducts(res.data);

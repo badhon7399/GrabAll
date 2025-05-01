@@ -17,7 +17,7 @@ const ProductGrid = ({ onView = () => {}, onAddToCart = () => {} }) => {
   const [quickView, setQuickView] = useState({ open: false, product: null });
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
+    fetch('/api/products')
       .then(res => res.json())
       .then(data => {
         setProducts(data);
@@ -37,11 +37,12 @@ const ProductGrid = ({ onView = () => {}, onAddToCart = () => {} }) => {
 
   return (
     <Box sx={{
-      py: 8,
-      background: theme => theme.palette.background.default // or match Home's background
+      py: { xs: 2, md: 8 },
+      background: theme => theme.palette.background.default,
+      minHeight: { xs: '70vh', md: 'auto' }
     }}>
-      <Container maxWidth="lg">
-        <Typography variant="h2" fontWeight={800} mb={4} color="primary.main" align="center">
+      <Container maxWidth={false} sx={{ maxWidth: '1400px', width: '100vw', px: { xs: 0, sm: 1, md: 0.5 } }}>
+        <Typography variant="h2" fontWeight={800} mb={4} color="primary.main" align="center" sx={{ fontSize: { xs: '1.5rem', sm: '2.5rem' } }}>
           Shop Our Collection
         </Typography>
         <ProductFilterBar filter={filter} setFilter={setFilter} />
@@ -51,21 +52,23 @@ const ProductGrid = ({ onView = () => {}, onAddToCart = () => {} }) => {
           </Box>
         ) : (
           <motion.div variants={gridVariants} initial="hidden" animate="visible">
-            <Grid container spacing={4}>
+            <Grid container spacing={{ xs: 1, sm: 2, md: 2 }} sx={{ minHeight: { xs: '40vh', md: '50vh' }, px: 0 }}>
               {filtered.length === 0 && (
                 <Grid item xs={12}>
                   <Typography variant="h6" align="center" color="text.secondary" sx={{ py: 6 }}>
-                    No products found for the selected filters.
+                    No products found in this range.
                   </Typography>
                 </Grid>
               )}
-              {filtered.map(product => (
-                <Grid item key={product._id || product.name} xs={12} sm={6} md={4}>
-                  <ProductCard
-                    product={product}
-                    onView={() => onView(product)}
-                    onQuickView={() => setQuickView({ open: true, product })}
-                  />
+              {filtered.map((product) => (
+                <Grid item xs={6} sm={6} md={3} lg={3} key={product._id} sx={{ display: 'flex' }}>
+                  <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', height: '100%', p: 0 }}>
+                    <ProductCard
+                      product={product}
+                      onView={() => onView(product)}
+                      onQuickView={() => setQuickView({ open: true, product })}
+                    />
+                  </Box>
                 </Grid>
               ))}
             </Grid>

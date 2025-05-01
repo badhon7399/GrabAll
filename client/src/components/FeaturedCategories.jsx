@@ -38,24 +38,24 @@ const FeaturedCategories = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
-    <Box sx={{ width: '100%', py: { xs: 4, md: 8 }, background: '#fff', px: { xs: 1, md: 0 } }}>
-      <Typography variant="h3" fontWeight={900} align="center" color="primary.main" mb={4}>
+    <Box sx={{ width: '100%', py: { xs: 2, md: 8 }, background: '#fff', px: { xs: 0.5, md: 0 } }}>
+      <Typography variant="h3" fontWeight={900} align="center" color="primary.main" mb={4} sx={{ fontSize: { xs: '1.3rem', md: '2.2rem' } }}>
         Featured Categories
       </Typography>
-      <Grid container spacing={3} justifyContent="center">
+      <Grid container spacing={{ xs: 1, sm: 3 }} justifyContent="center">
         {categories.map((cat) => (
           <Grid item xs={6} sm={4} md={2.4} key={cat.label}>
             <Paper
               elevation={3}
               sx={{
-                p: 3,
+                p: { xs: 1.5, sm: 3 },
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                borderRadius: 4,
+                borderRadius: { xs: 2, md: 4 },
                 background: cat.bg,
-                minHeight: isMobile ? 120 : 160,
+                minHeight: { xs: 90, sm: 120, md: 160 },
                 cursor: 'pointer',
                 transition: 'transform 0.2s',
                 '&:hover': {
@@ -65,7 +65,7 @@ const FeaturedCategories = () => {
               }}
             >
               {cat.icon}
-              <Typography variant="subtitle1" fontWeight={700} color="text.primary" mt={2}>
+              <Typography variant="subtitle1" fontWeight={700} color="text.primary" mt={2} sx={{ fontSize: { xs: '0.95rem', md: '1.1rem' } }}>
                 {cat.label}
               </Typography>
             </Paper>

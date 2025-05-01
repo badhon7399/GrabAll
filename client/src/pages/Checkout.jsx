@@ -6,14 +6,24 @@ const steps = ['Shipping', 'Payment', 'Review'];
 const Checkout = ({ cart, onPlaceOrder, onBack }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [shipping, setShipping] = useState({ name: '', address: '', city: '', zip: '' });
-  const [payment, setPayment] = useState({ card: '', expiry: '', cvc: '' });
+  const [payment, setPayment] = useState({ mobile: '', trxid: '' });
+  const [placingOrder, setPlacingOrder] = useState(false);
+  const [orderError, setOrderError] = useState('');
 
   const handleNext = () => setActiveStep((s) => s + 1);
   const handleBack = () => setActiveStep((s) => s - 1);
 
-  const handlePlaceOrder = () => {
-    onPlaceOrder({ shipping, payment });
-    setActiveStep(steps.length);
+  const handlePlaceOrder = async () => {
+    setOrderError('');
+    setPlacingOrder(true);
+    try {
+      await onPlaceOrder({ shipping, payment });
+      setActiveStep(steps.length);
+    } catch (err) {
+      setOrderError(err?.message || 'Failed to place order.');
+    } finally {
+      setPlacingOrder(false);
+    }
   };
 
   return (
@@ -43,14 +53,16 @@ const Checkout = ({ cart, onPlaceOrder, onBack }) => {
         {activeStep === 1 && (
           <Box>
             <Typography variant="h6" mb={2}>Payment Details</Typography>
+            <Typography variant="body1" color="primary" mb={2}>Bkash: 01712345678</Typography>
+            <Typography variant="body1" color="primary" mb={2}>Nagad: 01712345678</Typography>
+            <Typography variant="body1" color="error" mb={2}>Note: Please send money in the given numbers and fill the number and trxid</Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12}><TextField label="Card Number" fullWidth required value={payment.card} onChange={e => setPayment(p => ({ ...p, card: e.target.value }))} /></Grid>
-              <Grid item xs={6}><TextField label="Expiry" fullWidth required value={payment.expiry} onChange={e => setPayment(p => ({ ...p, expiry: e.target.value }))} /></Grid>
-              <Grid item xs={6}><TextField label="CVC" fullWidth required value={payment.cvc} onChange={e => setPayment(p => ({ ...p, cvc: e.target.value }))} /></Grid>
+              <Grid item xs={12}><TextField label="Mobile Number" fullWidth required value={payment.mobile} onChange={e => setPayment(p => ({ ...p, mobile: e.target.value }))} /></Grid>
+              <Grid item xs={6}><TextField label="TrxID" fullWidth required value={payment.trxid} onChange={e => setPayment(p => ({ ...p, trxid: e.target.value }))} /></Grid>
             </Grid>
             <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
               <Button onClick={handleBack}>Back</Button>
-              <Button variant="contained" color="primary" onClick={handleNext} disabled={!payment.card || !payment.expiry || !payment.cvc}>Next</Button>
+              <Button variant="contained" color="primary" onClick={handleNext} disabled={!payment.mobile || !payment.trxid}>Next</Button>
             </Box>
           </Box>
         )}
@@ -63,22 +75,28 @@ const Checkout = ({ cart, onPlaceOrder, onBack }) => {
             <Typography fontWeight={700} mt={3} mb={2}>Items</Typography>
             {cart.map((item, i) => (
               <Box key={i} sx={{ mb: 1 }}>
-                <Typography>{item.name} x{item.qty} - ${item.price * item.qty}</Typography>
+                <Typography>{item.name} x{item.qty} - ৳{item.price * item.qty}</Typography>
               </Box>
             ))}
             <Typography fontWeight={700} mt={3} mb={2}>Payment</Typography>
-            <Typography>Card: **** **** **** {payment.card.slice(-4)}</Typography>
+            <Typography>Mobile Number: {payment.mobile}</Typography>
+            <Typography>TrxID: {payment.trxid}</Typography>
+            {orderError && <Typography color="error" sx={{ mt: 2 }}>{orderError}</Typography>}
             <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
               <Button onClick={handleBack}>Back</Button>
-              <Button variant="contained" color="primary" onClick={handlePlaceOrder}>Place Order</Button>
+              <Button variant="contained" color="primary" onClick={handlePlaceOrder} disabled={placingOrder}>
+                {placingOrder ? 'Placing Order...' : 'Place Order'}
+              </Button>
             </Box>
           </Box>
         )}
         {activeStep === steps.length && (
           <Box sx={{ textAlign: 'center', py: 6 }}>
             <Typography variant="h4" fontWeight={900} color="primary.main" mb={2}>Thank you for your order!</Typography>
-            <Typography>Your order has been placed and will be shipped soon.</Typography>
-            <Button variant="contained" color="primary" sx={{ mt: 4 }} onClick={onBack}>Back to Shop</Button>
+            <Typography variant="h6" mb={3}>Your payment has been received and your order is being processed.</Typography>
+            <Button variant="contained" color="primary" size="large" onClick={() => window.location.href = '/shop'}>
+              Start Shopping
+            </Button>
           </Box>
         )}
       </Paper>

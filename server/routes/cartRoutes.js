@@ -4,6 +4,14 @@ const router = express.Router();
 // In-memory cart for demo (replace with DB logic for real app)
 let cart = [];
 
+// Middleware to always start with an empty cart for every new session/request
+router.use((req, res, next) => {
+  if (req.method === 'GET' && cart.length > 0) {
+    cart = [];
+  }
+  next();
+});
+
 // Add to cart
 router.post('/', (req, res) => {
   const { productId, qty } = req.body;

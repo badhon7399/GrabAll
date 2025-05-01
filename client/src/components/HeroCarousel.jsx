@@ -24,7 +24,16 @@ const HeroCarousel = () => {
       // Mark type for rendering
       const slidesArr = (slidesData || []).map(s => ({ ...s, _type: 'slide' }));
       const bannersArr = (bannersData || []).map(b => ({ ...b, _type: 'banner' }));
-      setSlides([...slidesArr, ...bannersArr]);
+      // Remove duplicates from slidesArr by _id (if present) or image+title fallback
+      const uniqueSlidesArr = slidesArr.filter((slide, idx, arr) => {
+        if (slide._id) {
+          return arr.findIndex(s => s._id === slide._id) === idx;
+        } else {
+          // fallback: check image+title combo
+          return arr.findIndex(s => s.image === slide.image && s.title === slide.title) === idx;
+        }
+      });
+      setSlides([...uniqueSlidesArr, ...bannersArr]);
     });
   }, []);
 
@@ -49,9 +58,9 @@ const HeroCarousel = () => {
     <Box
       sx={{
         width: '100vw',
-        height: { xs: 'calc(100vh - 56px)', md: 'calc(100vh - 72px)' },
-        minHeight: 300,
-        maxHeight: '100vh',
+        height: { xs: 'calc(60vh - 56px)', md: 'calc(100vh - 72px)' },
+        minHeight: { xs: 180, md: 300 },
+        maxHeight: { xs: 320, md: '100vh' },
         overflow: 'hidden',
         position: 'relative',
         m: 0,
@@ -70,29 +79,92 @@ const HeroCarousel = () => {
           initial="enter"
           animate="center"
           exit="exit"
-          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', height: '100%' }}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute', height: '100%', flexDirection: isMobile ? 'column' : 'row' }}
         >
-          <Box sx={{
-            zIndex: 2,
-            color: '#fff',
-            textAlign: isMobile ? 'center' : 'left',
-            px: { xs: 2, md: 10 },
-            width: { xs: '100%', md: '50%' },
-          }}>
-            {slides[idx]._type === 'slide' ? (
-              <>
-                <Typography variant="h1" sx={{ fontWeight: 900, mb: 2, fontSize: { xs: '2.2rem', md: '3.5rem' } }}>
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            {slides[idx]._type === 'slide' && (
+              <Box sx={{ zIndex: 2, color: '#fff', textAlign: 'left', px: 10, width: '50%', py: 0, background: 'none', borderRadius: 0 }}>
+                <Typography variant="h2" fontWeight={900} sx={{ fontSize: '2.8rem', mb: 2 }}>
                   {slides[idx].title}
                 </Typography>
-                <Typography variant="h5" sx={{ mb: 4, color: 'rgba(255,255,255,0.95)' }}>
+                <Typography variant="body1" sx={{ fontSize: '1.3rem', mb: 4 }}>
                   {slides[idx].subtitle}
                 </Typography>
-                <Button variant="contained" color="secondary" size="large" sx={{ fontWeight: 700, px: 5 }} onClick={() => handleCTAClick(slides[idx])}>
-                  {slides[idx].cta}
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="large"
+                  sx={{ mt: 2, px: 4, fontWeight: 700, fontSize: '1.15rem', borderRadius: 3 }}
+                  onClick={() => handleCTAClick(slides[idx])}
+                >
+                  {slides[idx].cta || 'Shop Now'}
                 </Button>
-              </>
-            ) : null} 
+              </Box>
+            )}
           </Box>
+          {/* Mobile: SLIDE type - 50% left image, 50% right text/button; BANNER type - image only */}
+          {isMobile && (
+            slides[idx]._type === 'slide' ? (
+              <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+                {/* Left: Image */}
+                <Box sx={{ width: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <img
+                    src={slides[idx].image && slides[idx].image.startsWith('/uploads/')
+                      ? `${window.location.origin.replace(/:\d+$/, ':5000')}${slides[idx].image}`
+                      : slides[idx].image}
+                    alt={slides[idx].title}
+                    style={{
+                      maxHeight: '26vh',
+                      maxWidth: '44vw',
+                      minHeight: 80,
+                      minWidth: 80,
+                      borderRadius: 14,
+                      boxShadow: '0 8px 28px 0 rgba(60,72,88,0.16), 0 1px 4px rgba(91,134,229,0.12)',
+                      display: 'block',
+                      margin: '0 auto',
+                    }}
+                  />
+                </Box>
+                {/* Right: Text/Button */}
+                <Box sx={{ width: '50%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', pl: 1 }}>
+                  <Typography variant="h2" fontWeight={900} sx={{ fontSize: '1.06rem', mb: 0.5, color: '#fff', textAlign: 'left' }}>
+                    {slides[idx].title}
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontSize: '0.89rem', mb: 1, color: '#fff', textAlign: 'left' }}>
+                    {slides[idx].subtitle}
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    size="medium"
+                    sx={{ mt: 0.5, px: 1.5, fontWeight: 700, fontSize: '0.92rem', borderRadius: 2 }}
+                    onClick={() => handleCTAClick(slides[idx])}
+                  >
+                    {slides[idx].cta || 'Shop Now'}
+                  </Button>
+                </Box>
+              </Box>
+            ) : (
+              <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+                <img
+                  src={slides[idx].image && slides[idx].image.startsWith('/uploads/')
+                    ? `${window.location.origin.replace(/:\d+$/, ':5000')}${slides[idx].image}`
+                    : slides[idx].image}
+                  alt={slides[idx].title}
+                  style={{
+                    width: '100vw',
+                    height: '32vh',
+                    objectFit: 'cover',
+                    borderRadius: 0,
+                    boxShadow: 'none',
+                    margin: 0,
+                    padding: 0,
+                    display: 'block',
+                  }}
+                />
+              </Box>
+            )
+          )}
           {!isMobile && (
             slides[idx]._type === 'banner' ? (
               <img
@@ -138,19 +210,56 @@ const HeroCarousel = () => {
           )}
         </motion.div>
       </AnimatePresence>
-      {/* Carousel Controls */}
-      <Button
-        onClick={prevSlide}
-        sx={{ position: 'absolute', top: '50%', left: 16, transform: 'translateY(-50%)', color: '#fff', minWidth: 0, p: 1, zIndex: 3, display: { xs: 'none', md: 'inline-flex' } }}
-      >
-        &#8592;
-      </Button>
-      <Button
-        onClick={nextSlide}
-        sx={{ position: 'absolute', top: '50%', right: 16, transform: 'translateY(-50%)', color: '#fff', minWidth: 0, p: 1, zIndex: 3, display: { xs: 'none', md: 'inline-flex' } }}
-      >
-        &#8594;
-      </Button>
+      {/* Carousel Controls - show on mobile, smaller and at bottom center */}
+      {isMobile && (
+        <Box sx={{ position: 'absolute', bottom: 12, width: '100%', display: 'flex', justifyContent: 'space-between', px: 2, zIndex: 4 }}>
+          <Button
+            onClick={prevSlide}
+            sx={{
+              color: '#fff',
+              minWidth: 0,
+              p: 0.5,
+              fontSize: '1.4rem',
+              background: 'rgba(0,0,0,0.18)',
+              borderRadius: '50%',
+              boxShadow: 1,
+            }}
+          >
+            &#8592;
+          </Button>
+          <Button
+            onClick={nextSlide}
+            sx={{
+              color: '#fff',
+              minWidth: 0,
+              p: 0.5,
+              fontSize: '1.4rem',
+              background: 'rgba(0,0,0,0.18)',
+              borderRadius: '50%',
+              boxShadow: 1,
+            }}
+          >
+            &#8594;
+          </Button>
+        </Box>
+      )}
+      {/* Desktop controls */}
+      {!isMobile && (
+        <>
+          <Button
+            onClick={prevSlide}
+            sx={{ position: 'absolute', top: '50%', left: 16, transform: 'translateY(-50%)', color: '#fff', minWidth: 0, p: 1, zIndex: 3 }}
+          >
+            &#8592;
+          </Button>
+          <Button
+            onClick={nextSlide}
+            sx={{ position: 'absolute', top: '50%', right: 16, transform: 'translateY(-50%)', color: '#fff', minWidth: 0, p: 1, zIndex: 3 }}
+          >
+            &#8594;
+          </Button>
+        </>
+      )}
       {/* Dots */}
       <Box sx={{ position: 'absolute', bottom: 24, left: 0, width: '100%', display: 'flex', justifyContent: 'center', gap: 1 }}>
         {slides.map((_, i) => (
@@ -162,4 +271,3 @@ const HeroCarousel = () => {
 }
 
 export default HeroCarousel;
-

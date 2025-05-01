@@ -19,7 +19,7 @@ const AnimatedHero = () => (
       mt: 4,
     }}
   >
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ px: { xs: 1, sm: 3 } }}>
       <motion.div
         variants={heroVariants}
         initial="hidden"
@@ -29,18 +29,19 @@ const AnimatedHero = () => (
           variant="h1"
           sx={{
             fontWeight: 800,
-            fontSize: { xs: '2.5rem', md: '4rem' },
+            fontSize: { xs: '2rem', sm: '2.5rem', md: '4rem' },
             color: 'primary.main',
-            mb: 2,
+            mb: { xs: 1, sm: 2 },
             letterSpacing: '-2px',
             textShadow: '0 4px 24px rgba(127,90,240,0.08)',
+            wordBreak: 'break-word',
           }}
         >
           Elevate Your Space<br />with World-Class Design
         </Typography>
         <Typography
           variant="h5"
-          sx={{ color: 'text.secondary', mb: 4 }}
+          sx={{ color: 'text.secondary', mb: { xs: 2, sm: 4 }, fontSize: { xs: '1.1rem', sm: '1.5rem' } }}
         >
           Discover premium furniture and decor with stunning aesthetics and seamless shopping.
         </Typography>
@@ -48,7 +49,7 @@ const AnimatedHero = () => (
           variant="contained"
           size="large"
           color="primary"
-          sx={{ px: 5, py: 1.5, fontSize: '1.1rem', boxShadow: 3 }}
+          sx={{ px: { xs: 3, sm: 5 }, py: { xs: 1, sm: 1.5 }, fontSize: { xs: '1rem', sm: '1.1rem' }, boxShadow: 3 }}
           component={motion.button}
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.98 }}

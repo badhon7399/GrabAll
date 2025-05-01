@@ -9,7 +9,6 @@ const mockReviews = [
   { user: 'Priya', rating: 5, text: 'Stylish and comfortable. Perfect for my living room.' },
 ];
 
-
 import { useEffect, useState } from 'react';
 
 const ProductDetail = ({ product, productId, onBack, onAddToCart, onViewRelated }) => {
@@ -19,13 +18,13 @@ const ProductDetail = ({ product, productId, onBack, onAddToCart, onViewRelated 
   const [fetchedProduct, setFetchedProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
+    fetch('/api/products')
       .then(res => res.json())
       .then(data => setAllProducts(data));
   }, []);
   useEffect(() => {
     if (!product && productId) {
-      fetch(`http://localhost:5000/api/products/${productId}`)
+      fetch(`/api/products/${productId}`)
         .then(res => res.json())
         .then(data => setFetchedProduct(data));
     }
@@ -82,7 +81,7 @@ const ProductDetail = ({ product, productId, onBack, onAddToCart, onViewRelated 
               <StarRating value={displayProduct.rating} />
             </Box>
             <Typography variant="body1" color="text.secondary" sx={{ my: 2, textAlign: 'left', width: '100%' }}>{displayProduct.description}</Typography>
-            <Typography variant="h4" color="primary.main" fontWeight={900} mb={4} sx={{ textAlign: 'left', width: '100%' }}>${displayProduct.price}</Typography>
+            <Typography variant="h4" color="primary.main" fontWeight={900} mb={4} sx={{ textAlign: 'left', width: '100%' }}>৳{displayProduct.price}</Typography>
             <Box sx={{ display: 'flex', gap: 2, mb: 2, width: '100%' }}>
               <Button
                 variant="contained"
@@ -124,7 +123,7 @@ const ProductDetail = ({ product, productId, onBack, onAddToCart, onViewRelated 
               <Paper elevation={2} sx={{ borderRadius: 3, p: 2, textAlign: 'center', background: '#fff' }}>
                 <img src={item.image} alt={item.name} style={{ width: '100%', maxHeight: 120, objectFit: 'contain', borderRadius: 8, marginBottom: 12 }} />
                 <Typography variant="subtitle1" fontWeight={700}>{item.name}</Typography>
-                <Typography variant="h6" color="primary.main" fontWeight={900}>${item.price}</Typography>
+                <Typography variant="h6" color="primary.main" fontWeight={900}>৳{item.price}</Typography>
                 <Button
                   variant="outlined"
                   color="secondary"

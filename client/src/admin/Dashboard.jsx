@@ -84,7 +84,7 @@ const Dashboard = () => (
               <ListItem key={order.id} sx={{ borderRadius: 2, mb: 1, background: '#e0e7ff', boxShadow: 1 }}>
                 <ListItemText
                   primary={<b>{order.id}</b>}
-                  secondary={<span>{order.user} &mdash; <span style={{color:'#5b86e5',fontWeight:700}}>${order.total}</span></span>}
+                  secondary={<span>{order.user} &mdash; <span style={{color:'#5b86e5',fontWeight:700}}>৳{order.total}</span></span>}
                 />
               </ListItem>
             ))}
@@ -112,7 +112,7 @@ const Dashboard = () => (
         <Paper elevation={6} sx={{ p: 4, borderRadius: 4, background: 'linear-gradient(135deg,#fff 60%,#e0e7ff 100%)', boxShadow: '0 4px 32px 0 rgba(91,134,229,0.10)', height: 220, overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', '::-webkit-scrollbar': { display: 'none' } }}>
           <Typography variant="h6" fontWeight={800} mb={2} color="#232f3e">Quick Stats</Typography>
           <Grid container spacing={2}>
-            <Grid item xs={6}><Typography fontWeight={700} color="#5b86e5">Avg. Order: <span style={{color:'#232f3e'}}>$312</span></Typography></Grid>
+            <Grid item xs={6}><Typography fontWeight={700} color="#5b86e5">Avg. Order: <span style={{color:'#232f3e'}}>৳312</span></Typography></Grid>
             <Grid item xs={6}><Typography fontWeight={700} color="#febd69">Returning Users: <span style={{color:'#232f3e'}}>48%</span></Typography></Grid>
             <Grid item xs={6}><Typography fontWeight={700} color="#232f3e">Conversion Rate: <span style={{color:'#5b86e5'}}>3.8%</span></Typography></Grid>
             <Grid item xs={6}><Typography fontWeight={700} color="#232f3e">Refunds: <span style={{color:'#febd69'}}>2</span></Typography></Grid>

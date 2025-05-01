@@ -49,7 +49,7 @@ const CartPage = ({ cartItems, onAdd, onRemove, onDelete, onCheckout, onClear })
             {safeItems.length === 0 ? (
               <Fade in>
                 <Box textAlign="center" mt={8}>
-                  <img src="https://assets10.lottiefiles.com/packages/lf20_jzv1z4.json" alt="Empty Cart" style={{ width: 220, marginBottom: 24 }} />
+                  <img src="https://assets10.lottiefiles.com/packages/lf20_jzv1z4.json" alt="Empty Cart" style={{ width: 220, marginBottom: 24 }} onError={e => { e.target.onerror = null; e.target.src = 'https://cdn-icons-png.flaticon.com/512/2038/2038854.png'; }} />
                   <Typography variant="h5" fontWeight={700} color="text.secondary" mb={2}>Your cart is empty</Typography>
                   <Button component={Link} to="/shop" variant="contained" size="large" color="primary" sx={{ fontWeight: 700 }}>
                     Continue Shopping
@@ -69,19 +69,19 @@ const CartPage = ({ cartItems, onAdd, onRemove, onDelete, onCheckout, onClear })
                           <Typography variant="subtitle1" fontWeight={700} noWrap>{item.name}</Typography>
                           <Typography variant="body2" color="text.secondary">{item.category || item.platform}</Typography>
                           <Button size="small" color="error" sx={{ mt: 1, textTransform: 'none' }} onClick={() => onDelete(item)}>
-                            Remove
+                            <Delete sx={{ fontSize: 18, mr: 0.5 }} /> Remove
                           </Button>
                         </Box>
                         <Box display="flex" alignItems="center" sx={{ minWidth: 110 }}>
-                          <IconButton onClick={() => onRemove(item)} size="small"><Remove /></IconButton>
+                          <IconButton onClick={() => onRemove(item)} size="small" disabled={item.qty <= 1}><Remove /></IconButton>
                           <Typography mx={1} fontWeight={700}>{item.qty}</Typography>
                           <IconButton onClick={() => onAdd(item)} size="small"><Add /></IconButton>
                         </Box>
                         <Box sx={{ minWidth: 70, textAlign: 'right' }}>
-                          <Typography fontWeight={700}>£{item.price.toFixed(2)}</Typography>
+                          <Typography fontWeight={700}>৳{typeof item.price === 'number' ? item.price.toFixed(2) : 'N/A'}</Typography>
                         </Box>
                         <Box sx={{ minWidth: 80, textAlign: 'right' }}>
-                          <Typography fontWeight={700}>£{(item.price * item.qty).toFixed(2)}</Typography>
+                          <Typography fontWeight={700}>৳{(typeof item.price === 'number' && typeof item.qty === 'number') ? (item.price * item.qty).toFixed(2) : 'N/A'}</Typography>
                         </Box>
                       </Paper>
                     </Grid>
@@ -127,7 +127,7 @@ const CartPage = ({ cartItems, onAdd, onRemove, onDelete, onCheckout, onClear })
                 sx={{ minWidth: 140, fontWeight: 700 }}
               >
                 {SHIPPING_OPTIONS.map(opt => (
-                  <MenuItem key={opt.value} value={opt.value}>{opt.label} - £{opt.price.toFixed(2)}</MenuItem>
+                  <MenuItem key={opt.value} value={opt.value}>{opt.label} - ৳{opt.price.toFixed(2)}</MenuItem>
                 ))}
               </Select>
             </Box>
@@ -162,13 +162,13 @@ const CartPage = ({ cartItems, onAdd, onRemove, onDelete, onCheckout, onClear })
             {promoApplied && (
               <Box display="flex" justifyContent="space-between" mb={2}>
                 <Typography color="success.main">Promo Discount</Typography>
-                <Typography color="success.main">-£{promoDiscount.toFixed(2)}</Typography>
+                <Typography color="success.main">-৳{promoDiscount.toFixed(2)}</Typography>
               </Box>
             )}
             <Divider sx={{ my: 2 }} />
             <Box display="flex" justifyContent="space-between" mb={2}>
               <Typography fontWeight={700}>TOTAL COST</Typography>
-              <Typography fontWeight={900} fontSize={22} color="primary.main">£{total.toFixed(2)}</Typography>
+              <Typography fontWeight={900} fontSize={22} color="primary.main">৳{total.toFixed(2)}</Typography>
             </Box>
             <Button
               variant="contained"

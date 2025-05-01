@@ -30,7 +30,7 @@ const CartDrawer = ({ open, onClose, cartItems, onRemove, onCheckout }) => {
                   primary={<Typography fontWeight={700}>{item.name}</Typography>}
                   secondary={<>
                     <Typography variant="body2" color="text.secondary">Qty: {item.qty}</Typography>
-                    <Typography variant="body2" color="text.secondary">${item.price} each</Typography>
+                    <Typography variant="body2" color="text.secondary">৳{item.price} each</Typography>
                   </>}
                 />
               </ListItem>
@@ -39,7 +39,7 @@ const CartDrawer = ({ open, onClose, cartItems, onRemove, onCheckout }) => {
         )}
         <Divider sx={{ my: 2 }} />
         <Box sx={{ mt: 'auto' }}>
-          <Typography variant="h6" fontWeight={800} mb={2}>Total: ${total.toFixed(2)}</Typography>
+          <Typography variant="h6" fontWeight={800} mb={2}>Total: ৳{total.toFixed(2)}</Typography>
           <Button
             variant="contained"
             color="primary"

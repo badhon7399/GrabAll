@@ -21,7 +21,9 @@ const userSchema = new mongoose.Schema({
     subject: String,
     message: String,
     date: { type: Date, default: Date.now }
-  }]
+  }],
+  // Favourites: array of Product IDs
+  favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
 }, { timestamps: true });
 
 // Password hashing middleware

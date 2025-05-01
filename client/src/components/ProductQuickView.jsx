@@ -26,7 +26,7 @@ const ProductQuickView = ({ open, product, onClose, onAddToCart = () => {}, onVi
               {product.description}
             </Typography>
             <Typography variant="h4" color="primary.main" fontWeight={900} mb={2}>
-              ${product.price}
+              ৳{product.price}
             </Typography>
             <Button
               variant="contained"
