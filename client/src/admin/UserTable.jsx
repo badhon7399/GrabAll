@@ -23,15 +23,9 @@ const UserTable = () => {
   // Fetch users from backend
   useEffect(() => {
     setLoading(true);
-    axios.get('/api/users')
-      .then(res => {
-        // Ensure users is always an array
-        setUsers(Array.isArray(res.data) ? res.data : []);
-      })
-      .catch(() => {
-        setError('Failed to fetch users');
-        setUsers([]); // fallback to empty array
-      })
+    axios.get(`${import.meta.env.VITE_API_URL}/api/users`)
+      .then(res => setUsers(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setError('Failed to fetch users'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -46,12 +40,12 @@ const UserTable = () => {
   const handleSave = () => {
     setLoading(true);
     if (editUser) {
-      axios.put(`/api/users/${editUser._id}`, form)
+      axios.put(`${import.meta.env.VITE_API_URL}/api/users/${editUser._id}`, form)
         .then(res => setUsers(users.map(u => u._id === editUser._id ? res.data : u)))
         .catch(() => setError('Failed to update user'))
         .finally(() => { setDialogOpen(false); setLoading(false); });
     } else {
-      axios.post('/api/users', form)
+      axios.post(`${import.meta.env.VITE_API_URL}/api/users`, form)
         .then(res => setUsers([...users, res.data]))
         .catch(() => setError('Failed to add user'))
         .finally(() => { setDialogOpen(false); setLoading(false); });
@@ -60,7 +54,7 @@ const UserTable = () => {
   // Delete user via backend
   const handleDelete = (user) => {
     setLoading(true);
-    axios.delete(`/api/users/${user._id}`)
+    axios.delete(`${import.meta.env.VITE_API_URL}/api/users/${user._id}`)
       .then(() => setUsers(users.filter(u => u._id !== user._id)))
       .catch(() => setError('Failed to delete user'))
       .finally(() => setLoading(false));

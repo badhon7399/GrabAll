@@ -61,14 +61,15 @@ const OrderTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, order: null, newStatus: '' });
   const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!token) return;
-    axios.get('/api/orders', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => setOrders(res.data))
-      .catch(err => console.error('Failed to fetch orders', err));
+    setLoading(true);
+    axios.get(`${import.meta.env.VITE_API_URL}/api/orders`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => setOrders(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setErrorMsg('Failed to fetch orders'))
+      .finally(() => setLoading(false));
   }, [token]);
 
   const handleStatusChange = (order, newStatus) => {
@@ -79,7 +80,7 @@ const OrderTable = () => {
     if (!confirmDialog.order || !confirmDialog.newStatus) return;
     console.log('Sending PATCH to backend:', confirmDialog.order._id, confirmDialog.newStatus);
     try {
-      const res = await axios.patch(`/api/orders/${confirmDialog.order._id}/status`, { status: confirmDialog.newStatus }, {
+      const res = await axios.patch(`${import.meta.env.VITE_API_URL}/api/orders/${confirmDialog.order._id}/status`, { status: confirmDialog.newStatus }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('PATCH response:', res.data);
@@ -376,6 +377,11 @@ const OrderTable = () => {
       {errorMsg && (
         <Box sx={{ mt: 2 }}>
           <Typography color="error">{errorMsg}</Typography>
+        </Box>
+      )}
+      {loading && (
+        <Box sx={{ mt: 2 }}>
+          <Typography>Loading...</Typography>
         </Box>
       )}
     </Box>

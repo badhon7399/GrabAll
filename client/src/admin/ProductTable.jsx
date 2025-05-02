@@ -20,15 +20,9 @@ const ProductTable = () => {
   // Fetch products from backend
   useEffect(() => {
     setLoading(true);
-    axios.get('/api/products')
-      .then(res => {
-        // Ensure products is always an array
-        setProducts(Array.isArray(res.data) ? res.data : []);
-      })
-      .catch(() => {
-        setError('Failed to fetch products');
-        setProducts([]); // fallback to empty array
-      })
+    axios.get(`${import.meta.env.VITE_API_URL}/api/products`)
+      .then(res => setProducts(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setError('Failed to fetch products'))
       .finally(() => setLoading(false));
   }, []);
 
