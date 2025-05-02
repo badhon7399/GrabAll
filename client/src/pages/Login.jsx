@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 
 const Login = () => {
@@ -158,8 +158,8 @@ const Login = () => {
           }}
         >
           Don't have an account?{" "}
-          <a
-            href="/signup"
+          <Link
+            to="/signup"
             style={{
               color: "#1a237e",
               fontWeight: "600",
@@ -168,7 +168,7 @@ const Login = () => {
             }}
           >
             Create Account
-          </a>
+          </Link>
         </div>
       </div>
     </div>
