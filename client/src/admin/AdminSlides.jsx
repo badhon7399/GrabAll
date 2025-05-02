@@ -33,8 +33,12 @@ export default function AdminSlides({ products }) {
   }, []);
 
   const fetchSlides = async () => {
-    const res = await axios.get('/api/slides');
-    setSlides(res.data);
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/slides`);
+      setSlides(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      setSlides([]);
+    }
   };
 
   const handleChange = e => {
