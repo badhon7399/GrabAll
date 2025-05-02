@@ -18,7 +18,7 @@ const OrderHistory = () => {
   useEffect(() => {
     if (!user || !token) return;
     setLoading(true);
-    axios.get('/api/orders/my', {
+    axios.get(`${import.meta.env.VITE_API_URL}/api/orders/my`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => setOrders(res.data))

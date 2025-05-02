@@ -14,7 +14,7 @@ const Home = () => {
 
   useEffect(() => {
     // Fetch featured products from backend
-    axios.get('/api/products/featured')
+    axios.get(`${import.meta.env.VITE_API_URL}/api/products/featured`)
       .then(res => {
         console.log('API /api/products/featured response:', res.data);
         setFeaturedProducts(res.data);

@@ -29,9 +29,9 @@ const ProductCard = ({ product, onView, onQuickView, isFavourite: initialIsFavou
     setLoadingFav(true);
     try {
       if (isFavourite) {
-        await axios.delete(`/api/users/favourites/${product._id}`, { headers: { Authorization: `Bearer ${token}` } });
+        await axios.delete(`${import.meta.env.VITE_API_URL}/api/users/favourites/${product._id}`, { headers: { Authorization: `Bearer ${token}` } });
       } else {
-        await axios.post(`/api/users/favourites/${product._id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/users/favourites/${product._id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
       }
       setIsFavourite(!isFavourite);
     } catch (e) {

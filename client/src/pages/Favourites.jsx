@@ -14,7 +14,7 @@ const Favourites = () => {
     const fetchFavourites = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get('/api/users/favourites', {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/favourites`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFavourites(data);

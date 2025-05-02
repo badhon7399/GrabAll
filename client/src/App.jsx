@@ -150,7 +150,7 @@ function App() {
   // On login, fetch cart from backend and merge
   React.useEffect(() => {
     if (user) {
-      fetch('/api/cart', {
+      fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
         .then(res => res.json())
@@ -175,7 +175,7 @@ function App() {
     localStorage.setItem('cart', JSON.stringify(cart));
     // Sync with backend if logged in
     if (user) {
-      fetch('/api/cart', {
+      fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(cart),
@@ -195,7 +195,7 @@ function App() {
       }
     });
     try {
-      await fetch('/api/cart', {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId: product._id, qty }),
@@ -213,7 +213,7 @@ function App() {
     setCart([]);
     localStorage.removeItem('cart');
     if (user) {
-      fetch('/api/cart', {
+      fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify([]),
@@ -258,7 +258,7 @@ function App() {
         isPaid: false,
         isDelivered: false
       };
-      const res = await fetch('/api/orders', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -269,7 +269,7 @@ function App() {
       if (res.ok) {
         setCart([]);
         localStorage.removeItem('cart');
-        await fetch('/api/cart', {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify([]),

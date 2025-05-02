@@ -18,8 +18,8 @@ const HeroCarousel = () => {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/slides').then(res => res.json()).catch(() => []),
-      fetch('/api/banners').then(res => res.json()).catch(() => [])
+      fetch(`${import.meta.env.VITE_API_URL}/api/slides`).then(res => res.json()).catch(() => []),
+      fetch(`${import.meta.env.VITE_API_URL}/api/banners`).then(res => res.json()).catch(() => [])
     ]).then(([slidesData, bannersData]) => {
       // Mark type for rendering
       const slidesArr = (slidesData || []).map(s => ({ ...s, _type: 'slide' }));

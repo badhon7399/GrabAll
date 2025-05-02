@@ -18,13 +18,13 @@ const ProductDetail = ({ product, productId, onBack, onAddToCart, onViewRelated 
   const [fetchedProduct, setFetchedProduct] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
   useEffect(() => {
-    fetch('/api/products')
+    fetch(`${import.meta.env.VITE_API_URL}/api/products`)
       .then(res => res.json())
       .then(data => setAllProducts(data));
   }, []);
   useEffect(() => {
     if (!product && productId) {
-      fetch(`/api/products/${productId}`)
+      fetch(`${import.meta.env.VITE_API_URL}/api/products/${productId}`)
         .then(res => res.json())
         .then(data => setFetchedProduct(data));
     }

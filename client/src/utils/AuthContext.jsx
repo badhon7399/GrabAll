@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      axios.get('/api/users/profile/me', {
+      axios.get(`${import.meta.env.VITE_API_URL}/api/users/profile/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => {
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (email, password) => {
-    const res = await axios.post('/api/users/login', { email, password });
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/login`, { email, password });
     setToken(res.data.token);
     localStorage.setItem('token', res.data.token);
     setUser(res.data);
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (name, email, password) => {
-    const res = await axios.post('/api/users/register', { name, email, password });
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/register`, { name, email, password });
     setToken(res.data.token);
     localStorage.setItem('token', res.data.token);
     setUser(res.data);
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateProfile = async (data) => {
-    const res = await axios.put('/api/users/profile/me', data, {
+    const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/users/profile/me`, data, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setUser(res.data);
