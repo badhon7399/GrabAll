@@ -118,12 +118,12 @@ const OrderTable = () => {
   };
   const handleCloseDialog = () => setDialogOpen(false);
 
-  // Filtering
+  // Defensive: always filter on an array
   const filteredOrders = (Array.isArray(orders) ? orders : []).filter(o => {
     const customer = o.customer?.name || o.customer?.email || o.customer || '';
     let match = (
-      o._id.toLowerCase().includes(search.toLowerCase()) ||
-      customer.toLowerCase().includes(search.toLowerCase())
+      o._id?.toLowerCase().includes(search.toLowerCase()) ||
+      customer?.toLowerCase().includes(search.toLowerCase())
     );
     if (statusFilter !== 'All') match = match && o.status === statusFilter;
     if (paymentFilter !== 'All') match = match && ((paymentFilter === 'Paid' && o.isPaid) || (paymentFilter === 'Unpaid' && !o.isPaid));
