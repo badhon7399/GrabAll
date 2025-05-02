@@ -110,7 +110,7 @@ const HeroCarousel = () => {
                 <Box sx={{ width: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <img
                     src={slides[idx].image && slides[idx].image.startsWith('/uploads/')
-                      ? `${window.location.origin.replace(/:\d+$/, ':5000')}${slides[idx].image}`
+                      ? `${import.meta.env.VITE_API_URL}${slides[idx].image}`
                       : slides[idx].image}
                     alt={slides[idx].title}
                     style={{
@@ -148,7 +148,7 @@ const HeroCarousel = () => {
               <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
                 <img
                   src={slides[idx].image && slides[idx].image.startsWith('/uploads/')
-                    ? `${window.location.origin.replace(/:\d+$/, ':5000')}${slides[idx].image}`
+                    ? `${import.meta.env.VITE_API_URL}${slides[idx].image}`
                     : slides[idx].image}
                   alt={slides[idx].title}
                   style={{
@@ -169,7 +169,7 @@ const HeroCarousel = () => {
             slides[idx]._type === 'banner' ? (
               <img
                 src={slides[idx].image && slides[idx].image.startsWith('/uploads/')
-                  ? `${window.location.origin.replace(/:\d+$/, ':5000')}${slides[idx].image}`
+                  ? `${import.meta.env.VITE_API_URL}${slides[idx].image}`
                   : slides[idx].image}
                 alt="Banner"
                 style={{
@@ -191,7 +191,7 @@ const HeroCarousel = () => {
               <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                 <img
                   src={slides[idx].image && slides[idx].image.startsWith('/uploads/')
-                    ? `${window.location.origin.replace(/:\d+$/, ':5000')}${slides[idx].image}`
+                    ? `${import.meta.env.VITE_API_URL}${slides[idx].image}`
                     : slides[idx].image}
                   alt={slides[idx].title}
                   style={{
