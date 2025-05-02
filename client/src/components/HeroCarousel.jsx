@@ -1,46 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Box, Button, Typography, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCachedFetch } from '../utils/useCachedFetch';
 
 const slideVariants = {
   enter: { opacity: 0, x: 80 },
   center: { opacity: 1, x: 0, transition: { duration: 0.7 } },
   exit: { opacity: 0, x: -80, transition: { duration: 0.5 } },
 };
+
 const HeroCarousel = () => {
-  const [slides, setSlides] = useState([]);
-  const [idx, setIdx] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
 
-  useEffect(() => {
-    Promise.all([
-      fetch(`${import.meta.env.VITE_API_URL}/api/slides`).then(res => res.json()).catch(() => []),
-      fetch(`${import.meta.env.VITE_API_URL}/api/banners`).then(res => res.json()).catch(() => [])
-    ]).then(([slidesData, bannersData]) => {
-      // Mark type for rendering
-      const slidesArr = (slidesData || []).map(s => ({ ...s, _type: 'slide' }));
-      const bannersArr = (bannersData || []).map(b => ({ ...b, _type: 'banner' }));
-      // Remove duplicates from slidesArr by _id (if present) or image+title fallback
-      const uniqueSlidesArr = slidesArr.filter((slide, idx, arr) => {
-        if (slide._id) {
-          return arr.findIndex(s => s._id === slide._id) === idx;
-        } else {
-          // fallback: check image+title combo
-          return arr.findIndex(s => s.image === slide.image && s.title === slide.title) === idx;
-        }
-      });
-      setSlides([...uniqueSlidesArr, ...bannersArr]);
-    });
-  }, []);
+  const { data: slidesData, loading: loadingSlides } = useCachedFetch(
+    'slides',
+    () => fetch(`${import.meta.env.VITE_API_URL}/api/slides`).then(res => res.json())
+  );
+  const { data: bannersData, loading: loadingBanners } = useCachedFetch(
+    'banners',
+    () => fetch(`${import.meta.env.VITE_API_URL}/api/banners`).then(res => res.json())
+  );
 
+  const slides = useMemo(() => {
+    if (!slidesData && !bannersData) return [];
+    const slidesArr = (slidesData || []).map(s => ({ ...s, _type: 'slide' }));
+    const bannersArr = (bannersData || []).map(b => ({ ...b, _type: 'banner' }));
+    // Remove duplicates from slidesArr by _id (if present) or image+title fallback
+    const uniqueSlidesArr = slidesArr.filter((slide, idx, arr) => {
+      if (slide._id) {
+        return arr.findIndex(s => s._id === slide._id) === idx;
+      } else {
+        // fallback: check image+title combo
+        return arr.findIndex(s => s.image === slide.image && s.title === slide.title) === idx;
+      }
+    });
+    return [...uniqueSlidesArr, ...bannersArr];
+  }, [slidesData, bannersData]);
+
+  const [idx, setIdx] = useState(0);
   const nextSlide = () => setIdx((idx + 1) % slides.length);
   const prevSlide = () => setIdx((idx - 1 + slides.length) % slides.length);
 
-  // Auto-play
   useEffect(() => {
     if (!slides.length) return;
     const timer = setTimeout(nextSlide, 5000);
@@ -52,6 +56,8 @@ const HeroCarousel = () => {
       navigate(`/product/${slide.product._id || slide.product}`);
     }
   };
+
+  if (loadingSlides && loadingBanners) return null;
   if (!slides.length) return null;
 
   return (
@@ -268,6 +274,6 @@ const HeroCarousel = () => {
       </Box>
     </Box>
   );
-}
+};
 
 export default HeroCarousel;
