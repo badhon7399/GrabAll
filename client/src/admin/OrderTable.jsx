@@ -119,7 +119,7 @@ const OrderTable = () => {
   const handleCloseDialog = () => setDialogOpen(false);
 
   // Filtering
-  const filteredOrders = orders.filter(o => {
+  const filteredOrders = (Array.isArray(orders) ? orders : []).filter(o => {
     const customer = o.customer?.name || o.customer?.email || o.customer || '';
     let match = (
       o._id.toLowerCase().includes(search.toLowerCase()) ||
@@ -219,7 +219,7 @@ const OrderTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedOrders.map((o) => {
+            {(Array.isArray(orders) ? orders : []).map((o) => {
               const customer = o.customer?.name || o.customer?.email || o.customer || '-';
               const itemsCount = Array.isArray(o.orderItems) ? o.orderItems.length : o.items || '-';
               const paymentStatus = o.isPaid ? 'Paid' : 'Unpaid';

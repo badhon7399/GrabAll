@@ -155,7 +155,7 @@ const ProductTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.isArray(products) && products.map((p) => (
+            {(Array.isArray(products) ? products : []).map((p) => (
               <TableRow key={p._id} sx={{
                 transition: 'background 0.18s, transform 0.18s',
                 '&:hover': {

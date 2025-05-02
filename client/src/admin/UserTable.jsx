@@ -116,7 +116,7 @@ const UserTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.isArray(users) && users.map((u) => (
+            {(Array.isArray(users) ? users : []).map((u) => (
               <TableRow key={u._id} sx={{
                 transition: 'background 0.18s, transform 0.18s',
                 '&:hover': {
