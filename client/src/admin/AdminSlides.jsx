@@ -145,7 +145,7 @@ export default function AdminSlides({ products }) {
       </Paper>
       <Typography variant="h6" fontWeight={700} mb={2}>Existing Slides</Typography>
       <Grid container spacing={2}>
-        {slides.map(slide => (
+        {(Array.isArray(slides) ? slides : []).map(slide => (
           <Grid item xs={12} md={6} key={slide._id}>
             <Paper sx={{ p: 2, mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
               <Box>
@@ -162,6 +162,11 @@ export default function AdminSlides({ products }) {
             </Paper>
           </Grid>
         ))}
+        {(!slides || slides.length === 0) && (
+          <Grid item xs={12}>
+            <Typography color="text.secondary">No slides found.</Typography>
+          </Grid>
+        )}
       </Grid>
     </Box>
   );
