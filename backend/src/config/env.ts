@@ -30,6 +30,6 @@ export const config = {
     API_SECRET: process.env.CLOUDINARY_API_SECRET,
   },
   ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS 
-    ? process.env.ALLOWED_ORIGINS.split(',') 
+    ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()) 
     : ['http://localhost:5173', 'http://127.0.0.1:5173'],
 };
