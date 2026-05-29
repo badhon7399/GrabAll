@@ -176,6 +176,10 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
         throw new Error(data.message || 'Failed to upload image.');
       }
 
+      if (!data.url) {
+        throw new Error('Server returned empty image URL. Please try again.');
+      }
+
       setPromo1(prev => ({ ...prev, image: data.url }));
       triggerToast('Promotional card image uploaded successfully.');
     } catch (err: any) {
@@ -186,7 +190,7 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
     }
   };
 
-  const syncSettingsWithBackend = async (payload: any) => {
+  const syncSettingsWithBackend = async (payload: any): Promise<boolean> => {
     try {
       const res = await fetch(`${API_BASE_URL}/settings`, {
         method: 'PUT',
@@ -197,10 +201,16 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
-        console.error('Failed to sync settings with database');
+        const errData = await res.json().catch(() => ({}));
+        console.error('Failed to sync settings with database:', errData);
+        triggerToast('⚠️ Failed to save to database. Changes are local only and will be lost on reload.');
+        return false;
       }
+      return true;
     } catch (err) {
       console.error('Error syncing settings:', err);
+      triggerToast('⚠️ Cannot reach the server. Changes are local only and will be lost on reload.');
+      return false;
     }
   };
 
@@ -297,6 +307,10 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.message || 'Failed to upload category image.');
+      }
+
+      if (!data.url) {
+        throw new Error('Server returned empty image URL. Please try again.');
       }
 
       setCatImage(data.url);
@@ -436,6 +450,10 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
         throw new Error(data.message || 'Failed to upload logo.');
       }
 
+      if (!data.url) {
+        throw new Error('Server returned empty image URL. Please try again.');
+      }
+
       setLogoUrl(data.url);
       triggerToast('Logo image uploaded successfully.');
     } catch (err: any) {
@@ -471,6 +489,10 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.message || 'Failed to upload banner.');
+      }
+
+      if (!data.url) {
+        throw new Error('Server returned empty image URL. Please try again.');
       }
 
       setBannerImage(data.url);

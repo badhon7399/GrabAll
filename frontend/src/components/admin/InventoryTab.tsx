@@ -138,6 +138,10 @@ export default function InventoryTab({
         throw new Error(data.message || 'Failed to upload image.');
       }
 
+      if (!data.url) {
+        throw new Error('Server returned empty image URL. Please try again.');
+      }
+
       setFormImageUrl(data.url);
     } catch (err: any) {
       console.error(err);
@@ -175,6 +179,9 @@ export default function InventoryTab({
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.message || 'Failed to upload image.');
+        }
+        if (!data.url) {
+          throw new Error('Server returned empty image URL for secondary image.');
         }
         uploadedUrls.push(data.url);
       }
