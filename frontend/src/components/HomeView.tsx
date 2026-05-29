@@ -682,10 +682,10 @@ export default function HomeView({
                       </motion.span>
 
                       <motion.h1
-                        initial={{ opacity: 0, y: 25 }}
+                        initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1, duration: 0.45 }}
-                        className="text-base sm:text-2xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-2 sm:mb-3 md:mb-4 leading-snug md:leading-snug tracking-tight text-white drop-shadow-sm py-2 transform-gpu"
+                        className="text-base sm:text-2xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-2 sm:mb-3 md:mb-6 leading-[1.15] md:leading-[1.05] tracking-tight text-white drop-shadow-sm pt-2 pb-1 transform-gpu"
                         style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
                       >
                         {slides[currentSlide].title[language] || slides[currentSlide].title['en']}
