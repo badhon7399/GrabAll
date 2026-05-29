@@ -292,7 +292,7 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
       }`}>
         <style dangerouslySetInnerHTML={{ __html: `
           .admin-light-theme {
-            --accent-color: #FF4B7E;
+            --accent-color: #0088FF;
             background-color: #f8fafc !important;
             color: #0f172a !important;
           }
@@ -305,7 +305,7 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
           .admin-light-theme h6 {
             color: #0f172a !important;
           }
-          .admin-light-theme .text-white:not(button):not(.bg-indigo-600):not(.bg-\\[\\#FF4B7E\\]):not(.bg-slate-800):not(.bg-\\[\\#0088FF\\]):not(.bg-[#FF4B7E]):not(.bg-emerald-500):not(.bg-rose-500):not(.bg-amber-500):not(.bg-red-500\\/10) {
+          .admin-light-theme .text-white:not(button):not(.bg-indigo-600):not(.bg-\\[\\#0088FF\\]):not(.bg-slate-800):not(.bg-\\[\\#0088FF\\]):not(.bg-[#0088FF]):not(.bg-emerald-500):not(.bg-rose-500):not(.bg-amber-500):not(.bg-red-500\\/10) {
             color: #0f172a !important;
           }
           
@@ -451,15 +451,15 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
           
           /* Active Sidebar Item */
           .admin-light-theme .bg-slate-800\\/80 {
-            background-color: #fff1f5 !important;
-            border-color: #ffe4e6 !important;
+            background-color: #f0f7ff !important;
+            border-color: #e0f2fe !important;
             box-shadow: none !important;
           }
           .admin-light-theme .bg-slate-800\\/80 h4 {
-            color: #FF4B7E !important;
+            color: #0088FF !important;
           }
           .admin-light-theme .bg-slate-800\\/80 p {
-            color: #fda4af !important;
+            color: #7dd3fc !important;
           }
           .admin-light-theme .bg-slate-800\\/60 {
             background-color: #f1f5f9 !important;
@@ -581,12 +581,12 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
             {/* Ambient background */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
               <div className="absolute top-10 left-10 w-[300px] h-[300px] rounded-full bg-[#0088FF]/5 blur-[100px]" />
-              <div className="absolute bottom-10 right-10 w-[300px] h-[300px] rounded-full bg-[#FF4B7E]/5 blur-[100px]" />
+              <div className="absolute bottom-10 right-10 w-[300px] h-[300px] rounded-full bg-[#3B82F6]/5 blur-[100px]" />
             </div>
 
             {isInitialLoad ? (
               <div className="relative h-[60vh] flex flex-col items-center justify-center gap-4">
-                <div className="w-10 h-10 rounded-full border-2 border-slate-800 border-t-[#FF4B7E] animate-spin" />
+                <div className="w-10 h-10 rounded-full border-2 border-slate-800 border-t-[#0088FF] animate-spin" />
                 <p className="text-xs text-slate-500 font-mono tracking-widest uppercase">
                   Loading dashboard data…
                 </p>

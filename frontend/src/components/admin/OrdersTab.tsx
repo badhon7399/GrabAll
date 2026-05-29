@@ -213,9 +213,9 @@ export default function OrdersTab({ orders, onUpdateOrderStatus, onDeleteOrder }
       className="flex items-end justify-between"
       >
       <div>
-        <p className="text-[10px] font-mono text-[#FF4B7E] tracking-[0.3em] uppercase mb-1">Order Management</p>
+        <p className="text-[10px] font-mono text-[#0088FF] tracking-[0.3em] uppercase mb-1">Order Management</p>
         <h2 className="text-3xl font-black text-white tracking-tight">
-          Orders <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF4B7E] to-[#FF85A7]">Ledger</span>
+          Orders <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0088FF] to-[#3B82F6]">Ledger</span>
         </h2>
         <p className="text-slate-500 text-xs mt-1 font-mono">Audit invoices · track shipments · manage statuses</p>
       </div>
@@ -224,7 +224,7 @@ export default function OrdersTab({ orders, onUpdateOrderStatus, onDeleteOrder }
           <span className="material-symbols-outlined text-sm">download</span>
           Export CSV
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#FF4B7E] text-xs font-mono font-bold text-white hover:bg-[#e63d6d] transition-colors shadow-lg shadow-[#FF4B7E]/20">
+        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0088FF] text-xs font-mono font-bold text-white hover:bg-[#0077ee] transition-colors shadow-lg shadow-[#0088FF]/20">
           <span className="material-symbols-outlined text-sm">print</span>
           Print
         </button>
@@ -276,7 +276,7 @@ className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden sh
               placeholder="Search by order ID, name, email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-10 py-2.5 bg-slate-800/60 border border-slate-700 rounded-xl text-slate-200 text-xs font-mono placeholder-slate-600 focus:border-[#FF4B7E]/40 focus:bg-slate-800 focus:outline-none transition-all"
+              className="w-full pl-10 pr-10 py-2.5 bg-slate-800/60 border border-slate-700 rounded-xl text-slate-200 text-xs font-mono placeholder-slate-600 focus:border-[#0088FF]/40 focus:bg-slate-800 focus:outline-none transition-all"
             />
             <AnimatePresence>
               {searchTerm && (
@@ -363,13 +363,13 @@ className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden sh
               transition={{ delay: i * 0.03 }}
           onClick={() => { setSelectedOrder(o); setActiveTab('details'); }}
           className={`text-xs border-b border-slate-800/60 font-mono cursor-pointer transition-colors group ${selectedOrder?._id === o._id
-            ? 'bg-[#FF4B7E]/5 border-l-2 border-l-[#FF4B7E]'
+            ? 'bg-[#0088FF]/5 border-l-2 border-l-[#0088FF]'
             : 'hover:bg-slate-800/40'
             }`}
                   >
           <td className="py-4 px-5">
             <div className="flex flex-col gap-0.5">
-              <span className="text-[#FF4B7E] font-black">#{o._id.slice(-6).toUpperCase()}</span>
+              <span className="text-[#0088FF] font-black">#{o._id.slice(-6).toUpperCase()}</span>
               <span className="text-[9px] text-slate-600">{o.orderItems?.length ?? 0} item{o.orderItems?.length !== 1 ? 's' : ''}</span>
             </div>
           </td>
@@ -399,7 +399,7 @@ className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden sh
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
             onClick={(e) => { e.stopPropagation(); setSelectedOrder(o); setActiveTab('details'); }}
-            className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-[#FF4B7E]/40 text-[#FF4B7E] font-bold text-[10px] transition-all"
+            className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-[#0088FF]/40 text-[#0088FF] font-bold text-[10px] transition-all"
                       >
             <span className="material-symbols-outlined text-[11px]">open_in_new</span>
             View
@@ -431,7 +431,7 @@ className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden sh
   {/* Table Footer */ }
   < div className = "px-5 py-3 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-600 bg-slate-800/20" >
           <span>Showing <span className="text-slate-400 font-bold">{filteredOrders.length}</span> of <span className="text-slate-400 font-bold">{orders.length}</span> orders</span>
-          <span>Total: <span className="text-[#FF4B7E] font-bold">৳ {filteredOrders.reduce((a, o) => a + o.totalAmount, 0).toLocaleString()}</span></span>
+          <span>Total: <span className="text-[#0088FF] font-bold">৳ {filteredOrders.reduce((a, o) => a + o.totalAmount, 0).toLocaleString()}</span></span>
         </div >
       </motion.div >
 
@@ -462,7 +462,7 @@ className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden sh
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0 pr-4">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-mono text-[#FF4B7E] tracking-widest uppercase">Invoice</span>
+              <span className="text-[10px] font-mono text-[#0088FF] tracking-widest uppercase">Invoice</span>
               <span className="px-2 py-0.5 rounded-lg bg-slate-800 border border-slate-700 text-[10px] font-mono text-slate-300 font-bold">
                 #{selectedOrder._id.slice(-8).toUpperCase()}
               </span>
@@ -497,7 +497,7 @@ className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden sh
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-[10px] font-mono font-bold uppercase tracking-wider transition-all border-b-2 ${activeTab === tab.id
-              ? 'border-[#FF4B7E] text-[#FF4B7E]'
+              ? 'border-[#0088FF] text-[#0088FF]'
               : 'border-transparent text-slate-500 hover:text-slate-300'
               }`}
           >
@@ -522,8 +522,8 @@ className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden sh
           {/* Client Card */}
           <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#FF4B7E]/15 border border-[#FF4B7E]/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-[#FF4B7E]">person</span>
+              <div className="w-10 h-10 rounded-xl bg-[#0088FF]/15 border border-[#0088FF]/20 flex items-center justify-center">
+                <span className="material-symbols-outlined text-[#0088FF]">person</span>
               </div>
               <div>
                 <p className="font-black text-white text-sm">{getClientName(selectedOrder)}</p>
@@ -550,7 +550,7 @@ className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden sh
               </div>
               <div className="text-right">
                 <p className="text-[10px] text-slate-500 font-mono">Total Invoice</p>
-                <p className="text-2xl font-black text-[#FF4B7E] font-mono">
+                <p className="text-2xl font-black text-[#0088FF] font-mono">
                   ৳ {selectedOrder.totalAmount.toLocaleString()}
                 </p>
               </div>
@@ -603,7 +603,7 @@ className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden sh
         {/* Total */}
         <div className="p-4 border-t border-slate-700/50 bg-slate-900/60 flex justify-between items-center">
           <span className="text-xs font-bold text-slate-400 font-mono">ORDER TOTAL</span>
-          <span className="text-xl font-black text-[#FF4B7E] font-mono">
+          <span className="text-xl font-black text-[#0088FF] font-mono">
             ৳ {selectedOrder.totalAmount.toLocaleString()}
           </span>
         </div>
@@ -679,7 +679,7 @@ className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden sh
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-      className="flex items-center gap-2 text-[10px] font-mono text-[#FF4B7E]"
+      className="flex items-center gap-2 text-[10px] font-mono text-[#0088FF]"
                           >
       <span className="material-symbols-outlined text-sm animate-spin">autorenew</span>
       Saving changes...

@@ -151,9 +151,9 @@ export default function UsersTab({ triggerToast }: UsersTabProps) {
         className="flex items-end justify-between"
       >
         <div>
-          <p className="text-[10px] font-mono text-[#FF4B7E] tracking-[0.3em] uppercase mb-1">User Directory</p>
+          <p className="text-[10px] font-mono text-[#0088FF] tracking-[0.3em] uppercase mb-1">User Directory</p>
           <h2 className="text-3xl font-black text-white tracking-tight">
-            User <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF4B7E] to-[#FF85A7]">Management</span>
+            User <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0088FF] to-[#3B82F6]">Management</span>
           </h2>
           <p className="text-slate-500 text-xs mt-1 font-mono">Manage accounts · assign administrative roles · audit user credentials</p>
         </div>
@@ -164,7 +164,7 @@ export default function UsersTab({ triggerToast }: UsersTabProps) {
         {[
           { label: 'Total Accounts', value: `${users.length} Users`, icon: 'groups', color: '#0088FF' },
           { label: 'Administrators', value: `${users.filter((u) => u.role === 'admin' || u.role === 'super_admin' || u.role === 'demo_admin').length} Admins`, icon: 'shield_person', color: '#10B981' },
-          { label: 'Managers & Staff', value: `${users.filter((u) => u.role === 'manager' || u.role === 'staff').length} Team`, icon: 'support_agent', color: '#FF4B7E' },
+          { label: 'Managers & Staff', value: `${users.filter((u) => u.role === 'manager' || u.role === 'staff').length} Team`, icon: 'support_agent', color: '#0088FF' },
         ].map((s, i) => (
           <motion.div
             key={s.label}
@@ -202,7 +202,7 @@ export default function UsersTab({ triggerToast }: UsersTabProps) {
               placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-10 py-2.5 bg-slate-800/60 border border-slate-700 rounded-xl text-slate-200 text-xs font-mono placeholder-slate-600 focus:border-[#FF4B7E]/40 focus:bg-slate-800 focus:outline-none transition-all"
+              className="w-full pl-10 pr-10 py-2.5 bg-slate-800/60 border border-slate-700 rounded-xl text-slate-200 text-xs font-mono placeholder-slate-600 focus:border-[#0088FF]/40 focus:bg-slate-800 focus:outline-none transition-all"
             />
             {searchTerm && (
               <button
@@ -242,7 +242,7 @@ export default function UsersTab({ triggerToast }: UsersTabProps) {
         {/* Table Content */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <div className="w-10 h-10 rounded-full border-2 border-slate-800 border-t-[#FF4B7E] animate-spin" />
+            <div className="w-10 h-10 rounded-full border-2 border-slate-800 border-t-[#0088FF] animate-spin" />
             <p className="text-xs text-slate-500 font-mono tracking-widest uppercase">Fetching user records...</p>
           </div>
         ) : (
@@ -271,7 +271,7 @@ export default function UsersTab({ triggerToast }: UsersTabProps) {
                     >
                       <td className="py-4 px-5">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-[#FF4B7E]/10 border border-[#FF4B7E]/20 flex items-center justify-center text-[#FF4B7E] font-black text-xs uppercase">
+                          <div className="w-8 h-8 rounded-full bg-[#0088FF]/10 border border-[#0088FF]/20 flex items-center justify-center text-[#0088FF] font-black text-xs uppercase">
                             {u.name.slice(0, 2)}
                           </div>
                           <span className="text-slate-200 font-bold">{u.name}</span>
@@ -300,7 +300,7 @@ export default function UsersTab({ triggerToast }: UsersTabProps) {
                           className={`inline-flex items-center justify-center p-1.5 rounded-lg border transition-all ${
                             currentUser?._id === u._id
                               ? 'opacity-30 cursor-not-allowed bg-transparent border-slate-800 text-slate-600'
-                              : 'bg-slate-800 hover:bg-slate-700 border-slate-700 hover:border-[#FF4B7E]/40 text-slate-300 hover:text-white'
+                              : 'bg-slate-800 hover:bg-slate-700 border-slate-700 hover:border-[#0088FF]/40 text-slate-300 hover:text-white'
                           }`}
                         >
                           <span className="material-symbols-outlined text-sm">
@@ -395,15 +395,15 @@ export default function UsersTab({ triggerToast }: UsersTabProps) {
                         onClick={() => setSelectedRole(role.id)}
                         className={`w-full flex items-center justify-between p-3 rounded-xl border text-xs font-mono font-bold transition-all ${
                           selectedRole === role.id
-                            ? 'bg-slate-800 border-[#FF4B7E]/40 text-white'
+                            ? 'bg-slate-800 border-[#0088FF]/40 text-white'
                             : 'bg-slate-800/40 border-slate-800 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200'
                         }`}
                       >
                         <span className="capitalize">{role.label}</span>
                         <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                          selectedRole === role.id ? 'border-[#FF4B7E] bg-[#FF4B7E]/10' : 'border-slate-600'
+                          selectedRole === role.id ? 'border-[#0088FF] bg-[#0088FF]/10' : 'border-slate-600'
                         }`}>
-                          {selectedRole === role.id && <div className="w-1.5 h-1.5 rounded-full bg-[#FF4B7E]" />}
+                          {selectedRole === role.id && <div className="w-1.5 h-1.5 rounded-full bg-[#0088FF]" />}
                         </div>
                       </button>
                     ))}

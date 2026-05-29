@@ -28,11 +28,11 @@ function AnimatedCounter({ value, prefix = '', suffix = '' }: { value: number; p
   const [display, setDisplay] = useState(0);
   useEffect(() => {
     let start = 0;
-    const duration = 1200;
+    const duration = 1000;
     const step = (timestamp: number) => {
       if (!start) start = timestamp;
       const progress = Math.min((timestamp - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
+      const eased = 1 - Math.pow(1 - progress, 3); // Cubic ease out
       setDisplay(Math.floor(eased * value));
       if (progress < 1) requestAnimationFrame(step);
     };
@@ -41,38 +41,19 @@ function AnimatedCounter({ value, prefix = '', suffix = '' }: { value: number; p
   return <>{prefix}{display.toLocaleString()}{suffix}</>;
 }
 
-// ── Sparkline Mini Chart ──────────────────────────────────────────────────────
-function Sparkline({ data, color }: { data: number[]; color: string }) {
-  const max = Math.max(...data, 1);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-  const w = 80, h = 32;
-  const pts = data.map((v, i) => ({
-    x: (i / (data.length - 1)) * w,
-    y: h - ((v - min) / range) * h,
-  }));
-  const line = pts.map(p => `${p.x},${p.y}`).join(' ');
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-20 h-8">
-      <polyline points={line} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-// ── Donut Ring Chart ──────────────────────────────────────────────────────────
+// ── Donut Chart ──────────────────────────────────────────────────────────────
 function DonutChart({ segments }: { segments: { value: number; color: string; label: string }[] }) {
   const total = segments.reduce((a, b) => a + b.value, 0) || 1;
-  const r = 54, cx = 64, cy = 64, stroke = 12;
+  const r = 52, cx = 64, cy = 64, strokeWidth = 10;
   const circ = 2 * Math.PI * r;
-  
-  // Precompute segment offsets using pure reduce to keep render loop pure
+
   const segmentOffsets = segments.reduce<number[]>((acc, _, i) => {
     return i === 0 ? [0] : [...acc, acc[i - 1] + segments[i - 1].value];
   }, []);
 
   return (
-    <svg viewBox="0 0 128 128" className="w-32 h-32">
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#1e293b" strokeWidth={stroke} />
+    <svg viewBox="0 0 128 128" className="w-40 h-40 relative z-10">
+      <circle cx={cx} cy={cy} r={r} fill="none" className="stroke-slate-800/40 dark:stroke-slate-800" strokeWidth={strokeWidth} />
       {segments.map((seg, i) => {
         const pct = seg.value / total;
         const dash = pct * circ;
@@ -81,86 +62,66 @@ function DonutChart({ segments }: { segments: { value: number; color: string; la
         return (
           <motion.circle
             key={i}
-            cx={cx} cy={cy} r={r}
+            cx={cx}
+            cy={cy}
+            r={r}
             fill="none"
             stroke={seg.color}
-            strokeWidth={stroke}
+            strokeWidth={strokeWidth}
             strokeDasharray={`${dash} ${gap}`}
             strokeLinecap="round"
             transform={`rotate(${rotate} ${cx} ${cy})`}
             initial={{ strokeDasharray: `0 ${circ}` }}
             animate={{ strokeDasharray: `${dash} ${gap}` }}
-            transition={{ duration: 1, delay: i * 0.15, ease: 'easeOut' }} 
+            transition={{ duration: 1, delay: i * 0.1, ease: 'easeOut' }}
           />
-      );
+        );
       })}
-      <text x={cx} y={cy - 6} textAnchor="middle" className="fill-slate-100 text-xs" fontSize="10" fontWeight="bold" fontFamily="monospace">TOTAL</text>
-      <text x={cx} y={cy + 8} textAnchor="middle" className="fill-white" fontSize="13" fontWeight="900" fontFamily="monospace">{total === 1 && segments.length === 0 ? 0 : total}</text>
+      <text x={cx} y={cy - 4} textAnchor="middle" className="fill-slate-500 text-[8px] tracking-[0.1em] uppercase font-bold">Total Sales</text>
+      <text x={cx} y={cy + 10} textAnchor="middle" className="fill-slate-900 dark:fill-white text-[11px] font-black" fontFamily="sans-serif">
+        {total >= 1000 ? `$${(total / 1000).toFixed(1)}k` : `$${total}`}
+      </text>
     </svg>
   );
 }
 
-// ── Gauge Chart ───────────────────────────────────────────────────────────────
-function GaugeChart({ value, max, color }: { value: number; max: number; color: string }) {
-  const pct = Math.min(value / max, 1);
-  const r = 40, cx = 56, cy = 56;
-  const startAngle = -210, endAngle = 30;
-  const totalArc = endAngle - startAngle;
-  const angle = startAngle + pct * totalArc;
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-  const arcPath = (start: number, end: number, radius: number) => {
-    const s = { x: cx + radius * Math.cos(toRad(start)), y: cy + radius * Math.sin(toRad(start)) };
-    const e = { x: cx + radius * Math.cos(toRad(end)), y: cy + radius * Math.sin(toRad(end)) };
-    const large = end - start > 180 ? 1 : 0;
-    return `M ${s.x} ${s.y} A ${radius} ${radius} 0 ${large} 1 ${e.x} ${e.y}`;
-  };
-  const needleX = cx + 32 * Math.cos(toRad(angle));
-  const needleY = cy + 32 * Math.sin(toRad(angle));
+// ── Half Gauge Chart ─────────────────────────────────────────────────────────
+function HalfGauge({ percentage, color }: { percentage: number; color: string }) {
+  const r = 44, strokeWidth = 9;
+  const circ = Math.PI * r; // half circle circumference
+  const strokeDashoffset = circ - (Math.min(percentage, 100) / 100) * circ;
+
   return (
-    <svg viewBox="0 0 112 72" className="w-28 h-16">
-      <path d={arcPath(startAngle, endAngle, r)} fill="none" stroke="#1e293b" strokeWidth="8" strokeLinecap="round" />
-      <motion.path
-        d={arcPath(startAngle, endAngle, r)}
-        fill="none"
-        stroke={color}
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeDasharray={`${pct * (totalArc / 360) * 2 * Math.PI * r} 999`}
-        initial={{ strokeDasharray: `0 999` }}
-        animate={{ strokeDasharray: `${pct * (totalArc / 360) * 2 * Math.PI * r} 999` }}
-        transition={{ duration: 1.2, ease: 'easeOut' }} 
-      />
-      <motion.line
-        x1={cx} y1={cy}
-        x2={needleX} y2={needleY}
-        stroke={color} strokeWidth="2" strokeLinecap="round"
-        initial={{ rotate: -210, originX: `${cx}px`, originY: `${cy}px` }}
-        animate={{ x2: needleX, y2: needleY }}
-        transition={{ duration: 1.2, ease: 'easeOut' }} 
-      />
-      <circle cx={cx} cy={cy} r="4" fill={color} />
-      <text x={cx} y={cy + 14} textAnchor="middle" fill="white" fontSize="8" fontWeight="bold" fontFamily="monospace">{Math.round(pct * 100)}%</text>
-    </svg>
+    <div className="relative flex flex-col items-center justify-center">
+      <svg viewBox="0 0 120 70" className="w-36 h-20">
+        {/* Background Arc */}
+        <path
+          d="M 16 60 A 44 44 0 0 1 104 60"
+          fill="none"
+          className="stroke-slate-800/40 dark:stroke-slate-800"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+        />
+        {/* Progress Arc */}
+        <motion.path
+          d="M 16 60 A 44 44 0 0 1 104 60"
+          fill="none"
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={circ}
+          initial={{ strokeDashoffset: circ }}
+          animate={{ strokeDashoffset }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
+        />
+      </svg>
+      <div className="absolute bottom-2 flex flex-col items-center">
+        <span className="text-2xl font-black text-slate-900 dark:text-white leading-none">{percentage}%</span>
+        <span className="text-[8px] font-bold text-emerald-500 uppercase tracking-widest mt-1">+8.03% vs Last Month</span>
+      </div>
+    </div>
   );
 }
-
-// ── Recent Activity Feed ──────────────────────────────────────────────────────
-const mockActivity = [
-  { icon: 'add_shopping_cart', label: 'New order placed', sub: 'Order #4821 · BDT 3,200', time: '2m ago', color: '#10B981' },
-  { icon: 'warning', label: 'Low stock alert', sub: 'Wireless Mouse · 3 left', time: '8m ago', color: '#EF4444' },
-  { icon: 'inventory_2', label: 'Stock updated', sub: 'USB Hub +50 units', time: '22m ago', color: '#F59E0B' },
-  { icon: 'payments', label: 'Payment received', sub: 'BDT 12,500 via bKash', time: '1h ago', color: '#0088FF' },
-  { icon: 'local_shipping', label: 'Order shipped', sub: 'Order #4810 dispatched', time: '2h ago', color: '#8B5CF6' },
-];
-
-// ── Top Products Table ────────────────────────────────────────────────────────
-const mockTopProducts = [
-  { name: 'Mechanical Keyboard', sales: 142, revenue: 284000, trend: '+18%', up: true },
-  { name: 'Wireless Mouse', sales: 98, revenue: 117600, trend: '+9%', up: true },
-  { name: 'USB-C Hub', sales: 76, revenue: 60800, trend: '-3%', up: false },
-  { name: 'Monitor Stand', sales: 54, revenue: 43200, trend: '+21%', up: true },
-  { name: 'Headset Pro', sales: 43, revenue: 107500, trend: '+5%', up: true },
-];
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function DashboardTab({
@@ -171,20 +132,23 @@ export default function DashboardTab({
   revenueData,
   categoryDistribution,
 }: DashboardTabProps) {
-  const [activeRange, setActiveRange] = useState<'1W' | '1M' | '3M'>('1M');
+  const [activeRange, setActiveRange] = useState<'8 Days' | 'Month' | 'Year'>('8 Days');
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
 
-  const chartHeight = 180;
-  const chartWidth = 520;
-  const maxRevenue = Math.max(...revenueData.map((d) => d.value), 1);
+  const chartHeight = 160;
+  const chartWidth = 500;
+  
+  // Custom mock values to fit the user's dashboard image
+  const totalVisitorsVal = 237782;
+  const monthlyTargetPercentage = 85;
 
+  const maxRevenue = Math.max(...revenueData.map((d) => d.value), 1);
   const points = revenueData.map((d, i) => ({
     x: (i / Math.max(revenueData.length - 1, 1)) * chartWidth,
-    y: chartHeight - (d.value / maxRevenue) * (chartHeight - 20) + 10,
+    y: chartHeight - (d.value / maxRevenue) * (chartHeight - 30) + 15,
     ...d,
   }));
 
-  // Smooth cubic bezier path
   const smoothPath = points.reduce((acc, p, i) => {
     if (i === 0) return `M ${p.x},${p.y}`;
     const prev = points[i - 1];
@@ -193,461 +157,445 @@ export default function DashboardTab({
   }, '');
 
   const areaPath = points.length > 1
-    ? `${smoothPath} L ${points[points.length - 1].x},${chartHeight + 10} L ${points[0].x},${chartHeight + 10} Z`
+    ? `${smoothPath} L ${points[points.length - 1].x},${chartHeight + 20} L ${points[0].x},${chartHeight + 20} Z`
     : '';
 
-  const statCards = [
-    {
-      title: 'Gross Revenue',
-      value: totalSales,
-      display: `BDT ${totalSales.toLocaleString()}`,
-      icon: 'payments',
-      color: 'from-[#0088FF] to-[#0055CC]',
-      accent: '#0088FF',
-      spark: [40, 55, 45, 70, 60, 85, 75, 90],
-      change: '+12.4%',
-      up: true,
-    },
-    {
-      title: 'Sales Volume',
-      value: ordersCount,
-      display: `${ordersCount}`,
-      suffix: ' Orders',
-      icon: 'shopping_basket',
-      color: 'from-[#10B981] to-[#059669]',
-      accent: '#10B981',
-      spark: [30, 40, 35, 55, 45, 65, 60, 70],
-      change: '+8.1%',
-      up: true,
-    },
-    {
-      title: 'Catalog Listings',
-      value: productsCount,
-      display: `${productsCount}`,
-      suffix: ' Items',
-      icon: 'inventory',
-      color: 'from-[#F59E0B] to-[#D97706]',
-      accent: '#F59E0B',
-      spark: [60, 58, 62, 64, 60, 65, 63, 68],
-      change: '+2.3%',
-      up: true,
-    },
-    {
-      title: 'Low Stock Alerts',
-      value: lowStockCount,
-      display: `${lowStockCount}`,
-      suffix: ' Warnings',
-      icon: 'warning',
-      color: 'from-[#EF4444] to-[#DC2626]',
-      accent: '#EF4444',
-      spark: [10, 8, 12, 15, 10, 18, 14, lowStockCount],
-      change: lowStockCount > 0 ? 'Needs Action' : 'All Clear',
-      up: false,
-      alert: lowStockCount > 0,
-    },
-  ];
+  const dashboardColors = {
+    primary: '#0088FF', // Blue instead of Orange
+    secondary: '#6366F1', // Indigo
+    accent: '#8B5CF6', // Purple
+    success: '#10B981', // Emerald
+    warning: '#F59E0B', // Amber
+    error: '#EF4444', // Red
+  };
 
-  const donutData = categoryDistribution.slice(0, 4).map((c, i) => ({
-    value: c.count,
+  const donutSegments = categoryDistribution.slice(0, 4).map((c, i) => ({
+    value: c.count * 12500, // scaled for realistic dashboard numbers
     label: c.name,
-    color: ['#FF4B7E', '#0088FF', '#10B981', '#F59E0B'][i] ?? '#8B5CF6',
+    color: [dashboardColors.primary, dashboardColors.secondary, dashboardColors.accent, dashboardColors.success][i] ?? '#94a3b8',
   }));
 
+  const conversionFunnel = [
+    { label: 'Product Views', value: 25000, percentage: 100, change: '+9%' },
+    { label: 'Add to Cart', value: 12000, percentage: 48, change: '+5%' },
+    { label: 'Proceed to Checkout', value: 8500, percentage: 34, change: '+4%' },
+    { label: 'Completed Purchases', value: 6200, percentage: 24.8, change: '+7%' },
+    { label: 'Abandoned Carts', value: 3000, percentage: 12, change: '-5%' },
+  ];
+
+  const trafficSources = [
+    { label: 'Direct Traffic', value: 40, color: dashboardColors.primary },
+    { label: 'Organic Search', value: 30, color: '#38BDF8' },
+    { label: 'Social Media', value: 15, color: dashboardColors.secondary },
+    { label: 'Referral Traffic', value: 10, color: dashboardColors.accent },
+    { label: 'Email Campaigns', value: 5, color: dashboardColors.success },
+  ];
+
+  const activeUsersByCountry = [
+    { country: 'Bangladesh', percentage: 38, count: 1048 },
+    { country: 'United States', percentage: 24, count: 662 },
+    { country: 'United Kingdom', percentage: 18, count: 496 },
+    { country: 'Other Countries', percentage: 20, count: 552 },
+  ];
+
   return (
-    <div className="space-y-8 pb-8">
-
+    <div className="space-y-6 pb-8 select-none">
       {/* ── Header ── */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-      className="flex items-end justify-between"
-      >
-      <div>
-        <p className="text-[10px] font-mono text-[#FF4B7E] tracking-[0.3em] uppercase mb-1">Analytics Suite v2</p>
-        <h2 className="text-3xl font-black text-white tracking-tight">
-          Command <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF4B7E] to-[#FF85A7]">Center</span>
-        </h2>
-        <p className="text-slate-500 text-xs mt-1 font-mono">Real-time telemetry · {new Date().toLocaleDateString('en-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          LIVE
-        </span>
-        <button className="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs font-mono font-bold text-slate-300 hover:bg-slate-700 transition-colors flex items-center gap-1.5">
-          <span className="material-symbols-outlined text-sm">download</span>
-          Export
-        </button>
-      </div>
-    </motion.div>
-
-      {/* ── KPI Cards ── */ }
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-    {statCards.map((stat, i) => (
-      <motion.div
-        key={stat.title}
-        initial={{ opacity: 0, y: 20, scale: 0.96 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ delay: i * 0.07, type: 'spring', stiffness: 260, damping: 22 }}
-    whileHover={{ y: -4, transition: { duration: 0.2 } }}
-    className="relative bg-slate-900 border border-slate-800 rounded-2xl p-5 overflow-hidden cursor-default group"
-    style={{ boxShadow: `0 0 30px ${stat.accent}12` }}
-          >
-    {/* glow orb */}
-    <div
-      className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-10 blur-2xl group-hover:opacity-20 transition-opacity"
-      style={{ background: stat.accent }}
-    />
-
-    {/* alert ping */}
-    {stat.alert && (
-      <span className="absolute top-3.5 right-3.5 flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
-      </span>
-    )}
-
-    {/* top row */}
-    <div className="flex justify-between items-start mb-3">
-      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono leading-tight">{stat.title}</p>
-      <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}>
-        <span className="material-symbols-outlined text-base text-white">{stat.icon}</span>
-      </div>
-    </div>
-
-    {/* value */}
-    <h3 className="text-[1.6rem] font-black text-white tracking-tight leading-none">
-      <AnimatedCounter value={stat.value} />
-      {stat.suffix && <span className="text-sm font-bold text-slate-400 ml-1">{stat.suffix}</span>}
-    </h3>
-
-    {/* sparkline + change */}
-    <div className="flex items-end justify-between mt-3">
-      <div className="flex items-center gap-1 text-[10px] font-mono">
-        <span className={`material-symbols-outlined text-xs font-bold ${stat.up ? 'text-emerald-400' : 'text-red-400'}`}>
-          {stat.up ? 'trending_up' : 'trending_down'}
-        </span>
-        <span className={stat.up ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}>{stat.change}</span>
-        <span className="text-slate-600">/ mo</span>
-      </div>
-      <Sparkline data={stat.spark} color={stat.accent} />
-    </div>
-
-    {/* bottom accent bar */}
-    <motion.div
-      className="absolute bottom-0 left-0 h-[2px] rounded-b-2xl"
-      style={{ background: `linear-gradient(to right, ${stat.accent}, transparent)` }}
-      initial={{ width: 0 }}
-      animate={{ width: '100%' }}
-      transition={{ delay: i * 0.07 + 0.4, duration: 0.8, ease: 'easeOut' }} 
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Dashboard</h2>
+          <p className="text-slate-500 text-xs mt-0.5">Welcome back, Admin</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* Search bar */}
+          <div className="relative hidden md:block">
+            <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-sm">search</span>
+            <input
+              type="text"
+              placeholder="Search stock, order, etc..."
+              className="pl-8 pr-4 py-2 w-64 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs text-slate-950 dark:text-white placeholder-slate-400 focus:outline-none"
             />
-  </motion.div>
-        ))
-}
-      </div >
-
-  {/* ── Middle Row: Revenue Chart + Activity Feed ── */ }
-  < div className = "grid grid-cols-1 lg:grid-cols-3 gap-6" >
-
-    {/* Revenue Chart */ }
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3 }}
-className = "lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col"
-  >
-  <div className="flex justify-between items-start mb-5">
-    <div>
-      <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">Revenue Performance</h3>
-      <p className="text-[10px] text-slate-500 mt-0.5 font-mono">Cumulative sales revenue over selected period</p>
-    </div>
-    <div className="flex gap-1.5 bg-slate-800/60 rounded-xl p-1">
-      {(['1W', '1M', '3M'] as const).map(r => (
-        <button
-          key={r}
-          onClick={() => setActiveRange(r)}
-          className={`px-3 py-1 rounded-lg text-[11px] font-mono font-bold transition-all ${activeRange === r
-              ? 'bg-[#FF4B7E] text-white shadow-md'
-              : 'text-slate-400 hover:text-slate-200'
-            }`}
-        >
-          {r}
-        </button>
-      ))}
-    </div>
-  </div>
-
-{/* Y-axis labels + chart */ }
-<div className="flex gap-3 flex-1 min-h-[200px]">
-  <div className="flex flex-col justify-between pb-8 text-[9px] text-slate-600 font-mono text-right w-12">
-    {[1, 0.75, 0.5, 0.25, 0].map(r => (
-      <span key={r}>{(maxRevenue * r / 1000).toFixed(0)}k</span>
-    ))}
-  </div>
-  <div className="flex-1 flex flex-col">
-    <div className="flex-1 relative">
-      <svg viewBox={`0 0 ${chartWidth} ${chartHeight + 20}`} className="w-full h-full overflow-visible">
-        <defs>
-          <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#FF4B7E" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#FF4B7E" stopOpacity="0" />
-          </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-        </defs>
-        {/* Horizontal grid */}
-        {[0, 0.25, 0.5, 0.75, 1].map((r, idx) => (
-          <line key={idx} x1="0" y1={10 + r * (chartHeight - 20)} x2={chartWidth} y2={10 + r * (chartHeight - 20)}
-            stroke="#1e293b" strokeWidth="1" strokeDasharray="4 4" />
-        ))}
-        {/* Area */}
-        {areaPath && <path d={areaPath} fill="url(#revGrad)" />}
-        {/* Line */}
-        {smoothPath && (
-          <motion.path
-            d={smoothPath}
-            fill="none"
-            stroke="#FF4B7E"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            filter="url(#glow)"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 1.4, ease: 'easeInOut' }} 
-                    />
-                  )}
-        {/* Points */}
-        {points.map((p, idx) => (
-          <g key={idx}
-            className="cursor-pointer"
-            onMouseEnter={() => setHoveredPoint(idx)}
-            onMouseLeave={() => setHoveredPoint(null)}
-          >
-            <circle cx={p.x} cy={p.y} r="10" fill="transparent" />
-            <motion.circle
-              cx={p.x} cy={p.y}
-              r={hoveredPoint === idx ? 6 : 4}
-              fill="#FF4B7E"
-              stroke="#0f172a"
-              strokeWidth="2"
-              animate={{ r: hoveredPoint === idx ? 6 : 4 }}
-              transition={{ duration: 0.15 }} 
-                      />
-            <AnimatePresence>
-              {hoveredPoint === idx && (
-                <motion.foreignObject
-                  x={p.x - 44} y={p.y - 38}
-                  width="88" height="28"
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }} 
-                          >
-              <div className="bg-slate-950 border border-[#FF4B7E]/40 text-white font-mono text-[9px] font-bold py-1 px-2 rounded-lg text-center shadow-xl">
-                {Math.round(p.value).toLocaleString()} BDT
-              </div>
-            </motion.foreignObject>
-                        )}
-          </AnimatePresence>
-                    </g>
-                  ))}
-    </svg>
-  </div>
-  {/* X labels */}
-  <div className="flex justify-between mt-1 px-1">
-    {revenueData.map((d, i) => (
-      <span key={i} className="text-[10px] text-slate-600 font-mono">{d.label}</span>
-    ))}
-  </div>
-</div>
-          </div >
-        </motion.div >
-
-  {/* Activity Feed */ }
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.4 }}
-className = "bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col"
-  >
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">Live Activity</h3>
-              <p className="text-[10px] text-slate-500 font-mono mt-0.5">Recent workspace events</p>
-            </div>
-            <span className="flex items-center gap-1 text-[9px] font-mono text-emerald-400 border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              LIVE
-            </span>
           </div>
-          <div className="space-y-3 flex-1">
-            {mockActivity.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: 12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 + i * 0.08 }} 
-                className="flex items-start gap-3 p-3 rounded-xl bg-slate-800/50 border border-slate-700/40 hover:border-slate-600/60 transition-colors group"
-              >
-                <div
-                  className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: `${item.color}18`, border: `1px solid ${item.color}30` }}
+        </div>
+      </div>
+
+      {/* ── Top Row: 3 KPI Cards ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Card 1: Total Sales */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Sales</span>
+            <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-blue-500">
+              <span className="material-symbols-outlined text-lg">attach_money</span>
+            </div>
+          </div>
+          <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none mb-1">
+            BDT <AnimatedCounter value={totalSales} />
+          </h3>
+          <div className="flex items-center gap-1 text-[10px] font-mono mt-2">
+            <span className="text-emerald-500 font-bold flex items-center gap-0.5">
+              <span className="material-symbols-outlined text-xs">trending_up</span>
+              +3.34%
+            </span>
+            <span className="text-slate-400">vs last week</span>
+          </div>
+        </div>
+
+        {/* Card 2: Total Orders */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Orders</span>
+            <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-500">
+              <span className="material-symbols-outlined text-lg">shopping_bag</span>
+            </div>
+          </div>
+          <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none mb-1">
+            <AnimatedCounter value={ordersCount} />
+          </h3>
+          <div className="flex items-center gap-1 text-[10px] font-mono mt-2">
+            <span className="text-rose-500 font-bold flex items-center gap-0.5">
+              <span className="material-symbols-outlined text-xs">trending_down</span>
+              -2.89%
+            </span>
+            <span className="text-slate-400">vs last week</span>
+          </div>
+        </div>
+
+        {/* Card 3: Total Visitors */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Visitors</span>
+            <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/40 flex items-center justify-center text-purple-500">
+              <span className="material-symbols-outlined text-lg">visibility</span>
+            </div>
+          </div>
+          <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none mb-1">
+            <AnimatedCounter value={totalVisitorsVal} />
+          </h3>
+          <div className="flex items-center gap-1 text-[10px] font-mono mt-2">
+            <span className="text-emerald-500 font-bold flex items-center gap-0.5">
+              <span className="material-symbols-outlined text-xs">trending_up</span>
+              +6.02%
+            </span>
+            <span className="text-slate-400">vs last week</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Middle Row: Revenue Analytics + Monthly Target + Top Categories ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Left Column (Span 2): Revenue Analytics */}
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h4 className="text-sm font-bold text-slate-950 dark:text-white">Revenue Analytics</h4>
+              <p className="text-[10px] text-slate-400">Cumulative sales performance trends</p>
+            </div>
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+              {(['8 Days', 'Month', 'Year'] as const).map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setActiveRange(r)}
+                  className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${
+                    activeRange === r
+                      ? 'bg-blue-500 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
                 >
-                  <span className="material-symbols-outlined text-sm" style={{ color: item.color }}>{item.icon}</span>
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative flex-1 flex flex-col justify-center min-h-[170px]">
+            <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-full overflow-visible">
+              <defs>
+                <linearGradient id="revenueBlueGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={dashboardColors.primary} stopOpacity="0.2" />
+                  <stop offset="100%" stopColor={dashboardColors.primary} stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              {/* Grid Lines */}
+              {[0, 0.25, 0.5, 0.75, 1].map((r, idx) => (
+                <line
+                  key={idx}
+                  x1="0"
+                  y1={15 + r * (chartHeight - 30)}
+                  x2={chartWidth}
+                  y2={15 + r * (chartHeight - 30)}
+                  className="stroke-slate-100 dark:stroke-slate-800"
+                  strokeWidth="1"
+                  strokeDasharray="4 4"
+                />
+              ))}
+              {/* Area path */}
+              {areaPath && <path d={areaPath} fill="url(#revenueBlueGrad)" />}
+              {/* Smooth line */}
+              {smoothPath && (
+                <motion.path
+                  d={smoothPath}
+                  fill="none"
+                  stroke={dashboardColors.primary}
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 1, ease: 'easeInOut' }}
+                />
+              )}
+              {/* Interactive Points */}
+              {points.map((p, idx) => (
+                <g
+                  key={idx}
+                  className="cursor-pointer"
+                  onMouseEnter={() => setHoveredPoint(idx)}
+                  onMouseLeave={() => setHoveredPoint(null)}
+                >
+                  <circle cx={p.x} cy={p.y} r="12" fill="transparent" />
+                  <motion.circle
+                    cx={p.x}
+                    cy={p.y}
+                    r={hoveredPoint === idx ? 6 : 4}
+                    fill={dashboardColors.primary}
+                    stroke="#ffffff"
+                    strokeWidth="2"
+                    className="dark:stroke-slate-900"
+                    animate={{ r: hoveredPoint === idx ? 6 : 4 }}
+                  />
+                  <AnimatePresence>
+                    {hoveredPoint === idx && (
+                      <motion.foreignObject
+                        x={p.x - 50}
+                        y={p.y - 36}
+                        width="100"
+                        height="30"
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        <div className="bg-slate-900 text-white font-mono text-[9px] font-bold py-1 px-1.5 rounded-lg text-center shadow-lg border border-slate-700">
+                          {p.value.toLocaleString()} BDT
+                        </div>
+                      </motion.foreignObject>
+                    )}
+                  </AnimatePresence>
+                </g>
+              ))}
+            </svg>
+            <div className="flex justify-between mt-2 px-1">
+              {revenueData.map((d, i) => (
+                <span key={i} className="text-[9px] text-slate-400 font-mono">{d.label}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Card 2: Monthly Target */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-start">
+            <div>
+              <h4 className="text-sm font-bold text-slate-950 dark:text-white">Monthly Target</h4>
+              <p className="text-[10px] text-slate-400">Core sales metrics target</p>
+            </div>
+            <button className="material-symbols-outlined text-slate-400 hover:text-slate-600 text-lg">more_horiz</button>
+          </div>
+
+          <div className="my-2 flex justify-center">
+            <HalfGauge percentage={monthlyTargetPercentage} color={dashboardColors.primary} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-center pt-2 border-t border-slate-100 dark:border-slate-800">
+            <div>
+              <span className="text-[9px] font-bold text-slate-400 uppercase block">Target</span>
+              <span className="text-xs font-mono font-black text-slate-900 dark:text-white">600,000 BDT</span>
+            </div>
+            <div>
+              <span className="text-[9px] font-bold text-slate-400 uppercase block">Revenue</span>
+              <span className="text-xs font-mono font-black text-slate-900 dark:text-white">
+                {(totalSales * 0.85).toLocaleString(undefined, { maximumFractionDigits: 0 })} BDT
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3: Top Categories */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-start">
+            <div>
+              <h4 className="text-sm font-bold text-slate-950 dark:text-white">Top Categories</h4>
+              <p className="text-[10px] text-slate-400 font-mono">Sales share by classification</p>
+            </div>
+            <button className="text-[10px] font-bold text-blue-500 hover:underline">See All</button>
+          </div>
+
+          <div className="flex justify-center my-3 relative">
+            <DonutChart segments={donutSegments.length > 0 ? donutSegments : [{ value: 1, color: '#e2e8f0', label: 'None' }]} />
+          </div>
+
+          <div className="space-y-1.5 text-[10px] font-mono pt-2 border-t border-slate-100 dark:border-slate-800">
+            {donutSegments.slice(0, 4).map((seg, i) => (
+              <div key={i} className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: seg.color }} />
+                  <span className="text-slate-600 dark:text-slate-300 truncate">{seg.label}</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold text-slate-200 truncate">{item.label}</p>
-                  <p className="text-[10px] text-slate-500 font-mono truncate mt-0.5">{item.sub}</p>
-                </div>
-                <span className="text-[9px] text-slate-600 font-mono flex-shrink-0 mt-0.5">{item.time}</span>
-              </motion.div >
+                <span className="text-slate-900 dark:text-white font-bold ml-2">
+                  BDT {seg.value.toLocaleString()}
+                </span>
+              </div>
             ))}
-          </div >
-  <button className="mt-4 w-full py-2 rounded-xl border border-slate-700 text-[11px] font-mono font-bold text-slate-400 hover:text-slate-200 hover:border-slate-600 transition-colors">
-    View All Events →
-  </button>
-        </motion.div >
-      </div >
+          </div>
+        </div>
+      </div>
 
-  {/* ── Bottom Row: Category Donut + Gauges + Top Products ── */ }
-  < div className = "grid grid-cols-1 lg:grid-cols-3 gap-6" >
+      {/* ── Bottom Row: Active User + Conversion Rate + Traffic Sources ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Card 1: Active Users */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-start">
+            <div>
+              <h4 className="text-sm font-bold text-slate-950 dark:text-white">Active User</h4>
+              <p className="text-[10px] text-slate-400">Live active sessions distribution</p>
+            </div>
+            <button className="material-symbols-outlined text-slate-400 hover:text-slate-600 text-lg">more_horiz</button>
+          </div>
 
-    {/* Category Donut */ }
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.5 }}
-className = "bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col"
-  >
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono mb-1">Inventory Clusters</h3>
-          <p className="text-[10px] text-slate-500 font-mono mb-5">Category distribution by stock volume</p>
-
-          <div className="flex items-center justify-center mb-5">
-            <DonutChart segments={donutData.length > 0 ? donutData : [{ value: 1, color: '#1e293b', label: 'Empty' }]} />
+          <div className="my-3">
+            <div className="flex items-baseline gap-1">
+              <span className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">2,758</span>
+              <span className="text-[10px] font-bold text-emerald-500 font-mono">+8.02% from last month</span>
+            </div>
           </div>
 
           <div className="space-y-3">
-            {categoryDistribution.slice(0, 5).map((cat, i) => {
-              const colors = ['#FF4B7E', '#0088FF', '#10B981', '#F59E0B', '#8B5CF6'];
-              const color = colors[i] ?? '#64748b';
-              return (
-                <div key={cat.name} className="space-y-1">
-                  <div className="flex justify-between text-[10px] font-mono">
-                    <span className="text-slate-300 font-bold truncate max-w-[120px]">{cat.name}</span>
-                    <span className="text-slate-400">{cat.percentage}% · {cat.count}</span>
-                  </div>
-                  <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${cat.percentage}%` }}
-                      transition={{ duration: 0.9, delay: 0.6 + i * 0.1, ease: 'easeOut' }}
-                      className="h-full rounded-full"
-                      style={{ background: color }}
-                    />
-                  </div>
+            {activeUsersByCountry.map((item, idx) => (
+              <div key={idx} className="space-y-1">
+                <div className="flex justify-between text-[10px] font-mono">
+                  <span className="text-slate-600 dark:text-slate-300 font-bold">{item.country}</span>
+                  <span className="text-slate-900 dark:text-white font-black">{item.percentage}%</span>
                 </div>
-              );
-            })}
-          </div>
-        </motion.div >
-
-  {/* Performance Gauges */ }
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.55 }}
-className = "bg-slate-900 border border-slate-800 rounded-2xl p-6"
-  >
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono mb-1">Performance Gauges</h3>
-          <p className="text-[10px] text-slate-500 font-mono mb-6">Operational health vs targets</p>
-
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { label: 'Revenue', value: totalSales, max: totalSales * 1.5, color: '#0088FF' },
-              { label: 'Orders', value: ordersCount, max: 200, color: '#10B981' },
-              { label: 'Stock', value: Math.max(productsCount - lowStockCount, 0), max: productsCount, color: '#F59E0B' },
-              { label: 'Fulfillment', value: ordersCount - lowStockCount, max: ordersCount, color: '#FF4B7E' },
-            ].map((g, i) => (
-              <motion.div
-                key={g.label}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.6 + i * 0.1 }} 
-                className="flex flex-col items-center gap-2 p-3 rounded-xl bg-slate-800/50 border border-slate-700/40"
-              >
-                <GaugeChart value={g.value} max={g.max} color={g.color} />
-                <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">{g.label}</span>
-              </motion.div>
+                <div className="h-2 bg-slate-100 dark:bg-slate-850 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-blue-500 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${item.percentage}%` }}
+                    transition={{ duration: 0.8, delay: idx * 0.1 }}
+                    style={{
+                      background: `linear-gradient(to right, ${dashboardColors.primary}, ${dashboardColors.secondary})`,
+                    }}
+                  />
+                </div>
+              </div>
             ))}
-          </div >
-        </motion.div >
+          </div>
+        </div>
 
-  {/* Top Products */ }
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.6 }}
-className = "bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col"
-  >
-          <div className="flex items-center justify-between mb-5">
+        {/* Card 2: Conversion Rate Funnel */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">Top Products</h3>
-              <p className="text-[10px] text-slate-500 font-mono mt-0.5">By revenue this month</p>
+              <h4 className="text-sm font-bold text-slate-950 dark:text-white">Conversion Rate</h4>
+              <p className="text-[10px] text-slate-400">Storefront checkout funnel statistics</p>
             </div>
-            <button className="text-[10px] font-mono text-[#FF4B7E] hover:underline">See all →</button>
+            <span className="text-[9px] font-black font-mono text-white bg-blue-500 px-2 py-0.5 rounded-lg shadow-sm">
+              This Week
+            </span>
           </div>
 
-          <div className="space-y-2 flex-1">
-            {mockTopProducts.map((p, i) => (
-              <motion.div
-                key={p.name}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.65 + i * 0.07 }} 
-                className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800/70 transition-colors group cursor-default"
-              >
-                <div className="w-6 h-6 rounded-lg bg-slate-700 flex items-center justify-center text-[10px] font-black text-slate-300 font-mono flex-shrink-0">
-                  {i + 1}
+          {/* Bar Chart */}
+          <div className="flex items-end justify-between h-40 pt-4 px-1">
+            {conversionFunnel.map((item, idx) => (
+              <div key={idx} className="flex flex-col items-center flex-1 group">
+                <div className="relative w-full flex flex-col items-center justify-end h-28">
+                  {/* Tooltip on hover */}
+                  <span className="absolute -top-5 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-950 text-white font-mono text-[8px] py-0.5 px-1 rounded shadow-md pointer-events-none z-20">
+                    {item.value.toLocaleString()}
+                  </span>
+                  <motion.div
+                    className="w-4/5 rounded-t-lg bg-blue-500/20 hover:bg-blue-500 transition-colors cursor-default"
+                    initial={{ height: 0 }}
+                    animate={{ height: `${item.percentage}%` }}
+                    transition={{ duration: 1, ease: 'easeOut', delay: idx * 0.05 }}
+                    style={{
+                      backgroundColor: idx === 3 ? dashboardColors.primary : undefined,
+                    }}
+                  />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold text-slate-200 truncate">{p.name}</p>
-                  <p className="text-[9px] font-mono text-slate-500 mt-0.5">{p.sales} sold · BDT {p.revenue.toLocaleString()}</p>
-                </div>
-                <span className={`text-[10px] font-mono font-black px-2 py-0.5 rounded-lg ${
-                  p.up
-                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                    : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                }`}>
-                  {p.trend}
+                <span className="text-[8px] font-black text-slate-900 dark:text-slate-300 font-mono mt-1 text-center truncate w-14">
+                  {item.percentage}%
                 </span>
-              </motion.div>
+              </div>
             ))}
-          </div >
-        </motion.div >
-      </div >
+          </div>
 
-  {/* ── Footer Status Bar ── */ }
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ delay: 0.9 }}
-className = "flex items-center justify-between px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-[10px] font-mono text-slate-600"
-  >
+          {/* Legend */}
+          <div className="flex justify-between text-[7px] text-slate-400 font-mono tracking-tighter pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span>Views</span>
+            <span>Cart</span>
+            <span>Checkout</span>
+            <span>Purchase</span>
+            <span>Abandon</span>
+          </div>
+        </div>
+
+        {/* Card 3: Traffic Sources */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-start">
+            <div>
+              <h4 className="text-sm font-bold text-slate-950 dark:text-white">Traffic Sources</h4>
+              <p className="text-[10px] text-slate-400 font-mono">Visitor referral channels</p>
+            </div>
+            <button className="material-symbols-outlined text-slate-400 hover:text-slate-600 text-lg">more_horiz</button>
+          </div>
+
+          {/* Stacked bar or distribution visualization */}
+          <div className="h-6 bg-slate-100 dark:bg-slate-850 rounded-xl overflow-hidden flex my-4">
+            {trafficSources.map((source, idx) => (
+              <motion.div
+                key={idx}
+                className="h-full hover:brightness-110 transition-all cursor-pointer"
+                style={{
+                  width: `${source.value}%`,
+                  backgroundColor: source.color,
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: idx * 0.1 }}
+                title={`${source.label}: ${source.value}%`}
+              />
+            ))}
+          </div>
+
+          <div className="space-y-2 font-mono text-[9px] pt-1">
+            {trafficSources.map((source, idx) => (
+              <div key={idx} className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: source.color }} />
+                  <span className="text-slate-500 dark:text-slate-450">{source.label}</span>
+                </div>
+                <span className="text-slate-900 dark:text-white font-black">{source.value}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Footer Status Bar ── */}
+      <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-[10px] font-mono text-slate-400 shadow-sm">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-emerald-400">All systems operational</span>
+            <span className="text-emerald-500 font-bold">All systems operational</span>
           </span>
           <span>Last sync: just now</span>
         </div>
         <div className="flex items-center gap-4">
-          <span>{productsCount} products indexed</span>
+          <span>{productsCount} products cataloged {lowStockCount > 0 && <span className="text-amber-500 font-bold">(low stock: {lowStockCount})</span>}</span>
           <span>{ordersCount} orders tracked</span>
-          <span className="text-[#FF4B7E] font-bold">v2.0.0</span>
+          <span className="text-blue-500 font-bold">v2.1.0</span>
         </div>
-      </motion.div >
-
-    </div >
+      </div>
+    </div>
   );
 }

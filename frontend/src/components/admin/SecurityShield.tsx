@@ -14,7 +14,7 @@ export default function SecurityShield({ children, onExit }: SecurityShieldProps
     return (
       <div className="min-h-screen bg-[#020617] flex items-center justify-center font-sans">
         <div className="relative flex flex-col items-center">
-          <div className="w-16 h-16 border-4 border-[#FF4B7E]/20 border-t-[#FF4B7E] rounded-full animate-spin mb-4" />
+          <div className="w-16 h-16 border-4 border-[#0088FF]/20 border-t-[#0088FF] rounded-full animate-spin mb-4" />
           <p className="text-slate-400 font-mono text-sm tracking-widest animate-pulse">
             INITIALIZING SECURITY SHIELD...
           </p>
