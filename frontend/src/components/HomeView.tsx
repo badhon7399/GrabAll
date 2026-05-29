@@ -654,7 +654,6 @@ export default function HomeView({
                     transition={{ duration: 1.4 }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-deep-navy/95 via-deep-navy/60 to-transparent" />
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:36px_36px] pointer-events-none" />
 
                   {/* Floating glow orbs */}
                   <motion.div
