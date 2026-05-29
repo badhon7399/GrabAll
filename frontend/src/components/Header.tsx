@@ -62,13 +62,11 @@ export default function Header({
   const { cartCount } = useCart();
   const { language, setLanguage, t } = useLanguage();
 
-  const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const shopDropdownRef = useRef<HTMLDivElement>(null);
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
@@ -78,9 +76,6 @@ export default function Header({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (shopDropdownRef.current && !shopDropdownRef.current.contains(event.target as Node)) {
-        setIsShopDropdownOpen(false);
-      }
       if (
         userDropdownRef.current &&
         !userDropdownRef.current.contains(event.target as Node) &&
@@ -115,8 +110,6 @@ export default function Header({
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const shopCategories = ['Content Gear', 'Microphones', 'Power Banks', 'Neck Mounts', 'Smart Finder'];
 
   const navLinkBase =
     'relative text-[13px] font-semibold py-2 px-1 transition-all duration-300 group';
@@ -514,77 +507,21 @@ export default function Header({
             )}
           </button>
 
-          {/* Shop Dropdown */}
-          <div className="relative" ref={shopDropdownRef}>
-            <button
-              onClick={() => {
-                setCurrentTab('shop');
-                setSelectedCategory('All');
-                setSortFilter('none');
-                setIsShopDropdownOpen(!isShopDropdownOpen);
-              }}
-              className={`${navLinkBase} flex items-center gap-0.5 ${currentTab === 'shop' || isShopDropdownOpen
-                  ? 'text-[#0088FF]'
-                  : 'text-on-surface-variant hover:text-deep-navy'
-                }`}
-            >
-              {t('nav.shop')}
-              <span
-                className={`material-symbols-outlined text-lg transition-all duration-300 ${isShopDropdownOpen
-                    ? 'rotate-180 text-[#0088FF]'
-                    : 'text-on-surface-variant group-hover:text-deep-navy'
-                  }`}
-              >
-                expand_more
-              </span>
-              {renderUnderline(currentTab === 'shop' || isShopDropdownOpen)}
-            </button>
-
-            {isShopDropdownOpen && (
-              <div className="absolute left-1/2 -translate-x-1/2 mt-4 w-72 bg-white/95 backdrop-blur-xl border border-outline-variant/40 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.12)] py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden">
-                {/* Decorative gradient bar */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0088FF] via-[#00C2FF] to-[#FF4B7E]" />
-
-                <div className="px-5 py-2 mb-1 flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.18em]">
-                    {t('cat.title')}
-                  </span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0088FF] animate-pulse" />
-                </div>
-
-                {shopCategories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => {
-                      setSelectedCategory(cat);
-                      setSortFilter('none');
-                      setCurrentTab('shop');
-                      setIsShopDropdownOpen(false);
-                    }}
-                    className="w-full text-left px-5 py-2.5 mx-0 hover:bg-gradient-to-r hover:from-[#0088FF]/8 hover:to-transparent text-[13px] font-medium text-on-surface hover:text-[#0088FF] transition-all flex items-center justify-between group"
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-outline-variant group-hover:bg-[#0088FF] group-hover:w-4 transition-all duration-300" />
-                      {t(
-                        cat === 'Content Gear'
-                          ? 'cat.contentGear'
-                          : cat === 'Microphones'
-                            ? 'cat.microphones'
-                            : cat === 'Power Banks'
-                              ? 'cat.powerBanks'
-                              : cat === 'Neck Mounts'
-                                ? 'cat.neckMounts'
-                                : 'cat.smartFinder',
-                      )}
-                    </span>
-                    <span className="material-symbols-outlined text-sm opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#0088FF]">
-                      arrow_forward
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Shop */}
+          <button
+            onClick={() => {
+              setCurrentTab('shop');
+              setSelectedCategory('All');
+              setSortFilter('none');
+            }}
+            className={`${navLinkBase} ${currentTab === 'shop'
+                ? 'text-[#0088FF]'
+                : 'text-on-surface-variant hover:text-deep-navy'
+              }`}
+          >
+            {t('nav.shop')}
+            {renderUnderline(currentTab === 'shop')}
+          </button>
 
           {/* Top Selling */}
           <button

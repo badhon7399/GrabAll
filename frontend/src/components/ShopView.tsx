@@ -28,6 +28,13 @@ export default function ShopView({
   const [priceRange, setPriceRange] = useState<number>(3000);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
+  const resetFilters = () => {
+    setSearchTerm('');
+    setSelectedCategory('All');
+    setPriceRange(3000);
+    setSortBy('best');
+  };
+
   const getCategoryName = (cat: string) => {
     if (cat === 'All') return t('All');
     if (cat === 'Content Gear') return t('cat.contentGear');
@@ -116,21 +123,8 @@ export default function ShopView({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Side: Filter Sidebar */}
-        <aside className="lg:col-span-3">
-          {/* Mobile Filter Toggle Button */}
-          <div className="lg:hidden flex gap-3 mb-2">
-            <button
-              onClick={() => setShowMobileFilters(!showMobileFilters)}
-              className="flex-1 py-3 px-4 bg-white/95 backdrop-blur-xl border border-outline-variant/40 rounded-2xl font-bold text-xs text-deep-navy flex items-center justify-center gap-2 shadow-sm active:scale-98 transition-all"
-            >
-              <span className="material-symbols-outlined text-[18px] text-[#0088FF]">tune</span>
-              {showMobileFilters 
-                ? (language === 'en' ? 'Hide Filters' : 'ফিল্টার বন্ধ করুন')
-                : (language === 'en' ? 'Show Filters & Search' : 'ফিল্টার ও সার্চ দেখুন')}
-            </button>
-          </div>
-
-          <div className={`${showMobileFilters ? 'block' : 'hidden lg:block'} lg:sticky lg:top-6 space-y-6`}>
+        <aside className="hidden lg:block lg:col-span-3">
+          <div className="lg:sticky lg:top-6 space-y-6">
             <div className="relative bg-white/80 backdrop-blur-xl p-6 rounded-3xl border border-outline-variant/40 shadow-[0_8px_30px_rgba(0,0,0,0.04)] space-y-6 overflow-hidden">
               {/* Decorative gradient strip */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0088FF] via-[#00C2FF] to-[#FF4B7E]" />
@@ -143,12 +137,7 @@ export default function ShopView({
                   {t('shop.sidebarTitle')}
                 </h3>
                 <button
-                  onClick={() => {
-                    setSearchTerm('');
-                    setSelectedCategory('All');
-                    setPriceRange(3000);
-                    setSortBy('best');
-                  }}
+                  onClick={resetFilters}
                   className="text-[10px] font-semibold text-[#0088FF] hover:underline"
                 >
                   {language === 'en' ? 'Reset' : 'রিসেট'}
@@ -272,8 +261,178 @@ export default function ShopView({
 
         {/* Right Side: Product Grid & Sorting */}
         <div className="lg:col-span-9 space-y-6">
+          <div className="lg:hidden space-y-3">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder={t('nav.searchPlaceholder')}
+                className="w-full pl-11 pr-11 py-3.5 bg-white border border-outline-variant/50 rounded-2xl text-sm text-deep-navy placeholder:text-outline shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0088FF]/30 focus:border-[#0088FF]"
+              />
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#0088FF] text-[20px]">
+                search
+              </span>
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-surface-container-low text-on-surface-variant flex items-center justify-center"
+                  aria-label="Clear search"
+                >
+                  <span className="material-symbols-outlined text-[16px]">close</span>
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+              {categories.map((cat) => {
+                const active = selectedCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`shrink-0 px-4 py-2 rounded-full border text-xs font-bold transition-all ${
+                      active
+                        ? 'bg-deep-navy text-white border-deep-navy shadow-md'
+                        : 'bg-white text-on-surface-variant border-outline-variant/50'
+                    }`}
+                  >
+                    {getCategoryName(cat)}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="grid grid-cols-[1fr_auto] gap-2">
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e: any) => setSortBy(e.target.value)}
+                  className="w-full appearance-none px-4 py-3 pr-9 bg-white border border-outline-variant/50 rounded-2xl text-xs font-bold text-deep-navy shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0088FF]/30"
+                >
+                  <option value="best">{t('shop.sort.none')}</option>
+                  <option value="price-asc">{t('shop.sort.priceLow')}</option>
+                  <option value="price-desc">{t('shop.sort.priceHigh')}</option>
+                  <option value="discount">{t('shop.sort.discount')}</option>
+                </select>
+                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px] pointer-events-none">
+                  expand_more
+                </span>
+              </div>
+              <button
+                onClick={() => setShowMobileFilters(true)}
+                className="px-4 py-3 bg-white border border-outline-variant/50 rounded-2xl text-xs font-bold text-deep-navy shadow-sm flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-[18px] text-[#0088FF]">tune</span>
+                {language === 'en' ? 'Filter' : 'ফিল্টার'}
+              </button>
+            </div>
+          </div>
+
+          {showMobileFilters && (
+            <div className="fixed inset-0 z-50 lg:hidden">
+              <button
+                className="absolute inset-0 bg-deep-navy/45 backdrop-blur-[2px]"
+                onClick={() => setShowMobileFilters(false)}
+                aria-label="Close filters"
+              />
+              <div className="absolute inset-x-0 bottom-0 max-h-[82vh] overflow-y-auto rounded-t-[1.75rem] bg-white shadow-2xl border-t border-outline-variant/40">
+                <div className="sticky top-0 z-10 bg-white/95 backdrop-blur px-5 pt-4 pb-3 border-b border-outline-variant/30">
+                  <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-outline-variant/70" />
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#0088FF]">
+                        {t('shop.sidebarTitle')}
+                      </p>
+                      <h3 className="text-lg font-extrabold text-deep-navy">
+                        {language === 'en' ? 'Refine products' : 'পণ্য বাছাই করুন'}
+                      </h3>
+                    </div>
+                    <button
+                      onClick={() => setShowMobileFilters(false)}
+                      className="w-10 h-10 rounded-full bg-surface-container-low text-deep-navy flex items-center justify-center"
+                      aria-label="Close filters"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-5 space-y-6">
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
+                      {t('cat.title')}
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {categories.map((cat) => {
+                        const count =
+                          cat === 'All'
+                            ? products.length
+                            : products.filter((p) => p.category === cat).length;
+                        const active = selectedCategory === cat;
+                        return (
+                          <button
+                            key={cat}
+                            onClick={() => setSelectedCategory(cat)}
+                            className={`px-3 py-3 rounded-2xl border text-left transition-all ${
+                              active
+                                ? 'bg-[#0088FF]/10 text-[#0088FF] border-[#0088FF]/30'
+                                : 'bg-surface-container-low/40 text-deep-navy border-outline-variant/40'
+                            }`}
+                          >
+                            <span className="block text-xs font-bold line-clamp-1">{getCategoryName(cat)}</span>
+                            <span className="text-[10px] text-on-surface-variant">{count} items</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
+                        {t('shop.priceRange')}
+                      </label>
+                      <span className="text-xs font-bold text-deep-navy bg-[#0088FF]/10 px-2.5 py-1 rounded-lg">
+                        ৳ {priceRange.toLocaleString()}
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min="300"
+                      max="3000"
+                      step="50"
+                      value={priceRange}
+                      onChange={(e) => setPriceRange(Number(e.target.value))}
+                      className="w-full accent-[#0088FF] h-1.5 bg-outline-variant/30 rounded-lg appearance-none cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[10px] text-outline font-semibold">
+                      <span>৳ 300</span>
+                      <span>৳ 3,000</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button
+                      onClick={resetFilters}
+                      className="py-3 rounded-2xl border border-outline-variant/50 text-xs font-bold text-deep-navy"
+                    >
+                      {language === 'en' ? 'Reset' : 'রিসেট'}
+                    </button>
+                    <button
+                      onClick={() => setShowMobileFilters(false)}
+                      className="py-3 rounded-2xl bg-gradient-to-r from-[#0088FF] to-[#00C2FF] text-xs font-bold text-white shadow-lg shadow-[#0088FF]/20"
+                    >
+                      {language === 'en' ? `Show ${filteredProducts.length}` : `${filteredProducts.length} টি দেখুন`}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Controls Bar */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/80 backdrop-blur-xl p-4 rounded-2xl border border-outline-variant/40 shadow-sm text-xs">
+          <div className="flex justify-between items-center gap-4 bg-white/80 backdrop-blur-xl p-4 rounded-2xl border border-outline-variant/40 shadow-sm text-xs">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl bg-[#0088FF]/10 flex items-center justify-center">
                 <span className="material-symbols-outlined text-[16px] text-[#0088FF]">
@@ -296,7 +455,7 @@ export default function ShopView({
                 )}
               </span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
               <span className="text-on-surface-variant font-semibold">{t('shop.sortBy')}:</span>
               <div className="relative">
                 <select
@@ -333,12 +492,7 @@ export default function ShopView({
                 </p>
               </div>
               <button
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedCategory('All');
-                  setPriceRange(3000);
-                  setSortBy('best');
-                }}
+                onClick={resetFilters}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#0088FF] to-[#00C2FF] text-white rounded-2xl text-xs font-bold hover:shadow-lg hover:shadow-[#0088FF]/30 hover:-translate-y-0.5 transition-all"
               >
                 <span className="material-symbols-outlined text-[16px]">refresh</span>
@@ -346,7 +500,7 @@ export default function ShopView({
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5 md:gap-6">
               {filteredProducts.map((prod) => {
                 const isWishlisted = wishlist.includes(prod._id);
                 const discount =
@@ -355,7 +509,7 @@ export default function ShopView({
                 return (
                   <div
                     key={prod._id}
-                    className="relative bg-white rounded-3xl p-4 border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(0,136,255,0.12)] hover:-translate-y-1.5 hover:border-[#0088FF]/30 transition-all duration-500 flex flex-col cursor-pointer group text-xs overflow-hidden"
+                    className="relative bg-white rounded-2xl md:rounded-3xl p-3 sm:p-4 border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(0,136,255,0.12)] hover:-translate-y-1.5 hover:border-[#0088FF]/30 transition-all duration-500 flex flex-col cursor-pointer group text-xs overflow-hidden"
                   >
                     {/* Decorative gradient on hover */}
                     <div className="absolute inset-0 bg-gradient-to-br from-[#0088FF]/0 via-transparent to-[#FF4B7E]/0 group-hover:from-[#0088FF]/5 group-hover:to-[#FF4B7E]/5 transition-all duration-500 pointer-events-none" />
@@ -383,7 +537,7 @@ export default function ShopView({
                     {/* Image */}
                     <div
                       onClick={() => onSelectProduct(prod)}
-                      className="relative aspect-square w-full rounded-2xl overflow-hidden bg-gradient-to-br from-surface-container-low to-white mb-4"
+                      className="relative aspect-square w-full rounded-xl md:rounded-2xl overflow-hidden bg-gradient-to-br from-surface-container-low to-white mb-3 sm:mb-4"
                     >
                       <img
                         src={prod.image}
@@ -410,16 +564,16 @@ export default function ShopView({
                     {/* Description and metadata */}
                     <div
                       onClick={() => onSelectProduct(prod)}
-                      className="space-y-1.5 mb-4 flex-1"
+                      className="space-y-1.5 mb-3 sm:mb-4 flex-1"
                     >
                       <span className="inline-block text-[9px] font-extrabold text-[#0088FF] tracking-[0.12em] uppercase bg-[#0088FF]/8 px-2 py-0.5 rounded-md">
                         {getCategoryName(prod.category)}
                       </span>
-                      <h3 className="font-bold text-deep-navy leading-snug line-clamp-2 group-hover:text-[#0088FF] transition-colors text-[13px]">
+                      <h3 className="font-bold text-deep-navy leading-snug line-clamp-2 group-hover:text-[#0088FF] transition-colors text-[12px] sm:text-[13px]">
                         {prod.name}
                       </h3>
                       <div className="flex items-baseline gap-2 pt-1.5">
-                        <span className="font-extrabold bg-gradient-to-r from-[#0088FF] to-[#00C2FF] bg-clip-text text-transparent text-base">
+                        <span className="font-extrabold bg-gradient-to-r from-[#0088FF] to-[#00C2FF] bg-clip-text text-transparent text-sm sm:text-base">
                           ৳ {prod.salePrice.toLocaleString()}
                         </span>
                         {prod.originalPrice > prod.salePrice && (
@@ -442,7 +596,7 @@ export default function ShopView({
                         <span className="material-symbols-outlined text-[15px]">
                           shopping_cart
                         </span>
-                        <span className="hidden sm:inline">{t('prod.addToCart')}</span>
+                        <span className="sr-only sm:not-sr-only">{t('prod.addToCart')}</span>
                       </button>
                       <button
                         onClick={(e) => {
@@ -452,7 +606,7 @@ export default function ShopView({
                         className="flex-1 py-2.5 bg-gradient-to-r from-[#0088FF] to-[#00C2FF] text-white rounded-xl hover:shadow-lg hover:shadow-[#0088FF]/30 hover:-translate-y-0.5 active:scale-95 transition-all font-bold flex items-center justify-center gap-1.5"
                       >
                         <span className="material-symbols-outlined text-[15px]">flash_on</span>
-                        <span className="hidden sm:inline">{t('prod.buyNow')}</span>
+                        <span className="sr-only sm:not-sr-only">{t('prod.buyNow')}</span>
                       </button>
                     </div>
                   </div>
