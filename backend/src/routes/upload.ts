@@ -29,9 +29,34 @@ router.post(
       return;
     }
     
-    // multer-storage-cloudinary sets req.file.path as the Cloudinary URL
-    const fileUrl = (req.file as any).path || (req.file as any).secure_url;
+    // Log the file object structure for easier troubleshooting
+    console.log('[Upload Route] Received file from Multer:', {
+      fieldname: req.file.fieldname,
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size,
+      keys: Object.keys(req.file),
+      path: (req.file as any).path,
+      secure_url: (req.file as any).secure_url,
+      url: (req.file as any).url,
+      location: (req.file as any).location
+    });
+
+    // Extract the Cloudinary URL using multiple property fallbacks
+    const fileUrl = 
+      (req.file as any).path || 
+      (req.file as any).secure_url || 
+      (req.file as any).url ||
+      (req.file as any).location;
+
+    if (!fileUrl) {
+      console.error('[Upload Route] Error: Could not extract URL from uploaded file object.');
+      res.status(500).json({ message: 'Upload succeeded but no valid image URL was returned by storage provider.' });
+      return;
+    }
     
+    console.log('[Upload Route] Successfully extracted file URL:', fileUrl);
+
     res.status(200).json({
       message: 'Image uploaded successfully',
       url: fileUrl

@@ -59,6 +59,25 @@ export const settingsSchema = z.object({
       name: z.string().min(1),
       image: z.string().url('Category image must be a valid URL'),
     })).optional(),
+    promotions: z.object({
+      promo1: z.object({
+        badge: z.string().optional(),
+        title: z.string().optional(),
+        desc: z.string().optional(),
+        ctaText: z.string().optional(),
+        image: z.string().url('Promo 1 image must be a valid URL').or(z.literal('')).optional(),
+        categoryTarget: z.string().optional(),
+      }).optional(),
+      promo2: z.object({
+        badge: z.string().optional(),
+        title: z.string().optional(),
+        desc: z.string().optional(),
+        ctaText: z.string().optional(),
+        bgGradientFrom: z.string().optional(),
+        bgGradientTo: z.string().optional(),
+        categoryTarget: z.string().optional(),
+      }).optional(),
+    }).optional(),
     faqs: z.array(z.object({
       question: z.object({
         en: z.string().min(1, 'English question is required'),
