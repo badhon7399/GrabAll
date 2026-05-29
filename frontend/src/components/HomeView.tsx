@@ -527,10 +527,32 @@ export default function HomeView({
   const [isSlideHovered, setIsSlideHovered] = useState(false);
 
   useEffect(() => {
-    slides.forEach((slide) => {
+    const activeImage = slides[currentSlide]?.image;
+    if (!activeImage) return;
+
+    const href = getOptimizedImageUrl(activeImage, 1200);
+    if (document.head.querySelector(`link[data-hero-preload="${href}"]`)) return;
+
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = href;
+    link.setAttribute('fetchpriority', currentSlide === 0 ? 'high' : 'auto');
+    link.setAttribute('imagesrcset', [
+      `${getOptimizedImageUrl(activeImage, 800)} 800w`,
+      `${getOptimizedImageUrl(activeImage, 1200)} 1200w`,
+      `${getOptimizedImageUrl(activeImage, 1600)} 1600w`,
+    ].join(', '));
+    link.setAttribute('imagesizes', '(max-width: 768px) 100vw, 96vw');
+    link.setAttribute('data-hero-preload', href);
+    document.head.appendChild(link);
+  }, [currentSlide, slides]);
+
+  useEffect(() => {
+    slides.slice(1).forEach((slide) => {
       if (slide.image) {
         const img = new Image();
-        img.src = slide.image;
+        img.src = getOptimizedImageUrl(slide.image, 1200);
       }
     });
   }, [slides]);
@@ -734,12 +756,23 @@ export default function HomeView({
                   style={{ willChange: 'transform, opacity' }}
                 >
                   <motion.div
-                    className="absolute inset-0 bg-cover bg-center transform-gpu"
-                    style={{ backgroundImage: `url('${getOptimizedImageUrl(slides[currentSlide].image, 1600)}')`, y: heroParallaxY, willChange: 'transform' }}
+                    className="absolute inset-0 transform-gpu"
+                    style={{ y: heroParallaxY, willChange: 'transform' }}
                     initial={{ scale: 1.15 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 1.4, ease: 'easeOut' }}
-                  />
+                  >
+                    <img
+                      src={getOptimizedImageUrl(slides[currentSlide].image, 1200)}
+                      srcSet={`${getOptimizedImageUrl(slides[currentSlide].image, 800)} 800w, ${getOptimizedImageUrl(slides[currentSlide].image, 1200)} 1200w, ${getOptimizedImageUrl(slides[currentSlide].image, 1600)} 1600w`}
+                      sizes="(max-width: 768px) 100vw, 96vw"
+                      alt=""
+                      className="w-full h-full object-cover object-center"
+                      loading={currentSlide === 0 ? 'eager' : 'lazy'}
+                      fetchPriority={currentSlide === 0 ? 'high' : 'auto'}
+                      decoding={currentSlide === 0 ? 'sync' : 'async'}
+                    />
+                  </motion.div>
                   <div className="absolute inset-0 bg-gradient-to-r from-deep-navy/95 via-deep-navy/60 to-transparent" />
 
                   {/* Static glow orbs to prevent animating-blur text repaint flickers */}
