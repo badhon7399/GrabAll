@@ -573,7 +573,6 @@ export default function HomeView({
     offset: ['start start', 'end start'],
   });
   const heroOpacity = useTransform(heroScrollProgress, [0, 0.8], [1, 0]);
-  const heroParallaxY = useTransform(heroScrollProgress, [0, 1], ['0%', '30%']);
 
   /* -------------------- Derived product lists --------------------- */
   const defaultCategories = useMemo(() => [
@@ -757,7 +756,7 @@ export default function HomeView({
                 >
                   <motion.div
                     className="absolute inset-0 transform-gpu"
-                    style={{ y: heroParallaxY, willChange: 'transform' }}
+                    style={{ willChange: 'transform' }}
                     initial={{ scale: 1.15 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 1.4, ease: 'easeOut' }}
