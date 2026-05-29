@@ -17,13 +17,13 @@ const generateAccessToken = (
   role: string,
   permissions: string[]
 ): string => {
-  return jwt.sign({ id, isAdmin, role, permissions }, config.JWT_SECRET, {
+  return jwt.sign({ id, isAdmin, role, permissions }, config.JWT_ACCESS_SECRET, {
     expiresIn: '15m', // Short-lived access token
   });
 };
 
 const generateRefreshToken = (id: string): string => {
-  return jwt.sign({ id }, config.JWT_SECRET, {
+  return jwt.sign({ id }, config.JWT_REFRESH_SECRET, {
     expiresIn: '7d', // Long-lived refresh token
   });
 };
@@ -55,6 +55,7 @@ router.post('/register', validateRequest(registerSchema), async (req: Request, r
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const verificationToken = crypto.randomBytes(32).toString('hex');
+    const hashedVerificationToken = crypto.createHash('sha256').update(verificationToken).digest('hex');
 
     const user = await User.create({
       name,
@@ -64,7 +65,7 @@ router.post('/register', validateRequest(registerSchema), async (req: Request, r
       permissions: [],
       isAdmin: false,
       isEmailVerified: false,
-      emailVerificationToken: verificationToken,
+      emailVerificationToken: hashedVerificationToken,
     });
 
     if (user) {
@@ -186,7 +187,7 @@ router.post('/refresh', async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    const decoded = jwt.verify(refreshToken, config.JWT_SECRET) as { id: string };
+    const decoded = jwt.verify(refreshToken, config.JWT_REFRESH_SECRET) as { id: string };
     const user = await User.findById(decoded.id);
 
     if (!user || user.refreshToken !== refreshToken || !user.isActive) {
@@ -218,7 +219,7 @@ router.post('/logout', async (req: Request, res: Response): Promise<void> => {
 
   if (refreshToken) {
     try {
-      const decoded = jwt.verify(refreshToken, config.JWT_SECRET) as { id: string };
+      const decoded = jwt.verify(refreshToken, config.JWT_REFRESH_SECRET) as { id: string };
       const user = await User.findById(decoded.id);
       if (user) {
         user.refreshToken = undefined;
@@ -250,7 +251,8 @@ router.post('/verify-email', async (req: Request, res: Response): Promise<void> 
   }
 
   try {
-    const user = await User.findOne({ emailVerificationToken: token });
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const user = await User.findOne({ emailVerificationToken: hashedToken });
 
     if (!user) {
       res.status(400).json({ message: 'Invalid or expired verification token' });
@@ -292,7 +294,8 @@ router.post('/resend-verification', async (req: Request, res: Response): Promise
     }
 
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    user.emailVerificationToken = verificationToken;
+    const hashedVerificationToken = crypto.createHash('sha256').update(verificationToken).digest('hex');
+    user.emailVerificationToken = hashedVerificationToken;
     await user.save();
 
     await sendVerificationEmail(user.email, user.name, verificationToken);
@@ -323,7 +326,8 @@ router.post('/forgot-password', async (req: Request, res: Response): Promise<voi
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
-    user.passwordResetToken = resetToken;
+    const hashedResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    user.passwordResetToken = hashedResetToken;
     user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour expiration
     await user.save();
 
@@ -352,8 +356,9 @@ router.post('/reset-password', async (req: Request, res: Response): Promise<void
   }
 
   try {
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
     const user = await User.findOne({
-      passwordResetToken: token,
+      passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: new Date() },
     });
 

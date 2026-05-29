@@ -16,7 +16,7 @@ export const protect = (req: AuthRequest, res: Response, next: NextFunction): vo
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, config.JWT_SECRET) as {
+      const decoded = jwt.verify(token, config.JWT_ACCESS_SECRET) as {
         id: string;
         isAdmin: boolean;
         role?: string;

@@ -16,6 +16,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const API_BASE_URL = (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000/api';
 
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+const subscribeTokenRefresh = (cb: (token: string) => void) => {
+  refreshSubscribers.push(cb);
+};
+
+const onRefreshed = (token: string) => {
+  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers = [];
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -123,30 +135,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let res = await fetch(url, options);
 
     if (res.status === 401 && user) {
-      try {
-        const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
+      if (!isRefreshing) {
+        isRefreshing = true;
+        fetch(`${API_BASE_URL}/auth/refresh`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           credentials: 'include',
-        });
-
-        if (refreshRes.ok) {
-          const data = await refreshRes.json();
-          const updatedUser = { ...user, token: data.token };
-          setUser(updatedUser);
-          localStorage.setItem('grabAllUser', JSON.stringify(updatedUser));
-
-          options.headers = mergeHeaders(data.token);
-          res = await fetch(url, options);
-        } else {
-          logout();
-        }
-      } catch (err) {
-        console.error('Silent token refresh failed:', err);
-        logout();
+        })
+          .then(async (refreshRes) => {
+            if (refreshRes.ok) {
+              const data = await refreshRes.json();
+              const updatedUser = { ...user, token: data.token };
+              setUser(updatedUser);
+              localStorage.setItem('grabAllUser', JSON.stringify(updatedUser));
+              isRefreshing = false;
+              onRefreshed(data.token);
+            } else {
+              isRefreshing = false;
+              logout();
+              onRefreshed('');
+            }
+          })
+          .catch(() => {
+            isRefreshing = false;
+            logout();
+            onRefreshed('');
+          });
       }
+
+      return new Promise<Response>((resolve, reject) => {
+        subscribeTokenRefresh((newToken) => {
+          if (!newToken) {
+            reject(new Error('Token refresh failed'));
+            return;
+          }
+          options.headers = mergeHeaders(newToken);
+          fetch(url, options).then(resolve).catch(reject);
+        });
+      });
     }
 
     return res;

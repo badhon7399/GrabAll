@@ -114,7 +114,16 @@ export default function AuditLogsTab({ triggerToast }: { triggerToast: (msg: str
                       <tr
                         key={log._id}
                         onClick={() => setSelectedLog(log)}
-                        className={`text-xs hover:bg-white/[0.01] cursor-pointer transition-colors ${
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setSelectedLog(log);
+                          }
+                        }}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`View log details for action ${log.action}`}
+                        className={`text-xs hover:bg-white/[0.01] cursor-pointer transition-colors focus:outline-none focus:bg-white/[0.03] focus:ring-1 focus:ring-indigo-500/30 ${
                           selectedLog?._id === log._id ? 'bg-white/[0.02]' : ''
                         }`}
                       >
@@ -154,14 +163,14 @@ export default function AuditLogsTab({ triggerToast }: { triggerToast: (msg: str
                   <button
                     disabled={page === 1 || loading}
                     onClick={() => setPage(page - 1)}
-                    className="px-3 py-1.5 rounded-lg border border-white/5 bg-slate-900 text-xs font-semibold text-slate-400 hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="px-3 py-1.5 rounded-lg border border-white/5 bg-slate-900 text-xs font-semibold text-slate-400 hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                   >
                     Previous
                   </button>
                   <button
                     disabled={page === totalPages || loading}
                     onClick={() => setPage(page + 1)}
-                    className="px-3 py-1.5 rounded-lg border border-white/5 bg-slate-900 text-xs font-semibold text-slate-400 hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="px-3 py-1.5 rounded-lg border border-white/5 bg-slate-900 text-xs font-semibold text-slate-400 hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                   >
                     Next
                   </button>

@@ -19,6 +19,7 @@ import {
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 import { API_BASE_URL } from '../context/AuthContext';
+import { getOptimizedImageUrl } from '../utils/image';
 
 interface CheckoutViewProps {
   shippingName: string;
@@ -89,6 +90,8 @@ const FloatingField: React.FC<FloatingFieldProps> = ({
     'focus:border-[#0088FF] focus:ring-4 focus:ring-[#0088FF]/10 focus:outline-none ' +
     'transition-all duration-300 shadow-sm hover:shadow-md';
 
+  const inputId = 'field-' + label.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
   return (
     <motion.div variants={fadeUp} className="relative group">
       <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#0088FF] transition-colors z-10">
@@ -97,7 +100,10 @@ const FloatingField: React.FC<FloatingFieldProps> = ({
 
       {textarea ? (
         <textarea
+          id={inputId}
           required={required}
+          aria-required={required ? "true" : "false"}
+          aria-label={label}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
@@ -105,8 +111,11 @@ const FloatingField: React.FC<FloatingFieldProps> = ({
         />
       ) : (
         <input
+          id={inputId}
           type={type}
           required={required}
+          aria-required={required ? "true" : "false"}
+          aria-label={label}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
@@ -115,6 +124,7 @@ const FloatingField: React.FC<FloatingFieldProps> = ({
       )}
 
       <label
+        htmlFor={inputId}
         className="absolute left-12 top-1.5 text-[10px] font-semibold uppercase tracking-wider
                    text-slate-500 group-focus-within:text-[#0088FF]
                    peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
@@ -361,18 +371,22 @@ export default function CheckoutView({
 
             {/* Payment Method */}
             <motion.div variants={fadeUp} className="pt-2">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
+              <span className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
                 <CreditCard className="w-4 h-4" />
                 {language === 'en' ? 'Payment Method' : 'পেমেন্ট পদ্ধতি'}
-              </label>
+              </span>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div role="radiogroup" aria-label={language === 'en' ? 'Payment Method' : 'পেমেন্ট পদ্ধতি'} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Cash on Delivery */}
                 <motion.div
+                  role="radio"
+                  aria-checked={paymentMethod === 'cod'}
+                  tabIndex={0}
+                  onKeyDown={(e) => (e.key === ' ' || e.key === 'Enter') && setPaymentMethod('cod')}
                   whileHover={{ scale: 1.01, y: -2 }}
                   whileTap={{ scale: 0.99 }}
                   onClick={() => setPaymentMethod('cod')}
-                  className={`relative flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all border-2
+                  className={`relative flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all border-2 focus:ring-4 focus:ring-[#0088FF]/20 focus:outline-none
                              ${paymentMethod === 'cod'
                                ? 'bg-gradient-to-br from-[#0088FF]/5 via-white to-indigo-50/20 border-[#0088FF] shadow-md shadow-[#0088FF]/5'
                                : 'bg-white border-slate-200/80 hover:border-slate-300'
@@ -406,10 +420,14 @@ export default function CheckoutView({
 
                 {/* bKash / Nagad */}
                 <motion.div
+                  role="radio"
+                  aria-checked={paymentMethod === 'bkash'}
+                  tabIndex={0}
+                  onKeyDown={(e) => (e.key === ' ' || e.key === 'Enter') && setPaymentMethod('bkash')}
                   whileHover={{ scale: 1.01, y: -2 }}
                   whileTap={{ scale: 0.99 }}
                   onClick={() => setPaymentMethod('bkash')}
-                  className={`relative flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all border-2
+                  className={`relative flex items-center gap-4 p-5 rounded-2xl cursor-pointer transition-all border-2 focus:ring-4 focus:ring-pink-500/20 focus:outline-none
                              ${paymentMethod === 'bkash'
                                ? 'bg-gradient-to-br from-pink-50/30 via-white to-orange-50/20 border-pink-500 shadow-md shadow-pink-500/5'
                                : 'bg-white border-slate-200/80 hover:border-slate-300'
@@ -453,7 +471,8 @@ export default function CheckoutView({
                 onClick={resetAllFilters}
                 whileHover={{ x: -3 }}
                 whileTap={{ scale: 0.97 }}
-                className="px-6 py-3.5 border border-slate-200 text-slate-700 rounded-2xl hover:bg-slate-50 hover:border-slate-300 transition-all font-semibold text-sm flex items-center justify-center gap-2"
+                aria-label={language === 'en' ? 'Back to Shopping' : 'শপিংয়ে ফিরে যান'}
+                className="px-6 py-3.5 border border-slate-200 text-slate-700 rounded-2xl hover:bg-slate-50 hover:border-slate-300 transition-all font-semibold text-sm flex items-center justify-center gap-2 focus:ring-4 focus:ring-slate-100 focus:outline-none"
               >
                 <ArrowLeft className="w-4 h-4" />
                 {language === 'en' ? 'Back to Shopping' : 'শপিংয়ে ফিরে যান'}
@@ -464,7 +483,8 @@ export default function CheckoutView({
                 disabled={checkoutSubmitting}
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                className="relative px-8 py-3.5 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-[#0088FF] via-blue-600 to-indigo-600 shadow-lg shadow-[#0088FF]/40 hover:shadow-xl hover:shadow-[#0088FF]/50 disabled:opacity-60 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 overflow-hidden group"
+                aria-label={language === 'en' ? 'Place Order' : 'অর্ডার নিশ্চিত করুন'}
+                className="relative px-8 py-3.5 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-[#0088FF] via-blue-600 to-indigo-600 shadow-lg shadow-[#0088FF]/40 hover:shadow-xl hover:shadow-[#0088FF]/50 disabled:opacity-60 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 overflow-hidden group focus:ring-4 focus:ring-blue-600/35 focus:outline-none"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 <AnimatePresence mode="wait">
@@ -540,8 +560,10 @@ export default function CheckoutView({
                   >
                     <div className="relative">
                       <img
-                        src={item.product.image}
+                        src={getOptimizedImageUrl(item.product.image, 160)}
                         alt={item.product.name}
+                        width={56}
+                        height={56}
                         className="w-14 h-14 rounded-xl object-cover ring-1 ring-slate-200"
                       />
                       <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#0088FF] text-white text-[10px] font-bold flex items-center justify-center shadow-md">
@@ -567,7 +589,7 @@ export default function CheckoutView({
 
             {/* Promo Code Input */}
             <div className="mt-5 pt-4 border-t border-slate-100">
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+              <label htmlFor="promo-code-input" className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                 {language === 'en' ? 'Have a Promo Code?' : 'প্রোমো কোড আছে?'}
               </label>
               {appliedPromo ? (
@@ -588,7 +610,8 @@ export default function CheckoutView({
                   <button
                     type="button"
                     onClick={handleRemovePromo}
-                    className="text-emerald-800 hover:text-red-600 transition"
+                    aria-label={language === 'en' ? 'Remove promo code' : 'প্রোমো কোড সরিয়ে ফেলুন'}
+                    className="text-emerald-800 hover:text-red-600 transition focus:outline-none focus:ring-2 focus:ring-emerald-600/30 rounded"
                   >
                     <span className="material-symbols-outlined text-[16px]">close</span>
                   </button>
@@ -596,16 +619,19 @@ export default function CheckoutView({
               ) : (
                 <div className="flex gap-2">
                   <input
+                    id="promo-code-input"
                     type="text"
                     value={promoInput}
                     onChange={(e) => setPromoInput(e.target.value)}
                     placeholder={language === 'en' ? 'e.g. CREATOR10' : 'যেমন: CREATOR10'}
-                    className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-[#0088FF] uppercase tracking-wider font-mono"
+                    aria-label={language === 'en' ? 'Promo code' : 'প্রোমো কোড'}
+                    className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-[#0088FF] focus:ring-2 focus:ring-[#0088FF]/10 uppercase tracking-wider font-mono"
                   />
                   <button
                     type="button"
                     onClick={handleApplyPromo}
-                    className="px-4 py-2 bg-[#0088FF] text-white text-xs font-bold rounded-xl hover:bg-blue-600 transition"
+                    aria-label={language === 'en' ? 'Apply promo code' : 'প্রোমো কোড প্রয়োগ করুন'}
+                    className="px-4 py-2 bg-[#0088FF] text-white text-xs font-bold rounded-xl hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-[#0088FF]/30"
                   >
                     {language === 'en' ? 'Apply' : 'প্রয়োগ'}
                   </button>

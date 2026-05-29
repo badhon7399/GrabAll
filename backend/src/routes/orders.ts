@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { Order } from '../models/Order';
 import { Product } from '../models/Product';
 import { PromoCode } from '../models/PromoCode';
@@ -17,7 +18,7 @@ const optionalAuth = (req: any, res: Response, next: any) => {
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       const token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, config.JWT_SECRET) as { id: string; isAdmin: boolean };
+      const decoded = jwt.verify(token, config.JWT_ACCESS_SECRET) as { id: string; isAdmin: boolean };
       req.user = decoded;
     } catch (error) {
       // Ignore token failure, proceed as guest
@@ -96,16 +97,44 @@ router.post('/', optionalAuth, validateRequest(orderSchema), async (req: any, re
       orderData.guestDetails = guestDetails;
     }
 
-    // 3. Decrement stock for all items
-    for (const item of verifiedItems) {
-      await Product.findByIdAndUpdate(item.product, {
-        $inc: { stock: -item.qty }
-      });
+    // 3. Decrement stock for all items atomically
+    const decrementedItems: { productId: any; qty: number }[] = [];
+    try {
+      for (const item of verifiedItems) {
+        const updatedProduct = await Product.findOneAndUpdate(
+          { _id: item.product, stock: { $gte: item.qty } },
+          { $inc: { stock: -item.qty } },
+          { new: true }
+        );
+        if (!updatedProduct) {
+          throw new Error(`Insufficient stock for product: ${item.name}`);
+        }
+        decrementedItems.push({ productId: item.product, qty: item.qty });
+      }
+    } catch (err: any) {
+      // Rollback already decremented items
+      for (const rolledBack of decrementedItems) {
+        await Product.findByIdAndUpdate(rolledBack.productId, {
+          $inc: { stock: rolledBack.qty }
+        });
+      }
+      res.status(400).json({ message: err.message || 'Error updating stock during checkout' });
+      return;
     }
 
     // 4. Save the order
     const createdOrder = await Order.create(orderData);
-    res.status(201).json(createdOrder);
+    
+    // Generate signature for guest / redirect payment verification
+    const paymentSignature = crypto
+      .createHmac('sha256', config.JWT_ACCESS_SECRET)
+      .update(createdOrder._id.toString())
+      .digest('hex');
+
+    res.status(201).json({
+      ...createdOrder.toJSON(),
+      paymentSignature,
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error occurred during checkout' });
   }
@@ -182,9 +211,10 @@ router.put('/:id/status', protect, admin, validateRequest(orderStatusSchema), as
 // @desc    Update order to paid
 // @route   PUT /api/orders/:id/pay
 // @access  Public
-router.put('/:id/pay', async (req: Request, res: Response): Promise<void> => {
+router.put('/:id/pay', optionalAuth, async (req: any, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
+    const { paymentSignature } = req.body;
     if (typeof id !== 'string' || !/^[0-9a-fA-F]{24}$/.test(id)) {
       res.status(404).json({ message: 'Order not found' });
       return;
@@ -193,6 +223,30 @@ router.put('/:id/pay', async (req: Request, res: Response): Promise<void> => {
     const order = await Order.findById(id);
     if (!order) {
       res.status(404).json({ message: 'Order not found' });
+      return;
+    }
+
+    // Security check: Only Admins, Order Owners, or requests with valid payment signatures can pay
+    let isAuthorized = false;
+    if (req.user && req.user.isAdmin) {
+      isAuthorized = true;
+    }
+
+    const expectedSignature = crypto
+      .createHmac('sha256', config.JWT_ACCESS_SECRET)
+      .update(id)
+      .digest('hex');
+
+    if (paymentSignature === expectedSignature) {
+      isAuthorized = true;
+    }
+
+    if (req.user && order.user && order.user.toString() === req.user.id) {
+      isAuthorized = true;
+    }
+
+    if (!isAuthorized) {
+      res.status(403).json({ message: 'Not authorized to pay for this order' });
       return;
     }
 

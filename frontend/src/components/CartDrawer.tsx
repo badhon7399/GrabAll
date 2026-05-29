@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
+import { getOptimizedImageUrl } from '../utils/image';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -243,8 +244,10 @@ export default function CartDrawer({
                                          ring-1 ring-black/[0.04]"
                             >
                               <motion.img
-                                src={item.product.image}
+                                src={getOptimizedImageUrl(item.product.image, 160)}
                                 alt={item.product.name}
+                                width={80}
+                                height={80}
                                 className="w-full h-full object-cover"
                                 whileHover={{ scale: 1.08 }}
                                 transition={{ duration: 0.6, ease: EASE_OUT }}

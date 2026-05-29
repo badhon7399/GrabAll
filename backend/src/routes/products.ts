@@ -25,7 +25,30 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
       ? { category: req.query.category as string }
       : {};
 
-    const products = await Product.find({ ...keyword, ...category });
+    const query = { ...keyword, ...category };
+
+    // Backward-compatible pagination support
+    if (req.query.page || req.query.limit || req.query.paginate === 'true') {
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+      const skip = (page - 1) * limit;
+
+      const total = await Product.countDocuments(query);
+      const products = await Product.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+
+      res.json({
+        products,
+        page,
+        pages: Math.ceil(total / limit),
+        total,
+      });
+      return;
+    }
+
+    const products = await Product.find(query).sort({ createdAt: -1 });
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

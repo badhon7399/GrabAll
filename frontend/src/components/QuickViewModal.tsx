@@ -1,5 +1,6 @@
 import type { Product } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { getOptimizedImageUrl } from '../utils/image';
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -48,8 +49,10 @@ export default function QuickViewModal({
         {/* Product Image */}
         <div className="w-full md:w-1/2 aspect-square bg-surface-container rounded-xl overflow-hidden shadow-inner">
           <img 
-            src={product.image} 
+            src={getOptimizedImageUrl(product.image, 600)} 
             alt={product.name} 
+            width={600}
+            height={600}
             className="w-full h-full object-cover" 
           />
         </div>

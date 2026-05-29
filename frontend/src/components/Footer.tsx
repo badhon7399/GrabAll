@@ -16,7 +16,10 @@ interface FooterProps {
       | 'contact-us'
       | 'product-details'
       | 'auth'
-      | 'admin',
+      | 'admin'
+      | 'privacy-policy'
+      | 'terms-of-service'
+      | 'refund-policy',
   ) => void;
   setSelectedCategory: (cat: string) => void;
   setSortFilter: (sort: 'none' | 'top-selling' | 'new-arrival' | 'offers-deals') => void;
@@ -218,22 +221,30 @@ export default function Footer({
       {t('footer.rights')}
     </p>
 
-    <div className="flex items-center gap-4">
-      <a
-        href="#"
-        className="relative hover:text-[#0088FF] transition-all duration-300 group"
+    <div className="flex items-center gap-4 flex-wrap justify-center">
+      <button
+        onClick={() => setCurrentTab('privacy-policy')}
+        className="relative hover:text-[#0088FF] transition-all duration-300 group cursor-pointer"
       >
         {language === 'en' ? 'Privacy Policy' : 'গোপনীয়তা নীতি'}
         <span className="absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-[#0088FF] group-hover:w-full transition-all duration-300 rounded-full" />
-      </a>
+      </button>
       <span className="w-1 h-1 rounded-full bg-outline-variant" />
-      <a
-        href="#"
-        className="relative hover:text-[#0088FF] transition-all duration-300 group"
+      <button
+        onClick={() => setCurrentTab('terms-of-service')}
+        className="relative hover:text-[#0088FF] transition-all duration-300 group cursor-pointer"
       >
         {language === 'en' ? 'Terms of Service' : 'সেবার শর্তাবলী'}
         <span className="absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-[#0088FF] group-hover:w-full transition-all duration-300 rounded-full" />
-      </a>
+      </button>
+      <span className="w-1 h-1 rounded-full bg-outline-variant" />
+      <button
+        onClick={() => setCurrentTab('refund-policy')}
+        className="relative hover:text-[#0088FF] transition-all duration-300 group cursor-pointer"
+      >
+        {language === 'en' ? 'Return & Refund Policy' : 'ফেরত ও রিফান্ড নীতি'}
+        <span className="absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-[#0088FF] group-hover:w-full transition-all duration-300 rounded-full" />
+      </button>
     </div>
 
     <div className="flex items-center gap-1.5 text-[10px] text-on-surface-variant/70">

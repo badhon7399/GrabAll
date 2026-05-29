@@ -1,5 +1,6 @@
 import type { Product } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { getOptimizedImageUrl } from '../utils/image';
 
 interface WishlistDrawerProps {
   isOpen: boolean;
@@ -59,8 +60,10 @@ export default function WishlistDrawer({
               wishlistItems.map((product) => (
                 <div key={product._id} className="flex gap-4 border-b border-outline-variant/30 pb-4 text-xs">
                   <img 
-                    src={product.image} 
+                    src={getOptimizedImageUrl(product.image, 160)} 
                     alt={product.name} 
+                    width={64}
+                    height={64}
                     className="w-16 h-16 object-cover rounded-xl border" 
                   />
                   <div className="flex-1 flex flex-col justify-between">

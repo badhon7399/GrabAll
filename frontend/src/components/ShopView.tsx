@@ -26,6 +26,7 @@ export default function ShopView({
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [sortBy, setSortBy] = useState<'best' | 'price-asc' | 'price-desc' | 'discount'>('best');
   const [priceRange, setPriceRange] = useState<number>(3000);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const getCategoryName = (cat: string) => {
     if (cat === 'All') return t('All');
@@ -116,7 +117,20 @@ export default function ShopView({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Side: Filter Sidebar */}
         <aside className="lg:col-span-3">
-          <div className="lg:sticky lg:top-6 space-y-6">
+          {/* Mobile Filter Toggle Button */}
+          <div className="lg:hidden flex gap-3 mb-2">
+            <button
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className="flex-1 py-3 px-4 bg-white/95 backdrop-blur-xl border border-outline-variant/40 rounded-2xl font-bold text-xs text-deep-navy flex items-center justify-center gap-2 shadow-sm active:scale-98 transition-all"
+            >
+              <span className="material-symbols-outlined text-[18px] text-[#0088FF]">tune</span>
+              {showMobileFilters 
+                ? (language === 'en' ? 'Hide Filters' : 'ফিল্টার বন্ধ করুন')
+                : (language === 'en' ? 'Show Filters & Search' : 'ফিল্টার ও সার্চ দেখুন')}
+            </button>
+          </div>
+
+          <div className={`${showMobileFilters ? 'block' : 'hidden lg:block'} lg:sticky lg:top-6 space-y-6`}>
             <div className="relative bg-white/80 backdrop-blur-xl p-6 rounded-3xl border border-outline-variant/40 shadow-[0_8px_30px_rgba(0,0,0,0.04)] space-y-6 overflow-hidden">
               {/* Decorative gradient strip */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0088FF] via-[#00C2FF] to-[#FF4B7E]" />

@@ -34,4 +34,7 @@ const productSchema = new Schema<IProduct>({
   timestamps: true
 });
 
+productSchema.index({ category: 1, createdAt: -1 });
+productSchema.index({ name: 1 });
+
 export const Product = model<IProduct>('Product', productSchema);

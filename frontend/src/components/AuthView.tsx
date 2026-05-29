@@ -41,6 +41,7 @@ const FloatingField: React.FC<FloatingFieldProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+  const inputId = 'auth-' + label.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
   return (
     <motion.div
@@ -53,21 +54,25 @@ const FloatingField: React.FC<FloatingFieldProps> = ({
         {icon}
       </div>
       <input
+        id={inputId}
         type={inputType}
         required={required}
+        aria-required={required ? "true" : "false"}
+        aria-label={label}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="peer w-full bg-slate-50/80 border border-slate-200 rounded-xl pl-11 pr-11 pt-6 pb-2 text-sm text-slate-800 placeholder-transparent focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 focus:outline-none transition-all duration-200"
         placeholder={label}
       />
-      <label className="absolute left-11 top-2 text-[10px] font-semibold uppercase tracking-widest text-blue-500 opacity-0 peer-focus:opacity-100 peer-[&:not(:placeholder-shown)]:opacity-100 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[13px] peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-normal peer-placeholder-shown:opacity-100 transition-all duration-200 pointer-events-none">
+      <label htmlFor={inputId} className="absolute left-11 top-2 text-[10px] font-semibold uppercase tracking-widest text-blue-500 opacity-0 peer-focus:opacity-100 peer-[&:not(:placeholder-shown)]:opacity-100 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[13px] peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-normal peer-placeholder-shown:opacity-100 transition-all duration-200 pointer-events-none">
         {label}
       </label>
       {isPassword && (
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors z-10"
+          aria-label={showPassword ? 'Hide password' : 'Show password'}
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors z-10 focus:outline-none focus:text-blue-500"
         >
           {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
         </button>
@@ -301,7 +306,7 @@ export default function AuthView({ setCurrentTab, triggerToast }: AuthViewProps)
               {mode === 'forgot-password' ? (
                 <button
                   onClick={() => switchMode('login')}
-                  className="flex-1 py-2.5 text-sm font-semibold rounded-xl bg-white text-slate-900 shadow-sm shadow-slate-200 transition-all duration-200 flex items-center justify-center gap-2"
+                  className="flex-1 py-2.5 text-sm font-semibold rounded-xl bg-white text-slate-900 shadow-sm shadow-slate-200 transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 >
                   &larr; {isEN ? 'Back to Sign In' : 'লগইন পেজে ফিরুন'}
                 </button>
@@ -310,7 +315,7 @@ export default function AuthView({ setCurrentTab, triggerToast }: AuthViewProps)
                   <button
                     key={m}
                     onClick={() => switchMode(m)}
-                    className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${mode === m
+                    className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${mode === m
                         ? 'bg-white text-slate-900 shadow-sm shadow-slate-200'
                         : 'text-slate-500 hover:text-slate-700'
                       }`}
@@ -490,7 +495,8 @@ export default function AuthView({ setCurrentTab, triggerToast }: AuthViewProps)
               type="button"
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm"
+              aria-label={isEN ? 'Continue with Google' : 'Google দিয়ে চালিয়ে যান'}
+              className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -536,7 +542,8 @@ function SubmitButton({ isSubmitting, label, gradient, shadow }: { isSubmitting:
       transition={{ delay: 0.2 }}
       whileHover={{ scale: 1.01, y: -1 }}
       whileTap={{ scale: 0.99 }}
-      className={`w-full relative px-6 py-3.5 rounded-xl font-bold text-white bg-gradient-to-r ${gradient} shadow-lg shadow-${shadow} hover:shadow-xl disabled:opacity-60 transition-all duration-200 flex items-center justify-center gap-2 group overflow-hidden text-sm`}
+      aria-label={label}
+      className={`w-full relative px-6 py-3.5 rounded-xl font-bold text-white bg-gradient-to-r ${gradient} shadow-lg shadow-${shadow} hover:shadow-xl disabled:opacity-60 transition-all duration-200 flex items-center justify-center gap-2 group overflow-hidden text-sm focus:outline-none focus:ring-4 focus:ring-blue-500/20`}
     >
       {/* shimmer */}
       <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/15 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />

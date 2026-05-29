@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import { config } from './config/env';
-import { PromoCode, IPromoCode } from './models/PromoCode';
-import { Order } from './models/Order';
+import { config } from '../src/config/env';
+import { PromoCode, IPromoCode } from '../src/models/PromoCode';
+import { Order } from '../src/models/Order';
 
 async function runTests() {
   console.log('Connecting to database...');

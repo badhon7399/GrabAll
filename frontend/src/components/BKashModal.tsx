@@ -6,11 +6,12 @@ import { useLanguage } from '../context/LanguageContext';
 interface BKashModalProps {
   orderId: string;
   amount: number;
+  paymentSignature?: string;
   onSuccess: () => void;
   onClose: () => void;
 }
 
-export default function BKashModal({ orderId, amount, onSuccess, onClose }: BKashModalProps) {
+export default function BKashModal({ orderId, amount, paymentSignature, onSuccess, onClose }: BKashModalProps) {
   const { language } = useLanguage();
   const [step, setStep] = useState<1 | 2 | 3 | 'processing' | 'success'>(1);
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -56,6 +57,7 @@ export default function BKashModal({ orderId, amount, onSuccess, onClose }: BKas
       const response = await fetch(`/api/orders/${orderId}/pay`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentSignature }),
       });
 
       if (response.ok) {

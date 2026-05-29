@@ -12,10 +12,16 @@ import uploadRoutes from './routes/upload';
 import userRoutes from './routes/users';
 import settingsRoutes from './routes/settings';
 import promoRoutes from './routes/promo';
+import { checkEmailStatus } from './services/email';
+import { checkCloudinaryStatus } from './middleware/upload';
 import { mongoSanitize } from './middleware/sanitize';
 import { errorHandler } from './middleware/error';
+import { requestLogger } from './middleware/logger';
+import { csrfProtection } from './middleware/csrf';
 
 const app = express();
+
+app.use(requestLogger);
 
 // Security Headers
 app.use(helmet());
@@ -27,8 +33,9 @@ app.use(cors({
 }));
 
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(mongoSanitize);
+app.use(csrfProtection);
 
 // Global Rate Limiting
 const apiLimiter = rateLimit({
@@ -56,14 +63,26 @@ app.use('/api/auth/register', authLimiter);
 const PORT = config.PORT;
 const MONGODB_URI = config.MONGODB_URI;
 
-mongoose
-  .connect(MONGODB_URI)
-  .then(() => {
+const connectDB = async (retries = 5, delay = 5000): Promise<void> => {
+  try {
+    const options = {
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    };
+    await mongoose.connect(MONGODB_URI, options);
     console.log('Successfully connected to MongoDB');
-  })
-  .catch((err) => {
-    console.error('Error connecting to MongoDB:', err.message);
-  });
+  } catch (err: any) {
+    if (retries > 0) {
+      console.warn(`MongoDB connection failed: ${err.message}. Retrying in ${delay / 1000}s... (${retries} retries left)`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      return connectDB(retries - 1, delay * 1.5);
+    } else {
+      console.error('Critical Error: Could not connect to MongoDB after multiple attempts.');
+      process.exit(1);
+    }
+  }
+};
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -78,18 +97,103 @@ app.get('/api', (req, res) => {
   res.json({ message: 'Welcome to GrabAllGoods API!' });
 });
 
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
-  res.status(dbStatus === 'connected' ? 200 : 503).json({
-    status: dbStatus === 'connected' ? 'healthy' : 'unhealthy',
-    uptime: process.uptime(),
-    timestamp: new Date(),
-    database: dbStatus,
+  const memoryUsage = process.memoryUsage();
+  
+  const [cloudinaryStatus, emailStatus] = await Promise.all([
+    checkCloudinaryStatus(),
+    checkEmailStatus(),
+  ]);
+
+  const isHealthy = dbStatus === 'connected' && 
+                     cloudinaryStatus !== 'error' && 
+                     emailStatus !== 'error';
+
+  res.status(isHealthy ? 200 : 503).json({
+    status: isHealthy ? 'healthy' : 'unhealthy',
+    uptime: `${Math.floor(process.uptime())}s`,
+    timestamp: new Date().toISOString(),
+    services: {
+      database: dbStatus,
+      cloudinary: cloudinaryStatus,
+      email: emailStatus,
+    },
+    system: {
+      memory: {
+        heapUsed: `${Math.round(memoryUsage.heapUsed / 1024 / 1024 * 100) / 100} MB`,
+        heapTotal: `${Math.round(memoryUsage.heapTotal / 1024 / 1024 * 100) / 100} MB`,
+        rss: `${Math.round(memoryUsage.rss / 1024 / 1024 * 100) / 100} MB`,
+      },
+      nodeVersion: process.version,
+    }
   });
+});
+
+app.get('/api/health/ready', async (req, res) => {
+  const dbStatus = mongoose.connection.readyState === 1;
+  const [cloudinaryStatus, emailStatus] = await Promise.all([
+    checkCloudinaryStatus(),
+    checkEmailStatus(),
+  ]);
+
+  const isReady = dbStatus && 
+                  cloudinaryStatus !== 'error' && 
+                  emailStatus !== 'error';
+
+  if (isReady) {
+    res.status(200).send('OK');
+  } else {
+    res.status(503).send('Service Unavailable');
+  }
 });
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+let server: any;
+
+if (process.env.NODE_ENV !== 'test') {
+  connectDB().then(() => {
+    server = app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  });
+}
+
+export { app };
+
+// Graceful shutdown
+const gracefulShutdown = (signal: string) => {
+  console.info(`Received ${signal}. Starting graceful shutdown...`);
+  
+  const closeServer = () => new Promise<void>((resolve) => {
+    if (server) {
+      server.close(() => {
+        console.info('Express server closed.');
+        resolve();
+      });
+    } else {
+      resolve();
+    }
+  });
+
+  closeServer()
+    .then(() => mongoose.connection.close())
+    .then(() => {
+      console.info('MongoDB connection closed.');
+      process.exit(0);
+    })
+    .catch((err) => {
+      console.error('Error during graceful shutdown:', err);
+      process.exit(1);
+    });
+
+  // Force shutdown after 10 seconds
+  setTimeout(() => {
+    console.error('Forceful shutdown triggered after timeout.');
+    process.exit(1);
+  }, 10000);
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

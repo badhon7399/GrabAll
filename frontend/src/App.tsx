@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
   motion,
   AnimatePresence,
+  MotionConfig,
 } from 'framer-motion';
 import { useAuth, API_BASE_URL } from './context/AuthContext';
 import { useCart } from './context/CartContext';
@@ -15,23 +16,30 @@ import HomeView from './components/HomeView';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
 import QuickViewModal from './components/QuickViewModal';
-import AuthView from './components/AuthView';
 import ContactModal from './components/ContactModal';
-import CheckoutView from './components/CheckoutView';
 import BKashModal from './components/BKashModal';
-import SuccessView from './components/SuccessView';
-import OrdersView from './components/OrdersView';
 import ShopView from './components/ShopView';
 import NeckMountsView from './components/NeckMountsView';
 import TopSellingView from './components/TopSellingView';
 import OffersDealsView from './components/OffersDealsView';
 import NewArrivalView from './components/NewArrivalView';
-import ContactView from './components/ContactView';
-import ProductDetailsView from './components/ProductDetailsView';
 import Footer from './components/Footer';
-import AdminLayout from './components/admin/AdminLayout';
-import VerifyEmailView from './components/VerifyEmailView';
-import ResetPasswordView from './components/ResetPasswordView';
+import ProtectedRoute from './components/ProtectedRoute';
+import CookieConsent from './components/CookieConsent';
+
+// Lazy-loaded Views
+const AuthView = React.lazy(() => import('./components/AuthView'));
+const CheckoutView = React.lazy(() => import('./components/CheckoutView'));
+const SuccessView = React.lazy(() => import('./components/SuccessView'));
+const OrdersView = React.lazy(() => import('./components/OrdersView'));
+const ContactView = React.lazy(() => import('./components/ContactView'));
+const ProductDetailsView = React.lazy(() => import('./components/ProductDetailsView'));
+const AdminLayout = React.lazy(() => import('./components/admin/AdminLayout'));
+const VerifyEmailView = React.lazy(() => import('./components/VerifyEmailView'));
+const ResetPasswordView = React.lazy(() => import('./components/ResetPasswordView'));
+const PrivacyPolicyView = React.lazy(() => import('./components/PrivacyPolicyView'));
+const TermsOfServiceView = React.lazy(() => import('./components/TermsOfServiceView'));
+const RefundPolicyView = React.lazy(() => import('./components/RefundPolicyView'));
 
 
 
@@ -44,11 +52,22 @@ function App() {
   const { cartItems, cartSubtotal, addToCart, clearCart } = useCart();
   const { language, t } = useLanguage();
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const [currentTabState, setCurrentTabState] = useState<
-    'home' | 'checkout' | 'orders' | 'success' | 'shop' | 'neck-mounts' | 'top-selling' | 'offers-deals' | 'new-arrival' | 'contact-us' | 'product-details' | 'auth' | 'admin' | 'verify-email' | 'reset-password'
+    'home' | 'checkout' | 'orders' | 'success' | 'shop' | 'neck-mounts' | 'top-selling' | 'offers-deals' | 'new-arrival' | 'contact-us' | 'product-details' | 'auth' | 'admin' | 'verify-email' | 'reset-password' | 'privacy-policy' | 'terms-of-service' | 'refund-policy'
   >('home');
 
   const currentTab = currentTabState;
@@ -174,6 +193,12 @@ function App() {
       setCurrentTabState('verify-email');
     } else if (path === '/reset-password') {
       setCurrentTabState('reset-password');
+    } else if (path === '/privacy-policy') {
+      setCurrentTabState('privacy-policy');
+    } else if (path === '/terms-of-service') {
+      setCurrentTabState('terms-of-service');
+    } else if (path === '/refund-policy') {
+      setCurrentTabState('refund-policy');
     }
   }, [location.pathname, products]);
 
@@ -330,11 +355,11 @@ function App() {
         }
       } else {
         const errData = await res.json();
-        alert(errData.message || (language === 'en' ? 'Error placing order' : 'অর্ডার করতে ত্রুটি হয়েছে'));
+        triggerToast(errData.message || (language === 'en' ? 'Error placing order' : 'অর্ডার করতে ত্রুটি হয়েছে'));
       }
     } catch (err) {
       console.error('Checkout error:', err);
-      alert(language === 'en' ? 'Network error. Please try again.' : 'নেটওয়ার্ক ত্রুটি। অনুগ্রহ করে আবার চেষ্টা করুন।');
+      triggerToast(language === 'en' ? 'Network error. Please try again.' : 'নেটওয়ার্ক ত্রুটি। অনুগ্রহ করে আবার চেষ্টা করুন।');
     } finally {
       setCheckoutSubmitting(false);
     }
@@ -416,28 +441,39 @@ function App() {
             </motion.div>
           )}
         </AnimatePresence>
-        <AdminLayout setCurrentTab={setCurrentTab} triggerToast={triggerToast} />
+        <React.Suspense fallback={<div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white font-semibold">Loading Admin Dashboard...</div>}>
+          <AdminLayout setCurrentTab={setCurrentTab} triggerToast={triggerToast} />
+        </React.Suspense>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-ice-white font-body-md text-on-surface antialiased flex flex-col overflow-x-clip pt-[104px]">
-      {/* Toast */}
-      <AnimatePresence>
-        {toastMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.9 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 22 }}
-            className="fixed bottom-5 right-5 bg-deep-navy text-white px-6 py-3 rounded-2xl shadow-2xl z-[60] border border-gold-accent/30 flex items-center gap-3"
-          >
-            <span className="material-symbols-outlined text-gold-accent">check_circle</span>
-            <span className="text-sm font-semibold">{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <MotionConfig reducedMotion={isMobile ? "always" : "never"}>
+      <div className="min-h-screen bg-ice-white font-body-md text-on-surface antialiased flex flex-col overflow-x-clip pt-[124px] md:pt-[104px] pb-20 md:pb-8">
+        {/* Skip to Main Content Link */}
+        <a 
+          href="#main-content" 
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-[#0088FF] focus:text-white focus:px-6 focus:py-3 focus:rounded-xl focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#0088FF] font-semibold text-sm transition-all"
+        >
+          Skip to main content
+        </a>
+
+        {/* Toast */}
+        <AnimatePresence>
+          {toastMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.9 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+              className="fixed bottom-20 md:bottom-5 right-5 bg-deep-navy text-white px-6 py-3 rounded-2xl shadow-2xl z-[60] border border-gold-accent/30 flex items-center gap-3"
+            >
+              <span className="material-symbols-outlined text-gold-accent">check_circle</span>
+              <span className="text-sm font-semibold">{toastMessage}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
       {/* Header */}
       <Header
@@ -457,10 +493,17 @@ function App() {
         handleViewOrders={handleViewOrders}
         products={products}
         setDetailsProduct={setDetailsProduct}
+        detailsProduct={detailsProduct}
       />
 
-    <main className="flex-1 w-full max-w-container-max mx-auto px-gutter md:px-12 lg:px-20 py-8">
-      {/* HOME */}
+    <main id="main-content" className="flex-1 w-full max-w-container-max mx-auto px-gutter md:px-12 lg:px-20 py-8">
+      <React.Suspense fallback={
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <div className="w-12 h-12 border-4 border-[#0088FF] border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-sm font-semibold text-on-surface-variant">Loading page...</span>
+        </div>
+      }>
+        {/* HOME */}
       {currentTab === 'home' && (
         <HomeView
           products={products}
@@ -484,19 +527,21 @@ function App() {
 {/* OTHER TABS (unchanged) */ }
 {
   currentTab === 'checkout' && (
-    <CheckoutView
-      shippingName={shippingName}
-      setShippingName={setShippingName}
-      shippingEmail={shippingEmail}
-      setShippingEmail={setShippingEmail}
-      shippingPhone={shippingPhone}
-      setShippingPhone={setShippingPhone}
-      shippingAddress={shippingAddress}
-      setShippingAddress={setShippingAddress}
-      handlePlaceOrder={handlePlaceOrder}
-      checkoutSubmitting={checkoutSubmitting}
-      resetAllFilters={resetAllFilters}
-    />
+    <ProtectedRoute>
+      <CheckoutView
+        shippingName={shippingName}
+        setShippingName={setShippingName}
+        shippingEmail={shippingEmail}
+        setShippingEmail={setShippingEmail}
+        shippingPhone={shippingPhone}
+        setShippingPhone={setShippingPhone}
+        shippingAddress={shippingAddress}
+        setShippingAddress={setShippingAddress}
+        handlePlaceOrder={handlePlaceOrder}
+        checkoutSubmitting={checkoutSubmitting}
+        resetAllFilters={resetAllFilters}
+      />
+    </ProtectedRoute>
   )
 }
 
@@ -508,7 +553,9 @@ function App() {
 
 {
   currentTab === 'orders' && (
-    <OrdersView userOrders={userOrders} loadingOrders={loadingOrders} resetAllFilters={resetAllFilters} />
+    <ProtectedRoute>
+      <OrdersView userOrders={userOrders} loadingOrders={loadingOrders} resetAllFilters={resetAllFilters} />
+    </ProtectedRoute>
   )
 }
 
@@ -654,7 +701,11 @@ function App() {
 { currentTab === 'verify-email' && <VerifyEmailView setCurrentTab={setCurrentTab} /> }
 
 { currentTab === 'reset-password' && <ResetPasswordView setCurrentTab={setCurrentTab} triggerToast={triggerToast} /> }
-      </main >
+{ currentTab === 'privacy-policy' && <PrivacyPolicyView resetAllFilters={resetAllFilters} /> }
+{ currentTab === 'terms-of-service' && <TermsOfServiceView resetAllFilters={resetAllFilters} /> }
+{ currentTab === 'refund-policy' && <RefundPolicyView resetAllFilters={resetAllFilters} /> }
+      </React.Suspense>
+    </main >
 
   {/* Trust Signals */}
   <section className="bg-white border-t border-b border-surface-container py-12">
@@ -719,6 +770,7 @@ setSortFilter = { setSortFilter }
         <BKashModal
           orderId={activePaymentOrder._id}
           amount={activePaymentOrder.totalAmount}
+          paymentSignature={activePaymentOrder.paymentSignature}
           onSuccess={() => {
             setPlacedOrder(activePaymentOrder);
             setActivePaymentOrder(null);
@@ -742,7 +794,7 @@ setSortFilter = { setSortFilter }
   transition={{ delay: 1.5, type: 'spring', stiffness: 200 }}
   whileHover={{ scale: 1.1 }}
   whileTap={{ scale: 0.9 }}
-  className="fixed bottom-5 left-5 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white shadow-2xl shadow-[#25D366]/40 flex items-center justify-center hover:bg-[#20ba59] transition-colors"
+  className="fixed bottom-20 md:bottom-5 left-5 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white shadow-2xl shadow-[#25D366]/40 flex items-center justify-center hover:bg-[#20ba59] transition-colors"
   aria-label={language === 'en' ? 'Contact Support on WhatsApp' : 'হোয়াটসঅ্যাপে আমাদের সাথে যোগাযোগ করুন'}
 >
   <svg 
@@ -754,7 +806,9 @@ setSortFilter = { setSortFilter }
   </svg>
   <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
 </motion.a>
-    </div >
+      <CookieConsent />
+      </div>
+    </MotionConfig>
   );
 }
 

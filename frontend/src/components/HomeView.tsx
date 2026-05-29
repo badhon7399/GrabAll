@@ -10,7 +10,8 @@ import {
 } from 'framer-motion';
 import type { Product } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import ProductCard from './ProductCard';
+import { getOptimizedImageUrl } from '../utils/image';
+import ProductCard, { ProductCardSkeleton } from './ProductCard';
 
 /* ------------------------------------------------------------------ */
 /* Animation Variants                                                 */
@@ -101,6 +102,53 @@ const MagneticWrap: React.FC<MagneticWrapProps> = ({ children, range = 35 }) => 
     </motion.div>
   );
 };
+
+export function HeroSkeleton() {
+  return (
+    <section className="mb-section-gap">
+      <div className="relative w-full aspect-[16/9] md:aspect-auto md:h-[72vh] rounded-[1rem] md:rounded-[2rem] overflow-hidden bg-slate-900 border border-white/5 animate-pulse flex items-center px-6 sm:px-12 md:px-16 lg:px-24">
+        {/* Gradients to look like the real hero background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-deep-navy/95 via-deep-navy/60 to-transparent" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:36px_36px] pointer-events-none" />
+        
+        {/* Glow placeholders */}
+        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#0088FF]/10 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-purple-500/5 blur-3xl" />
+
+        <div className="max-w-2xl text-white space-y-4 md:space-y-6 relative z-10 w-full">
+          {/* Badge skeleton */}
+          <div className="h-6 w-32 bg-white/10 border border-white/20 rounded-full" />
+          
+          {/* Title skeleton */}
+          <div className="space-y-3">
+            <div className="h-8 md:h-16 w-3/4 bg-white/15 rounded-xl" />
+            <div className="h-8 md:h-16 w-1/2 bg-white/15 rounded-xl" />
+          </div>
+
+          {/* Description skeleton */}
+          <div className="space-y-2">
+            <div className="h-3 md:h-4 w-full bg-white/10 rounded" />
+            <div className="h-3 md:h-4 w-5/6 bg-white/10 rounded" />
+            <div className="h-3 md:h-4 w-2/3 bg-white/10 rounded" />
+          </div>
+
+          {/* CTA Button skeleton */}
+          <div className="h-8 md:h-14 w-28 md:w-44 bg-white/20 rounded-full" />
+        </div>
+
+        {/* Stats skeleton (right) */}
+        <div className="hidden lg:flex absolute right-12 bottom-12 gap-3 z-10">
+          {[1, 2].map((s) => (
+            <div key={s} className="bg-white/5 border border-white/10 px-5 py-3 rounded-2xl min-w-[120px] space-y-2">
+              <div className="h-8 w-16 bg-white/15 rounded mx-auto" />
+              <div className="h-3 w-12 bg-white/10 rounded mx-auto" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /* Component Props                                                    */
@@ -571,158 +619,152 @@ export default function HomeView({
   return (
     <>
       {/* HERO */}
-      <section className="mb-section-gap">
-        <motion.div
-          ref={heroRef}
-          style={{ opacity: heroOpacity }}
-          className="relative w-full h-[55vh] md:h-[72vh] rounded-[2rem] overflow-hidden shadow-2xl border border-white/10"
-          onMouseEnter={() => setIsSlideHovered(true)}
-          onMouseLeave={() => setIsSlideHovered(false)}
-        >
-          <div className="relative w-full h-full">
-            <AnimatePresence initial={false} custom={direction}>
-              <motion.div
-                key={currentSlide}
-                custom={direction}
-                variants={{
-                  enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%', opacity: 0 }),
-                  center: { x: 0, opacity: 1 },
-                  exit: (dir: number) => ({ x: dir < 0 ? '100%' : '-100%', opacity: 0 }),
-                }}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ x: { type: 'spring', stiffness: 280, damping: 32 }, opacity: { duration: 0.25 } }}
-                className="absolute inset-0 w-full h-full"
-              >
+      {loadingProducts ? (
+        <HeroSkeleton />
+      ) : (
+        <section className="mb-section-gap">
+          <motion.div
+            ref={heroRef}
+            style={{ opacity: heroOpacity }}
+            className="relative w-full aspect-[16/9] md:aspect-auto md:h-[72vh] rounded-[1rem] md:rounded-[2rem] overflow-hidden shadow-2xl border border-white/10"
+            onMouseEnter={() => setIsSlideHovered(true)}
+            onMouseLeave={() => setIsSlideHovered(false)}
+          >
+            <div className="relative w-full h-full">
+              <AnimatePresence initial={false} custom={direction}>
                 <motion.div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url('${slides[currentSlide].image}')`, y: heroParallaxY }}
-                  initial={{ scale: 1.15 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 1.4 }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-deep-navy/95 via-deep-navy/60 to-transparent" />
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:36px_36px] pointer-events-none" />
+                  key={currentSlide}
+                  custom={direction}
+                  variants={{
+                    enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%', opacity: 0 }),
+                    center: { x: 0, opacity: 1 },
+                    exit: (dir: number) => ({ x: dir < 0 ? '100%' : '-100%', opacity: 0 }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ x: { type: 'spring', stiffness: 280, damping: 32 }, opacity: { duration: 0.25 } }}
+                  className="absolute inset-0 w-full h-full"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url('${getOptimizedImageUrl(slides[currentSlide].image, 1600)}')`, y: heroParallaxY }}
+                    initial={{ scale: 1.15 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 1.4 }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-deep-navy/95 via-deep-navy/60 to-transparent" />
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:36px_36px] pointer-events-none" />
 
-                {/* Floating glow orbs */}
-                <motion.div
-                  className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#0088FF]/30 blur-3xl"
-                  animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
-                  transition={{ duration: 6, repeat: Infinity }}
-                />
-                <motion.div
-                  className="absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-purple-500/20 blur-3xl"
-                  animate={{ scale: [1.1, 1, 1.1], opacity: [0.3, 0.6, 0.3] }}
-                  transition={{ duration: 8, repeat: Infinity }}
-                />
+                  {/* Floating glow orbs */}
+                  <motion.div
+                    className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#0088FF]/30 blur-3xl"
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
+                    transition={{ duration: 6, repeat: Infinity }}
+                  />
+                  <motion.div
+                    className="absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-purple-500/20 blur-3xl"
+                    animate={{ scale: [1.1, 1, 1.1], opacity: [0.3, 0.6, 0.3] }}
+                    transition={{ duration: 8, repeat: Infinity }}
+                  />
 
-                <div className="absolute inset-0 flex items-center px-8 md:px-16 lg:px-24">
-                  <div className="max-w-2xl text-white">
-                    <motion.span
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.05, duration: 0.35 }}
-                      className="inline-flex items-center gap-2 text-[11px] font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-1.5 rounded-full uppercase tracking-widest mb-6"
-                    >
-                      <span className="w-2 h-2 rounded-full bg-[#0088FF] animate-pulse" />
-                      {slides[currentSlide].badge[language] || slides[currentSlide].badge['en']}
-                    </motion.span>
-
-                    <motion.h1
-                      initial={{ opacity: 0, y: 25 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1, duration: 0.45 }}
-                      className="text-4xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-6 leading-[1.05] tracking-tight text-white drop-shadow-sm"
-                    >
-                      {slides[currentSlide].title[language] || slides[currentSlide].title['en']}
-                    </motion.h1>
-
-                    <motion.p
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.15, duration: 0.35 }}
-                      className="text-body-md md:text-lg font-body-lg text-white/85 mb-8 max-w-xl leading-relaxed"
-                    >
-                      {slides[currentSlide].desc[language] || slides[currentSlide].desc['en']}
-                    </motion.p>
-
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <MagneticWrap>
-                        <motion.button
-                          initial={{ opacity: 0, y: 15 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.2, duration: 0.35 }}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={slides[currentSlide].action}
-                          className="relative inline-flex items-center justify-center px-10 py-4 bg-white text-deep-navy text-label-md font-bold rounded-full overflow-hidden hover:bg-[#0088FF] hover:text-white transition-colors duration-300 shadow-xl shadow-black/20 group cursor-pointer"
-                        >
-                          <span className="relative z-10 flex items-center gap-2">
-                            {slides[currentSlide].cta[language] || slides[currentSlide].cta['en']}
-                            <span className="material-symbols-outlined text-sm font-bold transition-transform duration-300 group-hover:translate-x-1">
-                              arrow_forward
-                            </span>
-                          </span>
-                        </motion.button>
-                      </MagneticWrap>
-
-                      <motion.button
+                  <div className="absolute inset-0 flex items-center px-6 sm:px-12 md:px-16 lg:px-24">
+                    <div className="max-w-2xl text-white">
+                      <motion.span
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.25, duration: 0.35 }}
-                        onClick={() => setCurrentTab('shop')}
-                        className="inline-flex items-center gap-2 text-white/85 hover:text-white text-sm font-semibold px-5 py-4 rounded-full border border-white/20 hover:border-white/50 backdrop-blur-md transition-all"
+                        transition={{ delay: 0.05, duration: 0.35 }}
+                        className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] md:text-[11px] font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white px-2.5 py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 rounded-full uppercase tracking-widest mb-2 sm:mb-3 md:mb-6"
                       >
-                        <span className="material-symbols-outlined text-base">play_circle</span>
-                        {language === 'en' ? 'Watch Reel' : 'রিল দেখুন'}
-                      </motion.button>
+                        <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#0088FF] animate-pulse" />
+                        {slides[currentSlide].badge[language] || slides[currentSlide].badge['en']}
+                      </motion.span>
+
+                      <motion.h1
+                        initial={{ opacity: 0, y: 25 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1, duration: 0.45 }}
+                        className="text-base sm:text-2xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-2 sm:mb-3 md:mb-6 leading-[1.15] md:leading-[1.05] tracking-tight text-white drop-shadow-sm"
+                      >
+                        {slides[currentSlide].title[language] || slides[currentSlide].title['en']}
+                      </motion.h1>
+
+                      <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.15, duration: 0.35 }}
+                        className="text-[10px] sm:text-sm md:text-lg font-body-lg text-white/85 mb-3 sm:mb-4 md:mb-8 max-w-xl leading-relaxed line-clamp-2 sm:line-clamp-none"
+                      >
+                        {slides[currentSlide].desc[language] || slides[currentSlide].desc['en']}
+                      </motion.p>
+
+                      <div className="flex items-center gap-2 sm:gap-4">
+                        <MagneticWrap>
+                          <motion.button
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2, duration: 0.35 }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={slides[currentSlide].action}
+                            className="relative inline-flex items-center justify-center px-3 py-1 sm:px-8 sm:py-3 md:px-10 md:py-4 bg-white text-deep-navy text-[8px] sm:text-sm md:text-label-md font-bold rounded-full overflow-hidden hover:bg-[#0088FF] hover:text-white transition-colors duration-300 shadow-xl shadow-black/20 group cursor-pointer"
+                          >
+                            <span className="relative z-10 flex items-center gap-1 sm:gap-2">
+                              {slides[currentSlide].cta[language] || slides[currentSlide].cta['en']}
+                              <span className="material-symbols-outlined text-[8px] sm:text-sm font-bold transition-transform duration-300 group-hover:translate-x-1">
+                                arrow_forward
+                              </span>
+                            </span>
+                          </motion.button>
+                        </MagneticWrap>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Stats overlay (right) */}
-                <div className="hidden lg:flex absolute right-12 bottom-12 gap-3 z-10">
-                  {stats.slice(0, 2).map((s, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, y: 25 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 + idx * 0.1 }}
-                      className="bg-white/10 backdrop-blur-xl border border-white/20 px-5 py-3 rounded-2xl text-white text-center min-w-[120px]"
-                    >
-                      <div className="text-2xl font-bold">{s.value}</div>
-                      <div className="text-[11px] uppercase tracking-wider opacity-80">{s.label}</div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
+                  {/* Stats overlay (right) */}
+                  <div className="hidden lg:flex absolute right-12 bottom-12 gap-3 z-10">
+                    {stats.slice(0, 2).map((s, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, y: 25 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6 + idx * 0.1 }}
+                        className="bg-white/10 backdrop-blur-xl border border-white/20 px-5 py-3 rounded-2xl text-white text-center min-w-[120px]"
+                      >
+                        <div className="text-2xl font-bold">{s.value}</div>
+                        <div className="text-[11px] uppercase tracking-wider opacity-80">{s.label}</div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-          {/* Dots */}
-          <div className="absolute bottom-8 left-8 md:left-16 flex gap-3 z-10">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setDirection(index > currentSlide ? 1 : -1);
-                  setCurrentSlide(index);
-                }}
-                className="relative h-3 flex items-center justify-center group cursor-pointer"
-                style={{ width: currentSlide === index ? '48px' : '12px' }}
-                aria-label={`Go to slide ${index + 1}`}
-              >
-                <div
-                  className={`h-1.5 rounded-full transition-all duration-500 w-full ${
-                    currentSlide === index ? 'bg-[#0088FF]' : 'bg-white/40 group-hover:bg-white/70'
+            {/* Dots */}
+            <div className="absolute bottom-3 left-6 sm:bottom-6 sm:left-12 md:left-16 flex gap-1.5 md:gap-3 z-10">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setDirection(index > currentSlide ? 1 : -1);
+                    setCurrentSlide(index);
+                  }}
+                  className={`relative h-2 md:h-3 flex items-center justify-center group cursor-pointer transition-all duration-300 ${
+                    currentSlide === index ? 'w-6 md:w-12' : 'w-2 md:w-3'
                   }`}
-                />
-              </button>
-            ))}
-          </div>
-        </motion.div>
-      </section>
+                  aria-label={`Go to slide ${index + 1}`}
+                >
+                  <div
+                    className={`h-[2px] md:h-1 rounded-full transition-all duration-500 w-full ${
+                      currentSlide === index ? 'bg-[#0088FF]' : 'bg-white/40 group-hover:bg-white/70'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+      )}
 
       {/* BRAND STRIP */}
       <Reveal className="mb-section-gap">
@@ -808,8 +850,10 @@ export default function HomeView({
                   }`}>
                     {c.image ? (
                       <img
-                        src={c.image}
+                        src={getOptimizedImageUrl(c.image, 200)}
                         alt={c.name}
+                        width={112}
+                        height={112}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-full"
                       />
                     ) : (
@@ -896,8 +940,10 @@ export default function HomeView({
               className="relative bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-6 flex items-center gap-5 mt-8"
             >
               <img
-                src={featuredProduct.image}
+                src={getOptimizedImageUrl(featuredProduct.image, 300)}
                 alt={featuredProduct.name}
+                width={128}
+                height={128}
                 className="w-32 h-32 rounded-xl object-cover bg-white/10"
               />
               <div className="flex-1 min-w-0">
@@ -954,12 +1000,10 @@ export default function HomeView({
         </div>
 
         {loadingProducts ? (
-          <div className="flex flex-col justify-center items-center py-24">
-            <div className="relative w-16 h-16">
-              <div className="absolute inset-0 border-4 border-[#0088FF]/20 rounded-full" />
-              <div className="absolute inset-0 border-4 border-[#0088FF] border-t-transparent rounded-full animate-spin" />
-            </div>
-            <p className="mt-4 text-on-surface-variant font-semibold">{t('common.loading')}</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <ProductCardSkeleton key={index} />
+            ))}
           </div>
         ) : displayedProducts.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-outline-variant/40">
@@ -1217,7 +1261,14 @@ export default function HomeView({
               </div>
               <p className="text-on-surface mb-6 leading-relaxed">"{testi.quote}"</p>
               <div className="flex items-center gap-3">
-                <img src={testi.avatar} alt={testi.name} className="w-12 h-12 rounded-full object-cover" />
+                <img
+                  src={testi.avatar}
+                  alt={testi.name}
+                  width={48}
+                  height={48}
+                  loading="lazy"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
                 <div>
                   <p className="font-bold text-deep-navy">{testi.name}</p>
                   <p className="text-xs text-on-surface-variant">{testi.role}</p>
@@ -1288,7 +1339,16 @@ export default function HomeView({
               whileHover={{ scale: 1.04 }}
               className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer bg-gradient-to-br from-[#0088FF]/20 to-purple-500/20"
             >
-              {p?.image && <img src={p.image} alt="" className="w-full h-full object-cover" />}
+              {p?.image && (
+                <img
+                  src={getOptimizedImageUrl(p.image, 300)}
+                  alt=""
+                  width={300}
+                  height={300}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              )}
               <div className="absolute inset-0 bg-deep-navy/0 group-hover:bg-deep-navy/60 transition-colors flex items-center justify-center">
                 <span className="material-symbols-outlined text-white opacity-0 group-hover:opacity-100 transition-opacity text-3xl">
                   favorite

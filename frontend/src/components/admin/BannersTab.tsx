@@ -154,7 +154,7 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('File is too large. Max size is 5MB.');
+      triggerToast('File is too large. Max size is 5MB.');
       return;
     }
 
@@ -180,7 +180,7 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
       triggerToast('Promotional card image uploaded successfully.');
     } catch (err: any) {
       console.error(err);
-      alert(err.message || 'Failed to upload image.');
+      triggerToast(err.message || 'Failed to upload image.');
     } finally {
       setPromo1Uploading(false);
     }
@@ -250,7 +250,7 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
   const handleCatFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!catName.trim()) {
-      alert('Category name is required.');
+      triggerToast('Category name is required.');
       return;
     }
 
@@ -277,7 +277,7 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
     if (!file) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      alert('File is too large. Max size is 2MB for category logo.');
+      triggerToast('File is too large. Max size is 2MB for category logo.');
       return;
     }
 
@@ -303,7 +303,7 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
       triggerToast('Category logo uploaded successfully.');
     } catch (err: any) {
       console.error(err);
-      alert(err.message || 'Failed to upload category image.');
+      triggerToast(err.message || 'Failed to upload category image.');
     } finally {
       setCatUploading(false);
     }
@@ -414,7 +414,7 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
     if (!file) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      alert('File is too large. Max size is 2MB for logo.');
+      triggerToast('File is too large. Max size is 2MB for logo.');
       return;
     }
 
@@ -440,7 +440,7 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
       triggerToast('Logo image uploaded successfully.');
     } catch (err: any) {
       console.error(err);
-      alert(err.message || 'Failed to upload logo.');
+      triggerToast(err.message || 'Failed to upload logo.');
     } finally {
       setLogoUploading(false);
     }
@@ -451,7 +451,7 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('File is too large. Max size is 5MB for banner.');
+      triggerToast('File is too large. Max size is 5MB for banner.');
       return;
     }
 
@@ -477,7 +477,7 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
       triggerToast('Banner image uploaded successfully.');
     } catch (err: any) {
       console.error(err);
-      alert(err.message || 'Failed to upload banner.');
+      triggerToast(err.message || 'Failed to upload banner.');
     } finally {
       setBannerUploading(false);
     }

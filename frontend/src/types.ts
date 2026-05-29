@@ -59,5 +59,6 @@ export interface Order {
   paymentMethod: string;
   paymentStatus: string;
   orderStatus: string;
+  paymentSignature?: string;
   createdAt: string;
 }

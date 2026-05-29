@@ -148,35 +148,39 @@ export default function PromosTab({ triggerToast }: { triggerToast: (msg: string
           </h3>
           <form onSubmit={handleAddPromo} className="space-y-4">
             <div className="space-y-1">
-              <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-mono">Promo Code Name</label>
+              <label htmlFor="promo-code-name" className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-mono">Promo Code Name</label>
               <input
+                id="promo-code-name"
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 className={inputCls}
                 placeholder="e.g. SUMMER50"
+                aria-label="Promo Code Name"
                 required
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-mono">
+              <label htmlFor="promo-discount" className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-mono">
                 Discount Percentage (%)
               </label>
               <input
+                id="promo-discount"
                 type="number"
                 value={discount}
                 onChange={(e) => setDiscount(Number(e.target.value))}
                 className={inputCls}
                 min={1}
                 max={100}
+                aria-label="Discount Percentage (%)"
                 required
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-all shadow-md shadow-indigo-600/10"
+              className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-all shadow-md shadow-indigo-600/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
             >
               Add Promo Code
             </button>
@@ -217,7 +221,8 @@ export default function PromosTab({ triggerToast }: { triggerToast: (msg: string
                       <td className="py-3 px-2">
                         <button
                           onClick={() => handleTogglePromo(p)}
-                          className={`px-2 py-0.5 rounded font-mono text-[9px] font-bold ${
+                          aria-label={`Toggle active status for ${p.code}`}
+                          className={`px-2 py-0.5 rounded font-mono text-[9px] font-bold focus:outline-none focus:ring-1 focus:ring-indigo-500/50 ${
                             p.isActive
                               ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
                               : 'bg-rose-500/10 text-rose-400 border border-rose-500/25'
@@ -229,7 +234,8 @@ export default function PromosTab({ triggerToast }: { triggerToast: (msg: string
                       <td className="py-3 px-2 text-right">
                         <button
                           onClick={() => handleDeletePromo(p._id)}
-                          className="p-1 rounded hover:bg-rose-500/10 text-slate-500 hover:text-rose-400 transition-colors"
+                          aria-label={`Delete promo code ${p.code}`}
+                          className="p-1 rounded hover:bg-rose-500/10 text-slate-500 hover:text-rose-400 transition-colors focus:outline-none focus:ring-1 focus:ring-rose-500/50"
                         >
                           <span className="material-symbols-outlined text-sm">delete</span>
                         </button>

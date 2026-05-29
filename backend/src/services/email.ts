@@ -2,11 +2,11 @@ import nodemailer from 'nodemailer';
 import { config } from '../config/env';
 
 // Load email credentials or fall back to mock console logs
-const smtpHost = process.env.SMTP_HOST;
-const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
-const smtpUser = process.env.SMTP_USER;
-const smtpPass = process.env.SMTP_PASS;
-const smtpFrom = process.env.SMTP_FROM || 'no-reply@graballgoods.com';
+const smtpHost = config.SMTP.HOST;
+const smtpPort = config.SMTP.PORT;
+const smtpUser = config.SMTP.USER;
+const smtpPass = config.SMTP.PASS;
+const smtpFrom = config.SMTP.FROM;
 
 const isSmtpConfigured = !!(smtpHost && smtpUser && smtpPass);
 
@@ -112,4 +112,16 @@ export const sendPasswordResetEmail = async (email: string, name: string, token:
       </div>
     `,
   });
+};
+
+export const checkEmailStatus = async (): Promise<'connected' | 'not_configured' | 'error'> => {
+  if (!isSmtpConfigured || !transporter) {
+    return 'not_configured';
+  }
+  try {
+    await transporter.verify();
+    return 'connected';
+  } catch (error) {
+    return 'error';
+  }
 };

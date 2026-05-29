@@ -102,6 +102,9 @@ export default function OrdersView({
                   <div key={idx} className="py-3 flex gap-4 items-center">
                     <img 
                       src={item.image} 
+                      width={64}
+                      height={64}
+                      loading="lazy"
                       className="w-16 h-16 object-cover rounded-xl border" 
                       alt={item.name} 
                     />

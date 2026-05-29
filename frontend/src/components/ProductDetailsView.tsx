@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Product } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { getOptimizedImageUrl } from '../utils/image';
 
 interface ProductDetailsViewProps {
   product: Product;
@@ -142,6 +143,57 @@ export default function ProductDetailsView({
 
   return (
     <div className="space-y-12">
+      {/* JSON-LD Structured Data */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product.name,
+          "image": product.image,
+          "description": product.description || product.name,
+          "sku": product._id,
+          "offers": {
+            "@type": "Offer",
+            "url": window.location.href,
+            "priceCurrency": "BDT",
+            "price": product.salePrice,
+            "priceValidUntil": "2027-12-31",
+            "itemCondition": "https://schema.org/NewCondition",
+            "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "seller": {
+              "@type": "Organization",
+              "name": "GrabAll"
+            }
+          }
+        })}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": window.location.origin
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Shop",
+              "item": `${window.location.origin}/#shop`
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": product.name,
+              "item": window.location.href
+            }
+          ]
+        })}
+      </script>
+
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs font-semibold text-on-surface-variant/80 border-b border-outline-variant/30 pb-4">
         <button onClick={() => setCurrentTab('home')} className="hover:text-[#0088FF] transition-all">{t('nav.home')}</button>
@@ -152,13 +204,15 @@ export default function ProductDetailsView({
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12">
         {/* Left column: Image Gallery */}
         <div className="lg:col-span-6 space-y-4">
           <div className="relative aspect-square w-full rounded-2xl bg-white border border-outline-variant/40 overflow-hidden shadow-sm group">
             <img
-              src={selectedImage}
+              src={getOptimizedImageUrl(selectedImage, 800)}
               alt={product.name}
+              width={800}
+              height={800}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             {discountPercent > 0 && (
@@ -179,7 +233,13 @@ export default function ProductDetailsView({
                     selectedImage === imgUrl ? 'border-[#0088FF] shadow-sm scale-[0.98]' : 'border-outline-variant/40 hover:border-[#0088FF]/50'
                   }`}
                 >
-                  <img src={imgUrl} alt={`${product.name} gallery ${i}`} className="w-full h-full object-cover" />
+                  <img
+                    src={getOptimizedImageUrl(imgUrl, 160)}
+                    alt={`${product.name} gallery ${i}`}
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -488,7 +548,14 @@ export default function ProductDetailsView({
                   className="bg-white rounded-2xl p-4 border border-outline-variant/30 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer group text-xs"
                 >
                   <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-white mb-3">
-                    <img src={related.image} alt={related.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <img
+                      src={related.image}
+                      alt={related.name}
+                      width={300}
+                      height={300}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
                     {relDiscount > 0 && (
                       <span className="absolute top-2 left-2 bg-sale-red text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
                         -{relDiscount}%

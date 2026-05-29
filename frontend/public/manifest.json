@@ -1,0 +1,17 @@
+{
+  "short_name": "GrabAll",
+  "name": "GrabAllGoods Creator Store",
+  "description": "Premium Creator & Tech Gear Store",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0a192f",
+  "theme_color": "#0088ff",
+  "display": "standalone",
+  "orientation": "portrait"
+}

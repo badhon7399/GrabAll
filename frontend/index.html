@@ -3,11 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0088ff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GrabAllGoods - Premium Tech Retailer</title>
+    <title>GrabAllGoods - Premium Creator & Tech Gear</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Discover premium gear for creators, vloggers, and tech enthusiasts. Same-day dispatch and nationwide delivery in Bangladesh. Sourced directly, 100% authentic." />
+    <meta name="keywords" content="creator gear, tech accessories, vlog equipment, bangladesh, wireless microphone, neck mount, gopro, sony, dji" />
+    <meta name="author" content="GrabAll" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://graballgoods.com/" />
+    <meta property="og:title" content="GrabAllGoods - Premium Creator & Tech Gear" />
+    <meta property="og:description" content="Discover premium gear for creators, vloggers, and tech enthusiasts. Same-day dispatch and nationwide delivery in Bangladesh. Sourced directly, 100% authentic." />
+    <meta property="og:image" content="https://graballgoods.com/og-image.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://graballgoods.com/" />
+    <meta property="twitter:title" content="GrabAllGoods - Premium Creator & Tech Gear" />
+    <meta property="twitter:description" content="Discover premium gear for creators, vloggers, and tech enthusiasts. Same-day dispatch and nationwide delivery in Bangladesh. Sourced directly, 100% authentic." />
+    <meta property="twitter:image" content="https://graballgoods.com/og-image.jpg" />
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Montserrat:wght@600;700&amp;display=swap" rel="stylesheet"/>
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "OnlineStore",
+        "name": "GrabAll Goods",
+        "url": "https://graballgoods.com",
+        "logo": "https://graballgoods.com/manifest-icon-512.png",
+        "description": "Premium tech gear, vlogging essentials, wireless microphones, neck mounts, and fast charging power banks in Bangladesh.",
+        "sameAs": [
+          "https://facebook.com/graballgoods"
+        ],
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://graballgoods.com/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
   </head>
   <body class="font-body-md text-on-surface antialiased bg-ice-white">
     <div id="root"></div>

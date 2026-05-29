@@ -28,3 +28,15 @@ export const upload = multer({
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
 });
+
+export const checkCloudinaryStatus = async (): Promise<'connected' | 'not_configured' | 'error'> => {
+  if (!config.CLOUDINARY.CLOUD_NAME || !config.CLOUDINARY.API_KEY || !config.CLOUDINARY.API_SECRET) {
+    return 'not_configured';
+  }
+  try {
+    await cloudinary.api.ping();
+    return 'connected';
+  } catch (error) {
+    return 'error';
+  }
+};

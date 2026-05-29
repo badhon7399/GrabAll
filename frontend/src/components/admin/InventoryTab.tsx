@@ -8,6 +8,7 @@ interface InventoryTabProps {
   onSaveProduct: (prod: Partial<Product>) => Promise<void>;
   onDeleteProduct: (id: string) => Promise<void>;
   categories: string[];
+  triggerToast: (message: string) => void;
 }
 
 const fadeUp = {
@@ -84,6 +85,7 @@ export default function InventoryTab({
   onSaveProduct,
   onDeleteProduct,
   categories,
+  triggerToast,
 }: InventoryTabProps) {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
@@ -114,7 +116,7 @@ export default function InventoryTab({
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('File is too large. Max size is 5MB.');
+      triggerToast('File is too large. Max size is 5MB.');
       return;
     }
 
@@ -139,7 +141,7 @@ export default function InventoryTab({
       setFormImageUrl(data.url);
     } catch (err: any) {
       console.error(err);
-      alert(err.message || 'Failed to upload image.');
+      triggerToast(err.message || 'Failed to upload image.');
     } finally {
       setUploading(false);
     }
@@ -155,7 +157,7 @@ export default function InventoryTab({
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (file.size > 5 * 1024 * 1024) {
-          alert(`File ${file.name} is too large. Max size is 5MB.`);
+          triggerToast(`File ${file.name} is too large. Max size is 5MB.`);
           continue;
         }
 
@@ -180,7 +182,7 @@ export default function InventoryTab({
       setFormSecondaryImages((prev) => [...prev, ...uploadedUrls]);
     } catch (err: any) {
       console.error(err);
-      alert(err.message || 'Failed to upload secondary image(s).');
+      triggerToast(err.message || 'Failed to upload secondary image(s).');
     } finally {
       setSecUploading(false);
       if (secFileInputRef.current) {
@@ -243,7 +245,7 @@ export default function InventoryTab({
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName || !formCategory || formPrice <= 0 || !formImageUrl) {
-      alert('Please fill out all required fields.');
+      triggerToast('Please fill out all required fields.');
       return;
     }
     setSaving(true);

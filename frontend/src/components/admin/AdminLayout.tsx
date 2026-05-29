@@ -610,6 +610,7 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
                     onSaveProduct={handleSaveProduct}
                     onDeleteProduct={handleDeleteProduct}
                     categories={categories}
+                    triggerToast={triggerToast}
                   />
                 )}
 

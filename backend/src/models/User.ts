@@ -44,4 +44,7 @@ const userSchema = new Schema<IUser>({
   timestamps: true
 });
 
+userSchema.index({ emailVerificationToken: 1 }, { sparse: true });
+userSchema.index({ passwordResetToken: 1 }, { sparse: true });
+
 export const User = model<IUser>('User', userSchema);

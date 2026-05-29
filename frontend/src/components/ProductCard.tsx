@@ -1,5 +1,6 @@
 import type { Product } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { getOptimizedImageUrl } from '../utils/image';
 
 interface ProductCardProps {
   product: Product;
@@ -58,8 +59,11 @@ export default function ProductCard({
       <div className="aspect-square bg-surface-container overflow-hidden relative">
         <img
           alt={product.name}
+          width={400}
+          height={400}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          src={product.image}
+          src={getOptimizedImageUrl(product.image, 400)}
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-deep-navy/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
           <button
@@ -100,6 +104,26 @@ export default function ProductCard({
         >
           <span className="material-symbols-outlined text-sm">shopping_cart</span> {t('prod.addToCart')}
         </button>
+      </div>
+    </div>
+  );
+}
+
+export function ProductCardSkeleton() {
+  return (
+    <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-surface-container flex flex-col h-full animate-pulse">
+      <div className="aspect-square bg-slate-100 relative" />
+      <div className="p-4 flex flex-col flex-grow text-xs gap-3">
+        <div className="h-3 w-1/3 bg-slate-200 rounded" />
+        <div className="space-y-2">
+          <div className="h-3.5 w-full bg-slate-200 rounded" />
+          <div className="h-3.5 w-5/6 bg-slate-200 rounded" />
+        </div>
+        <div className="mt-auto pt-2 flex items-center gap-2">
+          <div className="h-5 w-1/3 bg-slate-200 rounded" />
+          <div className="h-3.5 w-1/4 bg-slate-200 rounded" />
+        </div>
+        <div className="h-8 w-full bg-slate-200 rounded-lg mt-4" />
       </div>
     </div>
   );
