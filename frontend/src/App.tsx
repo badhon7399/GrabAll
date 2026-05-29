@@ -245,6 +245,10 @@ function App() {
             }
             window.dispatchEvent(new Event('settingsUpdated'));
           }
+          if (data.faqs) {
+            localStorage.setItem('grabAllFaqs', JSON.stringify(data.faqs));
+            window.dispatchEvent(new Event('faqsUpdated'));
+          }
           window.dispatchEvent(new Event('storage'));
           window.dispatchEvent(new Event('logoUpdated'));
           window.dispatchEvent(new Event('bannersUpdated'));

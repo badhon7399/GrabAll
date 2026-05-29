@@ -151,6 +151,46 @@ const SettingsSchema = new mongoose.Schema(
         { name: 'Daily Deals', image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&q=80&w=600' },
       ],
     },
+    faqs: {
+      type: [
+        {
+          question: {
+            en: { type: String, required: true },
+            bn: { type: String, required: true },
+          },
+          answer: {
+            en: { type: String, required: true },
+            bn: { type: String, required: true },
+          },
+        },
+      ],
+      default: [
+        {
+          question: { en: "Are the products 100% genuine and original?", bn: "পণ্যগুলো কি ১০০% আসল এবং অথেনটিক?" },
+          answer: { en: "Yes, absolutely. We source all our products directly from official manufacturers or authorized global distributors. Every item comes in its original retail packaging with official warranty coverage.", bn: "হ্যাঁ, সম্পূর্ণ নিশ্চিত থাকুন। আমরা আমাদের সমস্ত পণ্য সরাসরি প্রস্তুতকারক বা অনুমোদিত গ্লোবাল ডিস্ট্রিবিউটরদের থেকে সংগ্রহ করি। প্রতিটি পণ্য আসল রিটেইল প্যাকেজিং এবং অফিশিয়াল ওয়ারেন্টিসহ সরবরাহ করা হয়।" }
+        },
+        {
+          question: { en: "What are the delivery charges and delivery times?", bn: "ডেলিভারি চার্জ এবং সময় কত লাগে?" },
+          answer: { en: "We offer flat-rate delivery across Bangladesh. Inside Dhaka, delivery takes 24-48 hours. Outside Dhaka, it takes 2-4 business days. Express same-day delivery is also available for select areas in Dhaka.", bn: "আমরা সারা বাংলাদেশে ফ্ল্যাট-রেটে ডেলিভারি দিয়ে থাকি। ঢাকা সিটির ভেতরে ২৪-৪৮ ঘণ্টা এবং ঢাকা সিটির বাইরে ২-৪ কার্যদিবস সময় লাগে। ঢাকার নির্দিষ্ট কিছু এলাকায় এক্সপ্রেস সেম-ডে ডেলিভারিও উপলব্ধ।" }
+        },
+        {
+          question: { en: "What is your return and refund policy?", bn: "আপনাদের রিটার্ন এবং রিফান্ড পলিসি কী?" },
+          answer: { en: "We offer a hassle-free 7-day return policy for any manufacturing defects or if the product does not match the description. The product must be unused and in its original packaging. Please check our detailed Refund Policy page for details.", bn: "পণ্যটিতে কোনো ম্যানুফ্যাকচারিং ত্রুটি থাকলে বা বিবরণের সাথে মিল না থাকলে আমরা সহজ ৭ দিনের রিটার্ন পলিসি অফার করি। পণ্যটি অবশ্যই অব্যবহৃত এবং মূল প্যাকেজিংয়ে থাকতে হবে। বিস্তারিত জানতে আমাদের রিফান্ড পলিসি পেজটি দেখুন।" }
+        },
+        {
+          question: { en: "How do I claim product warranty?", bn: "আমি কীভাবে পণ্যের ওয়ারেন্টি দাবি করব?" },
+          answer: { en: "To claim your warranty, simply contact our support team with your order number and invoice. We will verify the details and either repair or replace the product as per the manufacturer's warranty terms.", bn: "ওয়ারেন্টি দাবি করতে আপনার অর্ডার নম্বর এবং ইনভয়েস সহ আমাদের কাস্টমার সাপোর্ট টিমে যোগাযোগ করুন। আমরা বিবরণ যাচাই করব এবং প্রস্তুতকারকের ওয়ারেন্টি নীতি অনুযায়ী পণ্যটি মেরামত বা পরিবর্তন করে দেব।" }
+        },
+        {
+          question: { en: "Do you offer Cash on Delivery (COD)?", bn: "আপনারা কি ক্যাশ অন ডেলিভারি (COD) সুবিধা দেন?" },
+          answer: { en: "Yes! We offer cash on delivery nationwide. You can pay the delivery agent in cash once you receive the product and verify the package condition.", bn: "হ্যাঁ! আমরা দেশব্যাপী ক্যাশ অন ডেলিভারি (COD) সুবিধা দিচ্ছি। পণ্যটি পাওয়ার পর কুরিয়ার এজেন্টকে ক্যাশ পেমেন্ট করে আপনি পণ্যটি বুঝে নিতে পারেন।" }
+        },
+        {
+          question: { en: "Can I test the product before accepting it?", bn: "ডেলিভারি নেওয়ার আগে কি পণ্য পরীক্ষা করা যাবে?" },
+          answer: { en: "Yes, you can inspect the package exterior and verify the item inside with the delivery agent present. However, for internal electronic components or devices, testing requires powering them on, which should be done post-delivery. If you encounter any issue, contact support immediately for a replacement.", bn: "হ্যাঁ, ডেলিভারি এজেন্টের উপস্থিতিতে আপনি প্যাকেজটির বাইরের অংশ দেখে নিতে পারেন এবং ভেতরের পণ্যটি মিলিয়ে নিতে পারেন। তবে ডিভাইস চালু করে টেস্ট করার বিষয়টি ডেলিভারি নেওয়ার পর করতে হবে। কোনো সমস্যা হলে দ্রুত আমাদের জানান।" }
+        }
+      ]
+    },
   },
   { timestamps: true }
 );

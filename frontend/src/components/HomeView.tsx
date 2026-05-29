@@ -171,6 +171,69 @@ interface HomeViewProps {
   setSelectedProduct: (product: Product | null) => void; // for QuickViewModal
 }
 
+const faqData = [
+  {
+    question: {
+      en: "Are the products 100% genuine and original?",
+      bn: "পণ্যগুলো কি ১০০% আসল এবং অথেনটিক?"
+    },
+    answer: {
+      en: "Yes, absolutely. We source all our products directly from official manufacturers or authorized global distributors. Every item comes in its original retail packaging with official warranty coverage.",
+      bn: "হ্যাঁ, সম্পূর্ণ নিশ্চিত থাকুন। আমরা আমাদের সমস্ত পণ্য সরাসরি অফিশিয়াল প্রস্তুতকারক বা অনুমোদিত গ্লোবাল ডিস্ট্রিবিউটরদের থেকে সংগ্রহ করি। প্রতিটি পণ্য আসল রিটেইল প্যাকেজিং এবং অফিশিয়াল ওয়ারেন্টিসহ সরবরাহ করা হয়।"
+    }
+  },
+  {
+    question: {
+      en: "What are the delivery charges and delivery times?",
+      bn: "ডেলিভারি চার্জ এবং সময় কত লাগে?"
+    },
+    answer: {
+      en: "We offer flat-rate delivery across Bangladesh. Inside Dhaka, delivery takes 24-48 hours. Outside Dhaka, it takes 2-4 business days. Express same-day delivery is also available for select areas in Dhaka.",
+      bn: "আমরা সারা বাংলাদেশে ফ্ল্যাট-রেটে ডেলিভারি দিয়ে থাকি। ঢাকা সিটির ভেতরে ২৪-৪৮ ঘণ্টা এবং ঢাকা সিটির বাইরে ২-৪ কার্যদিবস সময় লাগে। ঢাকার নির্দিষ্ট কিছু এলাকায় এক্সপ্রেস সেম-ডে ডেলিভারিও উপলব্ধ।"
+    }
+  },
+  {
+    question: {
+      en: "What is your return and refund policy?",
+      bn: "আপনাদের রিটার্ন এবং রিফান্ড পলিসি কী?"
+    },
+    answer: {
+      en: "We offer a hassle-free 7-day return policy for any manufacturing defects or if the product does not match the description. The product must be unused and in its original packaging. Please check our detailed Refund Policy page for details.",
+      bn: "পণ্যটিতে কোনো ম্যানুফ্যাকচারিং ত্রুটি থাকলে বা বিবরণের সাথে মিল না থাকলে আমরা সহজ ৭ দিনের রিটার্ন পলিসি অফার করি। পণ্যটি অবশ্যই অব্যবহৃত এবং মূল প্যাকেজিংয়ে থাকতে হবে। বিস্তারিত জানতে আমাদের রিফান্ড পলিসি পেজটি দেখুন।"
+    }
+  },
+  {
+    question: {
+      en: "How do I claim product warranty?",
+      bn: "আমি কীভাবে পণ্যের ওয়ারেন্টি দাবি করব?"
+    },
+    answer: {
+      en: "To claim your warranty, simply contact our support team with your order number and invoice. We will verify the details and either repair or replace the product as per the manufacturer's warranty terms.",
+      bn: "ওয়ারেন্টি দাবি করতে আপনার অর্ডার নম্বর এবং ইনভয়েস সহ আমাদের কাস্টমার সাপোর্ট টিমে যোগাযোগ করুন। আমরা বিবরণ যাচাই করব এবং প্রস্তুতকারকের ওয়ারেন্টি নীতি অনুযায়ী পণ্যটি মেরামত বা পরিবর্তন করে দেব।"
+    }
+  },
+  {
+    question: {
+      en: "Do you offer Cash on Delivery (COD)?",
+      bn: "আপনারা কি ক্যাশ অন ডেলিভারি (COD) সুবিধা দেন?"
+    },
+    answer: {
+      en: "Yes! We offer cash on delivery nationwide. You can pay the delivery agent in cash once you receive the product and verify the package condition.",
+      bn: "হ্যাঁ! আমরা দেশব্যাপী ক্যাশ অন ডেলিভারি (COD) সুবিধা দিচ্ছি। পণ্যটি পাওয়ার পর কুরিয়ার এজেন্টকে ক্যাশ পেমেন্ট করে আপনি পণ্যটি বুঝে নিতে পারেন।"
+    }
+  },
+  {
+    question: {
+      en: "Can I test the product before accepting it?",
+      bn: "ডেলিভারি নেওয়ার আগে কি পণ্য পরীক্ষা করা যাবে?"
+    },
+    answer: {
+      en: "Yes, you can inspect the package exterior and verify the item inside with the delivery agent present. However, for internal electronic components or devices, testing requires powering them on, which should be done post-delivery. If you encounter any issue, contact support immediately for a replacement.",
+      bn: "হ্যাঁ, ডেলিভারি এজেন্টের উপস্থিতিতে আপনি প্যাকেজটির বাইরের অংশ দেখে নিতে পারেন এবং ভেতরের পণ্যটি মিলিয়ে নিতে পারেন। তবে ডিভাইস চালু করে টেস্ট করার বিষয়টি ডেলিভারি নেওয়ার পর করতে হবে। কোনো সমস্যা হলে দ্রুত আমাদের জানান।"
+    }
+  }
+];
+
 export default function HomeView({
   products,
   loadingProducts,
@@ -247,6 +310,20 @@ export default function HomeView({
     };
   });
 
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const [faqs, setFaqs] = useState<{
+    question: { en: string; bn: string };
+    answer: { en: string; bn: string };
+  }[]>(() => {
+    try {
+      const stored = localStorage.getItem('grabAllFaqs');
+      return stored ? JSON.parse(stored) : faqData;
+    } catch {
+      return faqData;
+    }
+  });
+
   const [categories, setCategories] = useState<{ name: string; image: string }[]>(() => {
     try {
       const saved = localStorage.getItem('grabAllCategories');
@@ -297,12 +374,17 @@ export default function HomeView({
         const saved = localStorage.getItem('grabAllSectionProducts');
         setSectionConfig(saved ? JSON.parse(saved) : {});
       } catch {}
+      try {
+        const stored = localStorage.getItem('grabAllFaqs');
+        setFaqs(stored ? JSON.parse(stored) : faqData);
+      } catch {}
     };
 
     window.addEventListener('storage', handleStorage);
     window.addEventListener('promotionsUpdated', handleStorage);
     window.addEventListener('categoriesUpdated', handleStorage);
     window.addEventListener('sectionsUpdated', handleStorage);
+    window.addEventListener('faqsUpdated', handleStorage);
     const interval = setInterval(handleStorage, 1000);
 
     return () => {
@@ -310,6 +392,7 @@ export default function HomeView({
       window.removeEventListener('promotionsUpdated', handleStorage);
       window.removeEventListener('categoriesUpdated', handleStorage);
       window.removeEventListener('sectionsUpdated', handleStorage);
+      window.removeEventListener('faqsUpdated', handleStorage);
       clearInterval(interval);
     };
   }, []);
@@ -643,42 +726,65 @@ export default function HomeView({
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ x: { type: 'spring', stiffness: 280, damping: 32 }, opacity: { duration: 0.25 } }}
-                  className="absolute inset-0 w-full h-full"
+                  transition={{ 
+                    x: { type: 'tween', ease: [0.16, 1, 0.3, 1], duration: 0.75 }, 
+                    opacity: { duration: 0.25 } 
+                  }}
+                  className="absolute inset-0 w-full h-full transform-gpu"
+                  style={{ willChange: 'transform, opacity' }}
                 >
                   <motion.div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url('${getOptimizedImageUrl(slides[currentSlide].image, 1600)}')`, y: heroParallaxY }}
+                    className="absolute inset-0 bg-cover bg-center transform-gpu"
+                    style={{ backgroundImage: `url('${getOptimizedImageUrl(slides[currentSlide].image, 1600)}')`, y: heroParallaxY, willChange: 'transform' }}
                     initial={{ scale: 1.15 }}
                     animate={{ scale: 1 }}
-                    transition={{ duration: 1.4 }}
+                    transition={{ duration: 1.4, ease: 'easeOut' }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-deep-navy/95 via-deep-navy/60 to-transparent" />
 
-                  {/* Floating glow orbs */}
-                  <motion.div
-                    className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#0088FF]/30 blur-3xl"
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
-                    transition={{ duration: 6, repeat: Infinity }}
-                  />
-                  <motion.div
-                    className="absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-purple-500/20 blur-3xl"
-                    animate={{ scale: [1.1, 1, 1.1], opacity: [0.3, 0.6, 0.3] }}
-                    transition={{ duration: 8, repeat: Infinity }}
-                  />
+                  {/* Static glow orbs to prevent animating-blur text repaint flickers */}
+                  <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#0088FF]/20 blur-3xl pointer-events-none" />
+                  <div className="absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
 
-                  <div className="absolute inset-0 flex items-center px-6 sm:px-12 md:px-16 lg:px-24">
-                    <div className="max-w-2xl text-white">
+                  <div className="absolute inset-0 flex items-center px-6 sm:px-12 md:px-16 lg:px-24 pointer-events-none">
+                    <div 
+                      className="max-w-2xl text-white pointer-events-auto transform-gpu"
+                      style={{
+                        transform: 'translate3d(0,0,0)',
+                        WebkitTransform: 'translate3d(0,0,0)',
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        willChange: 'transform, opacity'
+                      }}
+                    >
                       <span className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] md:text-[11px] font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white px-2.5 py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 rounded-full uppercase tracking-widest mb-2 sm:mb-3 md:mb-6">
                         <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#0088FF] animate-pulse" />
                         {slides[currentSlide].badge[language] || slides[currentSlide].badge['en']}
                       </span>
 
-                      <h1 className="text-base sm:text-2xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-2 sm:mb-3 md:mb-6 leading-[1.15] md:leading-[1.05] tracking-tight text-white drop-shadow-sm pt-2 pb-1">
+                      <h1 
+                        className="text-base sm:text-2xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-2 sm:mb-3 md:mb-6 leading-[1.15] md:leading-[1.05] tracking-tight text-white pt-2 pb-1 transform-gpu"
+                        style={{
+                          transform: 'translate3d(0,0,0)',
+                          WebkitTransform: 'translate3d(0,0,0)',
+                          backfaceVisibility: 'hidden',
+                          WebkitBackfaceVisibility: 'hidden',
+                          willChange: 'transform'
+                        }}
+                      >
                         {slides[currentSlide].title[language] || slides[currentSlide].title['en']}
                       </h1>
 
-                      <p className="text-[10px] sm:text-sm md:text-lg font-body-lg text-white/85 mb-3 sm:mb-4 md:mb-8 max-w-xl leading-relaxed line-clamp-2 sm:line-clamp-none">
+                      <p 
+                        className="text-[10px] sm:text-sm md:text-lg font-body-lg text-white/85 mb-3 sm:mb-4 md:mb-8 max-w-xl leading-relaxed line-clamp-2 sm:line-clamp-none transform-gpu"
+                        style={{
+                          transform: 'translate3d(0,0,0)',
+                          WebkitTransform: 'translate3d(0,0,0)',
+                          backfaceVisibility: 'hidden',
+                          WebkitBackfaceVisibility: 'hidden',
+                          willChange: 'transform'
+                        }}
+                      >
                         {slides[currentSlide].desc[language] || slides[currentSlide].desc['en']}
                       </p>
 
@@ -1341,6 +1447,72 @@ export default function HomeView({
               </div>
             </motion.div>
           ))}
+        </div>
+      </Reveal>
+
+      {/* FAQ SECTION */}
+      <Reveal className="mb-section-gap">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <p className="text-[11px] tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">
+              {language === 'en' ? 'Got Questions?' : 'জিজ্ঞাসা আছে?'}
+            </p>
+            <h2 className="text-2xl md:text-4xl font-bold text-deep-navy">
+              {language === 'en' ? 'Frequently Asked Questions' : 'সাধারণ জিজ্ঞাসা (FAQ)'}
+            </h2>
+            <p className="text-body-sm text-on-surface-variant mt-2">
+              {language === 'en'
+                ? "Everything you need to know about our products, delivery, and services."
+                : 'আমাদের পণ্য, ডেলিভারি এবং সার্ভিস সম্পর্কে সাধারণ প্রশ্নগুলোর উত্তর।'}
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div
+                  key={index}
+                  className={`bg-white rounded-2xl border transition-all duration-300 overflow-hidden ${
+                    isOpen
+                      ? 'border-[#0088FF] shadow-lg shadow-[#0088FF]/5'
+                      : 'border-outline-variant/30 hover:border-outline-variant/60 shadow-sm'
+                  }`}
+                >
+                  <button
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none group cursor-pointer"
+                  >
+                    <span className={`font-bold text-sm md:text-base transition-colors duration-200 ${
+                      isOpen ? 'text-[#0088FF]' : 'text-deep-navy group-hover:text-[#0088FF]'
+                    }`}>
+                      {language === 'en' ? faq.question.en : faq.question.bn}
+                    </span>
+                    <span className={`material-symbols-outlined transition-transform duration-300 text-deep-navy/40 ${
+                      isOpen ? 'rotate-180 text-[#0088FF]' : 'group-hover:text-deep-navy'
+                    }`}>
+                      keyboard_arrow_down
+                    </span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeInOut' }}
+                      >
+                        <div className="px-5 pb-5 md:px-6 md:pb-6 pt-0 text-sm md:text-body-md text-on-surface-variant leading-relaxed border-t border-dashed border-outline-variant/20">
+                          {language === 'en' ? faq.answer.en : faq.answer.bn}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </Reveal>
 

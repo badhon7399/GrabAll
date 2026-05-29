@@ -59,6 +59,16 @@ export const settingsSchema = z.object({
       name: z.string().min(1),
       image: z.string().url('Category image must be a valid URL'),
     })).optional(),
+    faqs: z.array(z.object({
+      question: z.object({
+        en: z.string().min(1, 'English question is required'),
+        bn: z.string().min(1, 'Bengali question is required'),
+      }),
+      answer: z.object({
+        en: z.string().min(1, 'English answer is required'),
+        bn: z.string().min(1, 'Bengali answer is required'),
+      }),
+    })).optional(),
   }),
 });
 

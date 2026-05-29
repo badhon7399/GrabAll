@@ -25,6 +25,10 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
         settings.promotions = (Settings.schema.path('promotions') as any).defaultValue();
         changed = true;
       }
+      if (!settings.faqs || settings.faqs.length === 0) {
+        settings.faqs = (Settings.schema.path('faqs') as any).defaultValue();
+        changed = true;
+      }
       if (changed) {
         await settings.save();
       }
@@ -45,7 +49,7 @@ router.put('/', protect, admin, validateRequest(settingsSchema), async (req: Aut
       settings = new Settings({});
     }
 
-    const { logo, banners, announcements, homepageSections, storeSettings, promos, promotions, categories } = req.body;
+    const { logo, banners, announcements, homepageSections, storeSettings, promos, promotions, categories, faqs } = req.body;
 
     if (logo !== undefined) settings.logo = logo;
     if (banners !== undefined) settings.banners = banners;
@@ -55,6 +59,7 @@ router.put('/', protect, admin, validateRequest(settingsSchema), async (req: Aut
     if (promos !== undefined) settings.promos = promos;
     if (promotions !== undefined) settings.promotions = promotions;
     if (categories !== undefined) settings.categories = categories;
+    if (faqs !== undefined) settings.faqs = faqs;
 
     const updatedSettings = await settings.save();
     
