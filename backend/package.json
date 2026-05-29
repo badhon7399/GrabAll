@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "seed": "ts-node src/seed.ts",
+    "setup-monitoring": "ts-node scripts/setup-monitoring.ts",
     "test": "vitest run src/tests"
   },
   "keywords": [],
