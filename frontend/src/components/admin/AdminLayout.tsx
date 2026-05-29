@@ -164,7 +164,11 @@ const MOCK_ORDERS: Order[] = [
 
 // ─── Custom Hook ──────────────────────────────────────────────────────────────
 
-function useAdminData(token: string | undefined, triggerToast: (msg: string) => void) {
+function useAdminData(
+  token: string | undefined,
+  fetchWithAuth: (url: string, options?: RequestInit) => Promise<Response>,
+  triggerToast: (msg: string) => void
+) {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -177,7 +181,7 @@ function useAdminData(token: string | undefined, triggerToast: (msg: string) => 
     try {
       const [prodRes, orderRes] = await Promise.all([
         fetch(`${API_BASE_URL}/products`),
-        fetch(`${API_BASE_URL}/orders`, {
+        fetchWithAuth(`${API_BASE_URL}/orders`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -198,7 +202,7 @@ function useAdminData(token: string | undefined, triggerToast: (msg: string) => 
     } finally {
       setLoading(false);
     }
-  }, [token, triggerToast]);
+  }, [token, fetchWithAuth, triggerToast]);
 
   useEffect(() => {
     fetchData();
@@ -224,7 +228,7 @@ const getAllowedNavItems = (role: string): AdminTab[] => {
 };
 
 export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayoutProps) {
-  const { user } = useAuth();
+  const { user, fetchWithAuth } = useAuth();
   const allowedTabs = getAllowedNavItems(user?.role || 'customer');
   
   const [activeTab, setActiveTab] = useState<AdminTab>(() => {
@@ -248,7 +252,11 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
     localStorage.setItem('adminTheme', nextTheme);
   };
 
-  const { products, setProducts, orders, setOrders, loading, isDemoMode, refresh } = useAdminData(user?.token, triggerToast);
+  const { products, setProducts, orders, setOrders, loading, isDemoMode, refresh } = useAdminData(
+    user?.token,
+    fetchWithAuth,
+    triggerToast
+  );
 
   const handleExit = () => setCurrentTab('home');
 
@@ -282,7 +290,7 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
       : `${API_BASE_URL}/products`;
 
     try {
-      const res = await fetch(url, {
+      const res = await fetchWithAuth(url, {
         method: isEdit ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -314,7 +322,7 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
     if (!user?.token) return;
 
     try {
-      const res = await fetch(`${API_BASE_URL}/products/${id}`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/products/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${user.token}` },
       });
@@ -348,7 +356,7 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
     if (!user?.token) return;
 
     try {
-      const res = await fetch(`${API_BASE_URL}/orders/${id}/status`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/orders/${id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -379,7 +387,7 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
     if (!user?.token) return;
 
     try {
-      const res = await fetch(`${API_BASE_URL}/orders/${id}`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/orders/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${user.token}` },
       });

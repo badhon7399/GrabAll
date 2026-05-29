@@ -19,7 +19,7 @@ const ROLES = [
 ] as const;
 
 export default function UsersTab({ triggerToast }: UsersTabProps) {
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, fetchWithAuth } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,7 +34,7 @@ export default function UsersTab({ triggerToast }: UsersTabProps) {
     if (!currentUser?.token) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/users`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/users`, {
         headers: { Authorization: `Bearer ${currentUser.token}` },
       });
       if (res.ok) {
@@ -53,7 +53,7 @@ export default function UsersTab({ triggerToast }: UsersTabProps) {
 
   useEffect(() => {
     fetchUsers();
-  }, [currentUser]);
+  }, [currentUser, fetchWithAuth]);
 
   // Set default selected role when opening role dialog
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function UsersTab({ triggerToast }: UsersTabProps) {
     if (!currentUser?.token) return;
     setActionPending(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/users/${targetUser._id}/role`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/users/${targetUser._id}/role`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export default function UsersTab({ triggerToast }: UsersTabProps) {
     if (!currentUser?.token) return;
     setActionPending(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/users/${targetUser._id}`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/users/${targetUser._id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${currentUser.token}` },
       });
