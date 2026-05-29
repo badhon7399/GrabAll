@@ -13,7 +13,7 @@ interface Banner {
 }
 
 export default function BannersTab({ triggerToast }: { triggerToast: (msg: string) => void }) {
-  const { user } = useAuth();
+  const { user, fetchWithAuth } = useAuth();
   const [logoUrl, setLogoUrl] = useState('https://raw.githubusercontent.com/shadcn.png');
   const [banners, setBanners] = useState<Banner[]>([]);
   
@@ -128,11 +128,10 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
           promo2: p2
         }
       };
-      const res = await fetch(`${API_BASE_URL}/settings`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${user?.token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -163,11 +162,8 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
 
     setPromo1Uploading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/upload`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/upload`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
         body: formData,
       });
 
@@ -192,11 +188,10 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
 
   const syncSettingsWithBackend = async (payload: any): Promise<boolean> => {
     try {
-      const res = await fetch(`${API_BASE_URL}/settings`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${user?.token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -296,11 +291,8 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
 
     setCatUploading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/upload`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/upload`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
         body: formData,
       });
 
@@ -437,11 +429,8 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
 
     setLogoUploading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/upload`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/upload`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
         body: formData,
       });
 
@@ -478,11 +467,8 @@ export default function BannersTab({ triggerToast }: { triggerToast: (msg: strin
 
     setBannerUploading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/upload`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/upload`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
         body: formData,
       });
 

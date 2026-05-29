@@ -87,7 +87,7 @@ export default function InventoryTab({
   categories,
   triggerToast,
 }: InventoryTabProps) {
-  const { user } = useAuth();
+  const { user, fetchWithAuth } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCatFilter, setSelectedCatFilter] = useState('All');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -125,11 +125,8 @@ export default function InventoryTab({
 
     setUploading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/upload`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/upload`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
         body: formData,
       });
 
@@ -168,11 +165,8 @@ export default function InventoryTab({
         const formData = new FormData();
         formData.append('image', file);
 
-        const res = await fetch(`${API_BASE_URL}/upload`, {
+        const res = await fetchWithAuth(`${API_BASE_URL}/upload`, {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
           body: formData,
         });
 
