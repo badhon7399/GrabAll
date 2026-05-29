@@ -86,12 +86,89 @@ function buildCategoryDistribution(products: Product[]): CategoryDataPoint[] {
   });
 }
 
+// ─── Mock Data for Offline Demo ───────────────────────────────────────────────
+
+const MOCK_PRODUCTS: Product[] = [
+  {
+    _id: 'mock-prod-1',
+    name: 'Interview Wireless Lavalier Microphone Handheld Adapter With Square Logo Box',
+    description: 'Elevate your interviews and reporting with this wireless lavalier adapter...',
+    image: 'https://images.unsplash.com/photo-1615247001958-f4bc92fa6a4a?auto=format&fit=crop&q=80&w=600',
+    originalPrice: 2200,
+    salePrice: 880,
+    category: 'Microphones',
+    stock: 15,
+    discountPercent: 60
+  },
+  {
+    _id: 'mock-prod-2',
+    name: 'Plokama WM1 Professional Interview Microphone Handle With Windproof Cover',
+    description: 'A premium handle adapter designed to transform wireless transmitter microphones into professional-style handheld interview mics...',
+    image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=600',
+    originalPrice: 1600,
+    salePrice: 820,
+    category: 'Microphones',
+    stock: 18,
+    discountPercent: 49
+  },
+  {
+    _id: 'mock-prod-3',
+    name: 'Plokama CX-60 Phone & Camera Neck Mount',
+    description: 'Silicone neck mount holder for hands-free POV vlogging.',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=600',
+    originalPrice: 2200,
+    salePrice: 1350,
+    category: 'Neck Mounts',
+    stock: 2,
+    discountPercent: 39
+  },
+  {
+    _id: 'mock-prod-4',
+    name: 'Hoco E101 Dual Anti-lost Device Tracker',
+    description: 'Dynamic device finder and tracking tag.',
+    image: 'https://images.unsplash.com/photo-1586015555751-63bb77f4322a?auto=format&fit=crop&q=80&w=600',
+    originalPrice: 1100,
+    salePrice: 800,
+    category: 'Smart Finder',
+    stock: 25,
+    discountPercent: 27
+  }
+];
+
+const MOCK_ORDERS: Order[] = [
+  {
+    _id: 'mock-ord-1',
+    orderItems: [
+      { product: 'mock-prod-1', name: 'Wireless Lavalier Microphone Handheld Adapter', qty: 1, price: 880, image: 'https://images.unsplash.com/photo-1615247001958-f4bc92fa6a4a?auto=format&fit=crop&q=80&w=600' }
+    ],
+    shippingAddress: 'Dhaka, Bangladesh',
+    totalAmount: 880,
+    paymentMethod: 'bKash',
+    paymentStatus: 'Paid',
+    orderStatus: 'Delivered',
+    createdAt: new Date().toISOString()
+  },
+  {
+    _id: 'mock-ord-2',
+    orderItems: [
+      { product: 'mock-prod-3', name: 'Plokama CX-60 Phone & Camera Neck Mount', qty: 2, price: 1350, image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=600' }
+    ],
+    shippingAddress: 'Chittagong, Bangladesh',
+    totalAmount: 2700,
+    paymentMethod: 'Cash On Delivery',
+    paymentStatus: 'Pending',
+    orderStatus: 'Processing',
+    createdAt: new Date().toISOString()
+  }
+];
+
 // ─── Custom Hook ──────────────────────────────────────────────────────────────
 
 function useAdminData(token: string | undefined, triggerToast: (msg: string) => void) {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDemoMode, setIsDemoMode] = useState(false);
 
   const fetchData = useCallback(async () => {
     if (!token) return;
@@ -105,11 +182,19 @@ function useAdminData(token: string | undefined, triggerToast: (msg: string) => 
         }),
       ]);
 
-      if (prodRes.ok) setProducts(await prodRes.json());
-      if (orderRes.ok) setOrders(await orderRes.json());
+      if (prodRes.ok && orderRes.ok) {
+        setProducts(await prodRes.json());
+        setOrders(await orderRes.json());
+        setIsDemoMode(false);
+      } else {
+        throw new Error('API response error');
+      }
     } catch (error) {
-      console.error('[AdminLayout] Data fetch failed:', error);
-      triggerToast('Failed to sync data. Please check your connection.');
+      console.warn('[AdminLayout] Data fetch failed, entering Demo Mode:', error);
+      setProducts(MOCK_PRODUCTS);
+      setOrders(MOCK_ORDERS);
+      setIsDemoMode(true);
+      triggerToast('Demonstration Mode: Using seeded mock database');
     } finally {
       setLoading(false);
     }
@@ -119,7 +204,7 @@ function useAdminData(token: string | undefined, triggerToast: (msg: string) => 
     fetchData();
   }, [fetchData]);
 
-  return { products, orders, loading, refresh: fetchData };
+  return { products, setProducts, orders, setOrders, loading, isDemoMode, refresh: fetchData };
 }
 
 const getAllowedNavItems = (role: string): AdminTab[] => {
@@ -163,16 +248,35 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
     localStorage.setItem('adminTheme', nextTheme);
   };
 
-  const { products, orders, loading, refresh } = useAdminData(user?.token, triggerToast);
+  const { products, setProducts, orders, setOrders, loading, isDemoMode, refresh } = useAdminData(user?.token, triggerToast);
 
   const handleExit = () => setCurrentTab('home');
 
   // ── Product Handlers ──────────────────────────────────────────────────────
 
   const handleSaveProduct = async (payload: Partial<Product>) => {
-    if (!user?.token) return;
-
     const isEdit = Boolean(payload._id);
+    
+    if (isDemoMode) {
+      if (isEdit) {
+        setProducts(prev => prev.map(p => p._id === payload._id ? { ...p, ...payload } : p));
+        triggerToast('Demo: Product updated successfully.');
+      } else {
+        const newProd = {
+          ...payload,
+          _id: `mock-prod-${Date.now()}`,
+          originalPrice: payload.originalPrice || 0,
+          salePrice: payload.salePrice || 0,
+          stock: payload.stock || 0,
+          discountPercent: payload.discountPercent || 0,
+        } as Product;
+        setProducts(prev => [newProd, ...prev]);
+        triggerToast('Demo: Product created successfully.');
+      }
+      return;
+    }
+
+    if (!user?.token) return;
     const url = isEdit
       ? `${API_BASE_URL}/products/${payload._id}`
       : `${API_BASE_URL}/products`;
@@ -201,6 +305,12 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
   };
 
   const handleDeleteProduct = async (id: string) => {
+    if (isDemoMode) {
+      setProducts(prev => prev.filter(p => p._id !== id));
+      triggerToast('Demo: Product removed.');
+      return;
+    }
+
     if (!user?.token) return;
 
     try {
@@ -224,12 +334,18 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
   // ── Order Handlers ────────────────────────────────────────────────────────
 
   const handleUpdateOrderStatus = async (id: string, updates: OrderStatusUpdate) => {
-    if (!user?.token) return;
-
     const payload = {
       ...(updates.status && { orderStatus: updates.status }),
       ...(updates.paymentStatus && { paymentStatus: updates.paymentStatus }),
     };
+
+    if (isDemoMode) {
+      setOrders(prev => prev.map(o => o._id === id ? { ...o, ...payload } : o));
+      triggerToast('Demo: Order status updated.');
+      return;
+    }
+
+    if (!user?.token) return;
 
     try {
       const res = await fetch(`${API_BASE_URL}/orders/${id}/status`, {
@@ -254,6 +370,12 @@ export default function AdminLayout({ setCurrentTab, triggerToast }: AdminLayout
   };
 
   const handleDeleteOrder = async (id: string) => {
+    if (isDemoMode) {
+      setOrders(prev => prev.filter(o => o._id !== id));
+      triggerToast('Demo: Order deleted.');
+      return;
+    }
+
     if (!user?.token) return;
 
     try {
