@@ -674,7 +674,8 @@ export default function HomeView({
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.05, duration: 0.35 }}
-                        className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] md:text-[11px] font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white px-2.5 py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 rounded-full uppercase tracking-widest mb-2 sm:mb-3 md:mb-6"
+                        className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] md:text-[11px] font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white px-2.5 py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 rounded-full uppercase tracking-widest mb-2 sm:mb-3 md:mb-6 transform-gpu"
+                        style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
                       >
                         <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#0088FF] animate-pulse" />
                         {slides[currentSlide].badge[language] || slides[currentSlide].badge['en']}
@@ -684,7 +685,8 @@ export default function HomeView({
                         initial={{ opacity: 0, y: 25 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1, duration: 0.45 }}
-                        className="text-base sm:text-2xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-2 sm:mb-3 md:mb-6 leading-[1.15] md:leading-[1.05] tracking-tight text-white drop-shadow-sm"
+                        className="text-base sm:text-2xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-2 sm:mb-3 md:mb-4 leading-snug md:leading-snug tracking-tight text-white drop-shadow-sm py-2 transform-gpu"
+                        style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
                       >
                         {slides[currentSlide].title[language] || slides[currentSlide].title['en']}
                       </motion.h1>
@@ -693,7 +695,8 @@ export default function HomeView({
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.15, duration: 0.35 }}
-                        className="text-[10px] sm:text-sm md:text-lg font-body-lg text-white/85 mb-3 sm:mb-4 md:mb-8 max-w-xl leading-relaxed line-clamp-2 sm:line-clamp-none"
+                        className="text-[10px] sm:text-sm md:text-lg font-body-lg text-white/85 mb-3 sm:mb-4 md:mb-8 max-w-xl leading-relaxed line-clamp-2 sm:line-clamp-none transform-gpu"
+                        style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
                       >
                         {slides[currentSlide].desc[language] || slides[currentSlide].desc['en']}
                       </motion.p>
@@ -707,7 +710,8 @@ export default function HomeView({
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={slides[currentSlide].action}
-                            className="relative inline-flex items-center justify-center px-3 py-1 sm:px-8 sm:py-3 md:px-10 md:py-4 bg-white text-deep-navy text-[8px] sm:text-sm md:text-label-md font-bold rounded-full overflow-hidden hover:bg-[#0088FF] hover:text-white transition-colors duration-300 shadow-xl shadow-black/20 group cursor-pointer"
+                            className="relative inline-flex items-center justify-center px-3 py-1 sm:px-8 sm:py-3 md:px-10 md:py-4 bg-white text-deep-navy text-[8px] sm:text-sm md:text-label-md font-bold rounded-full overflow-hidden hover:bg-[#0088FF] hover:text-white transition-colors duration-300 shadow-xl shadow-black/20 group cursor-pointer transform-gpu"
+                            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
                           >
                             <span className="relative z-10 flex items-center gap-1 sm:gap-2">
                               {slides[currentSlide].cta[language] || slides[currentSlide].cta['en']}
