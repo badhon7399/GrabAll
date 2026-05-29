@@ -4,6 +4,7 @@ import { Product } from './models/Product';
 import { User } from './models/User';
 import { Order } from './models/Order';
 import { PromoCode } from './models/PromoCode';
+import Settings from './models/Settings';
 import bcrypt from 'bcryptjs';
 
 dotenv.config();
@@ -14,7 +15,7 @@ const productsData = [
   {
     name: 'Interview Wireless Lavalier Microphone Handheld Adapter With Square Logo Box',
     description: 'Elevate your interviews and reporting with this high-quality wireless lavalier microphone handheld adapter. Complete with a professional square logo box, it gives you that broadcast look and feel while delivering crystal clear audio. Perfect for content creators, journalists, and vloggers.',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0uhn-7BlnYd_HxYdNbGTRQ8kNXSuLn3380fB5jXEnCbUIRv0jqKiK8uM_XohBTv-sqBtuDUb4EytgJVxgscreWt049uazdfgN0mEQmJXjx72OVrmoYaWXfo4VnwzXN-yjJH1WVQlSF8tolcWioyLmH6oaaBE1PX8AUFTG1gYc-ZKWRWrQ7iO7ZgaxBJVCDC3gbS4sJ9YwblNPKZg4bT8SiPsVI9IGWdvlH8u5YgIQo-9wRZvy3WtksCAXBU',
+    image: 'https://images.unsplash.com/photo-1615247001958-f4bc92fa6a4a?auto=format&fit=crop&q=80&w=600',
     originalPrice: 2200,
     salePrice: 880,
     category: 'Microphones',
@@ -24,7 +25,7 @@ const productsData = [
   {
     name: 'Plokama WM1 Professional Interview Microphone Handle With Windproof Cover',
     description: 'A premium handle adapter designed to transform your small wireless transmitter microphones into professional-style handheld interview mics. Sturdy construction, comfortable grip, and perfect ergonomics for long reporting sessions. Comes with a high-density windproof cover to reduce environmental noise.',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0uj7Wk7gSp6Y1zL4enyREzLnGln9Ervec5tjWZTHGbvNQTctmKcxOLkFqhvT5ZxHk1WigDLmxqXIFC_edcZhmCXXpdml99h9zzSTjrFrshL7cb8hn4Ro3X1-gVTrND6ChFEhdDhYypvZmuEUSXc4DuzhDv8YcVRAH5RClY8ByklRCjvV1yRTB5zge1PatEmDMAbofIZcsYBA1JpdP8muUQhm5i1ENgUrGVha3MPXcHtuXFaC7Lu1NZKQ2w',
+    image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=600',
     originalPrice: 1600,
     salePrice: 820,
     category: 'Microphones',
@@ -34,7 +35,7 @@ const productsData = [
   {
     name: 'Plokama CX-60 Phone & Camera Neck Mount – Flexible Hands-Free Silicone Bracket',
     description: 'The Plokama CX-60 neck mount offers creators a flexible, hands-free solution for capturing stunning POV content. Crafted from high-grade, durable silicone, it comfortably supports phones and light cameras, making it perfect for cooking, vlogging, crafting, and travel videos.',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0ug3BvwHdNJpg0k5QilL9db21Rr5OHwF7sdxIREtCLBGgxpzQwsIg3M4KTV5VLAvAO1iWZQO2eYETq-pg0jqlQLrZ7PQN_UpAKXt6G-0dLmEexf44ukv-YugWc6Ugy-GCEVhMurD3bxkAO8V-veojesAI1CPuYyqXHTZjo_hsbtrEF-8Q6T7qEm56ZBgdLyvBrNeuQaq3s-ex0mCJibGE1HfwrNOnx6-q2JAnYJ4Y6xCzzBXi99zUfvsdQ',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=600',
     originalPrice: 2200,
     salePrice: 1350,
     category: 'Neck Mounts',
@@ -44,7 +45,7 @@ const productsData = [
   {
     name: 'Hoco E101 Dual Anti-lost Device Tracker (Android & iOS Support)',
     description: 'Never lose your valuable items again with the Hoco E101 Dual Anti-lost Tracker. Compatible with both Android and iOS devices, this sleek smart tag easily attaches to keys, bags, and wallets, offering seamless Bluetooth tracking and loud buzzer notifications.',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0ugfHgRuLAXwqOfX_ydg5ntVvERQHJs1CLXf0hdHDS1qkGOCpTa3t6akPPTIj71zy_U1hL9tTyyQJxbBb6VHqo3U8HEATkA2RVbRXolEga84K9G05pgMKIcRvFVNLxbxEvOTASvuxI4bo5faXMfm8jov28s_X5LzBOMGFO-BrGnWXnwyDNjcnJxAfo_MtGDtPSfRCj_ZG245HaY03GS-pP_9PMfJuhVmZf2OhiIIuMneRBcKRrwjZ0PTnw',
+    image: 'https://images.unsplash.com/photo-1586015555751-63bb77f4322a?auto=format&fit=crop&q=80&w=600',
     originalPrice: 1100,
     salePrice: 800,
     category: 'Smart Finder',
@@ -74,7 +75,7 @@ const productsData = [
   {
     name: 'SmarToools RB20 AAA 1.5V 750 MWh Rechargeable Battery (2 Pcs Set)',
     description: 'High capacity AAA rechargeable cells equipped with direct USB charging convenience. Boasts a stable 1.5V output, over 1000 recharge cycles, and dynamic LED power level indicator. Perfect for high-drain remote control, toys, and audio equipment.',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0ugxbLK_7ectLvCZWoA_i0uDJb8SIRmjBCMFmrs4yxf-oNiVHRXoiN7JG7f_2sg9Of18_gw23_XY4NEv07ItPKt5Lt8Qiwc3O50JA2cq2zVFyi-K1VGOSsDs20L0G5ZlcHZHdjrGRR1ALeib4B4SZsHgvZkteSrt-oRF9poe7caPp5E8vWlKG8Fi0JBVBKKOsZ-ZQ-LmPrfxvgRkkUYi4Kgcqq1GJCW4f5hdlkLLjfBxUeidUhm3NGzH5qI',
+    image: 'https://images.unsplash.com/photo-1548345680-f5475ea5df84?auto=format&fit=crop&q=80&w=600',
     originalPrice: 700,
     salePrice: 500,
     category: 'Power Banks',
@@ -84,7 +85,7 @@ const productsData = [
   {
     name: 'SmarToools RB20 AA 1.5V 2600mWh Rechargeable Battery ( 2 Pcs Set )',
     description: 'Direct-charging AA lithium-ion batteries featuring a large 2600mWh power capacity. USB-rechargeable with indicator lights, ideal for flashlights, wireless keyboards, cameras, and game controllers.',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0ugxbLK_7ectLvCZWoA_i0uDJb8SIRmjBCMFmrs4yxf-oNiVHRXoiN7JG7f_2sg9Of18_gw23_XY4NEv07ItPKt5Lt8Qiwc3O50JA2cq2zVFyi-K1VGOSsDs20L0G5ZlcHZHdjrGRR1ALeib4B4SZsHgvZkteSrt-oRF9poe7caPp5E8vWlKG8Fi0JBVBKKOsZ-ZQ-LmPrfxvgRkkUYi4Kgcqq1GJCW4f5hdlkLLjfBxUeidUhm3NGzH5qI',
+    image: 'https://images.unsplash.com/photo-1548345680-f5475ea5df84?auto=format&fit=crop&q=80&w=600',
     originalPrice: 800,
     salePrice: 600,
     category: 'Power Banks',
@@ -104,7 +105,7 @@ const productsData = [
   {
     name: 'Wireless Microphone Holder For Interview (Microphone Not Included)',
     description: 'Turn your wireless lavalier transmitters (compatible with Rode, DJI, Boya, and others) into handheld microphones instantly. A lightweight plastic construction with molded microphone grid that gives you a professional look in vlogs or street interviews.',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0uj7Wk7gSp6Y1zL4enyREzLnGln9Ervec5tjWZTHGbvNQTctmKcxOLkFqhvT5ZxHk1WigDLmxqXIFC_edcZhmCXXpdml99h9zzSTjrFrshL7cb8hn4Ro3X1-gVTrND6ChFEhdDhYypvZmuEUSXc4DuzhDv8YcVRAH5RClY8ByklRCjvV1yRTB5zge1PatEmDMAbofIZcsYBA1JpdP8muUQhm5i1ENgUrGVha3MPXcHtuXFaC7Lu1NZKQ2w',
+    image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd6a?auto=format&fit=crop&q=80&w=600',
     originalPrice: 1200,
     salePrice: 690,
     category: 'Microphones',
@@ -124,7 +125,7 @@ const productsData = [
   {
     name: '360° Adjustable Neck Holder Mount – Hands-Free Vlogging Stand With Safety Belt',
     description: 'Secure, lightweight first-person POV mount for capturing active content. Perfect for biking, hiking, or hands-free cooking streams. Comes with an elastic chest safety harness/belt to prevent sudden device drops or shifts.',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0ug3BvwHdNJpg0k5QilL9db21Rr5OHwF7sdxIREtCLBGgxpzQwsIg3M4KTV5VLAvAO1iWZQO2eYETq-pg0jqlQLrZ7PQN_UpAKXt6G-0dLmEexf44ukv-YugWc6Ugy-GCEVhMurD3bxkAO8V-veojesAI1CPuYyqXHTZjo_hsbtrEF-8Q6T7qEm56ZBgdLyvBrNeuQaq3s-ex0mCJibGE1HfwrNOnx6-q2JAnYJ4Y6xCzzBXi99zUfvsdQ',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=600',
     originalPrice: 1200,
     salePrice: 790,
     category: 'Neck Mounts',
@@ -134,7 +135,7 @@ const productsData = [
   {
     name: 'PLOKAMA CX-10 Chest Mount Phone Holder',
     description: 'Stabilize your POV action recordings with the PLOKAMA CX-10 chest harness. Soft elastic straps adapt comfortably around your shoulders and torso. Perfect for action vlogging, riding, cooking, and hiking videos.',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0ug3BvwHdNJpg0k5QilL9db21Rr5OHwF7sdxIREtCLBGgxpzQwsIg3M4KTV5VLAvAO1iWZQO2eYETq-pg0jqlQLrZ7PQN_UpAKXt6G-0dLmEexf44ukv-YugWc6Ugy-GCEVhMurD3bxkAO8V-veojesAI1CPuYyqXHTZjo_hsbtrEF-8Q6T7qEm56ZBgdLyvBrNeuQaq3s-ex0mCJibGE1HfwrNOnx6-q2JAnYJ4Y6xCzzBXi99zUfvsdQ',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=600',
     originalPrice: 1200,
     salePrice: 700,
     category: 'Neck Mounts',
@@ -144,7 +145,7 @@ const productsData = [
   {
     name: 'Neepho NP-G2 Neck Mount Holder – Hands-Free Mobile & Camera Vlogging Stand',
     description: 'Durable and highly flexible neck bracket for mobile phones and GoPro-style cameras. Fully adjustable 360-degree rotation enables vertical or horizontal POV filming. Ergonomic silicone collar reduces neck strain during long shoots.',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0ug3BvwHdNJpg0k5QilL9db21Rr5OHwF7sdxIREtCLBGgxpzQwsIg3M4KTV5VLAvAO1iWZQO2eYETq-pg0jqlQLrZ7PQN_UpAKXt6G-0dLmEexf44ukv-YugWc6Ugy-GCEVhMurD3bxkAO8V-veojesAI1CPuYyqXHTZjo_hsbtrEF-8Q6T7qEm56ZBgdLyvBrNeuQaq3s-ex0mCJibGE1HfwrNOnx6-q2JAnYJ4Y6xCzzBXi99zUfvsdQ',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=600',
     originalPrice: 2200,
     salePrice: 1350,
     category: 'Neck Mounts',
@@ -154,7 +155,7 @@ const productsData = [
   {
     name: 'Original Neepho NP-G1 Neck Mount Holder – Hands-Free Mobile & Camera Vlogging Stand',
     description: 'The classic G1 neck mount stand designed with secure snap locking and a flexible silicone band. Universal smartphone compatibility with adjustable swivel. Capture immersive POV video and audio hands-free.',
-    image: 'https://lh3.googleusercontent.com/aida/ADBb0ug3BvwHdNJpg0k5QilL9db21Rr5OHwF7sdxIREtCLBGgxpzQwsIg3M4KTV5VLAvAO1iWZQO2eYETq-pg0jqlQLrZ7PQN_UpAKXt6G-0dLmEexf44ukv-YugWc6Ugy-GCEVhMurD3bxkAO8V-veojesAI1CPuYyqXHTZjo_hsbtrEF-8Q6T7qEm56ZBgdLyvBrNeuQaq3s-ex0mCJibGE1HfwrNOnx6-q2JAnYJ4Y6xCzzBXi99zUfvsdQ',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=600',
     originalPrice: 2200,
     salePrice: 1350,
     category: 'Neck Mounts',
@@ -318,6 +319,11 @@ const seedDatabase = async () => {
       { code: 'WELCOME10', discount: 10, isActive: true }
     ]);
     console.log('Seed: Successfully seeded default promo codes (SAVE20, WELCOME10)');
+
+    // Clear and seed default Settings
+    await Settings.deleteMany({});
+    await Settings.create({});
+    console.log('Seed: Cleared and re-created default storefront settings');
 
     process.exit(0);
   } catch (error) {

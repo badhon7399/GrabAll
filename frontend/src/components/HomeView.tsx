@@ -357,7 +357,7 @@ export default function HomeView({
         },
         cta: { en: 'Explore the Collection', bn: 'কালেকশন দেখুন' },
         image:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuCY37WKUTotREi9Y4lM4ZGVUUZo2WiuuCZ6ke-4zgcF84xfzHSpgg6pt4SVlkQw-5XbVVvxuiGXnP94C5vi1WiqJ3fHBh6iU9as_d6qReeIdsDsxsLpwfUvOTyC852P-EBYgu53uLvrS6dyl3GLLzS0m9vuoHQgdCq34op6CnuL1ISClKzpwYjiW51BRf0IUoZEpO0_vQ42-6R_U4catOsRi903GUeQMOPJFhdMSmC8PBLXs6wbCusAyGv1DecEKu3REbUWGi7sbYE',
+          'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&q=80&w=1200',
         action: () => {
           setSelectedCategory('All');
           setSortFilter('none');
@@ -374,7 +374,7 @@ export default function HomeView({
         },
         cta: { en: 'Shop Neck Mounts', bn: 'নেক মাউন্টস দেখুন' },
         image:
-          'https://lh3.googleusercontent.com/aida/ADBb0ugxbLK_7ectLvCZWoA_i0uDJb8SIRmjBCMFmrs4yxf-oNiVHRXoiN7JG7f_2sg9Of18_gw23_XY4NEv07ItPKt5Lt8Qiwc3O50JA2cq2zVFyi-K1VGOSsDs20L0G5ZlcHZHdjrGRR1ALeib4B4SZsHgvZkteSrt-oRF9poe7caPp5E8vWlKG8Fi0JBVBKKOsZ-ZQ-LmPrfxvgRkkUYi4Kgcqq1GJCW4f5hdlkLLjfBxUeidUhm3NGzH5qI',
+          'https://images.unsplash.com/photo-1500485035595-cbe6f645feb1?auto=format&fit=crop&q=80&w=1200',
         action: () => {
           setSelectedCategory('Neck Mounts');
           setSortFilter('none');
@@ -391,7 +391,7 @@ export default function HomeView({
         },
         cta: { en: 'Explore Microphones', bn: 'মাইক্রোফোন দেখুন' },
         image:
-          'https://lh3.googleusercontent.com/aida/ADBb0uj7Wk7gSp6Y1zL4enyREzLnGln9Ervec5tjWZTHGbvNQTctmKcxOLkFqhvT5ZxHk1WigDLmxqXIFC_edcZhmCXXpdml99h9zzSTjrFrshL7cb8hn4Ro3X1-gVTrND6ChFEhdDhYypvZmuEUSXc4DuzhDv8YcVRAH5RClY8ByklRCjvV1yRTB5zge1PatEmDMAbofIZcsYBA1JpdP8muUQhm5i1ENgUrGVha3MPXcHtuXFaC7Lu1NZKQ2w',
+          'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?auto=format&fit=crop&q=80&w=1200',
         action: () => {
           setSelectedCategory('Microphones');
           setSortFilter('none');
@@ -473,10 +473,10 @@ export default function HomeView({
   /* -------------------- Derived product lists --------------------- */
   const defaultCategories = useMemo(() => [
     { name: 'Content Gear', image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&q=80&w=600' },
-    { name: 'Microphones', image: 'https://lh3.googleusercontent.com/aida/ADBb0uj7Wk7gSp6Y1zL4enyREzLnGln9Ervec5tjWZTHGbvNQTctmKcxOLkFqhvT5ZxHk1WigDLmxqXIFC_edcZhmCXXpdml99h9zzSTjrFrshL7cb8hn4Ro3X1-gVTrND6ChFEhdDhYypvZmuEUSXc4DuzhDv8YcVRAH5RClY8ByklRCjvV1yRTB5zge1PatEmDMAbofIZcsYBA1JpdP8muUQhm5i1ENgUrGVha3MPXcHtuXFaC7Lu1NZKQ2w' },
-    { name: 'Power Banks', image: 'https://lh3.googleusercontent.com/aida/ADBb0ugxbLK_7ectLvCZWoA_i0uDJb8SIRmjBCMFmrs4yxf-oNiVHRXoiN7JG7f_2sg9Of18_gw23_XY4NEv07ItPKt5Lt8Qiwc3O50JA2cq2zVFyi-K1VGOSsDs20L0G5ZlcHZHdjrGRR1ALeib4B4SZsHgvZkteSrt-oRF9poe7caPp5E8vWlKG8Fi0JBVBKKOsZ-ZQ-LmPrfxvgRkkUYi4Kgcqq1GJCW4f5hdlkLLjfBxUeidUhm3NGzH5qI' },
-    { name: 'Neck Mounts', image: 'https://lh3.googleusercontent.com/aida/ADBb0ug3BvwHdNJpg0k5QilL9db21Rr5OHwF7sdxIREtCLBGgxpzQwsIg3M4KTV5VLAvAO1iWZQO2eYETq-pg0jqlQLrZ7PQN_UpAKXt6G-0dLmEexf44ukv-YugWc6Ugy-GCEVhMurD3bxkAO8V-veojesAI1CPuYyqXHTZjo_hsbtrEF-8Q6T7qEm56ZBgdLyvBrNeuQaq3s-ex0mCJibGE1HfwrNOnx6-q2JAnYJ4Y6xCzzBXi99zUfvsdQ' },
-    { name: 'Smart Finder', image: 'https://lh3.googleusercontent.com/aida/ADBb0ugfHgRuLAXwqOfX_ydg5ntVvERQHJs1CLXf0hdHDS1qkGOCpTa3t6akPPTIj71zy_U1hL9tTyyQJxbBb6VHqo3U8HEATkA2RVbRXolEga84K9G05pgMKIcRvFVNLxbxEvOTASvuxI4bo5faXMfm8jov28s_X5LzBOMGFO-BrGnWXnwyDNjcnJxAfo_MtGDtPSfRCj_ZG245HaY03GS-pP_9PMfJuhVmZf2OhiIIuMneRBcKRrwjZ0PTnw' },
+    { name: 'Microphones', image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=600' },
+    { name: 'Power Banks', image: 'https://images.unsplash.com/photo-1609592424109-dd9892f1b17c?auto=format&fit=crop&q=80&w=600' },
+    { name: 'Neck Mounts', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=600' },
+    { name: 'Smart Finder', image: 'https://images.unsplash.com/photo-1586015555751-63bb77f4322a?auto=format&fit=crop&q=80&w=600' },
     { name: 'Daily Deals', image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&q=80&w=600' },
   ], []);
 
