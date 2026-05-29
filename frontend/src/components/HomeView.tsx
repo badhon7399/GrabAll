@@ -670,36 +670,18 @@ export default function HomeView({
 
                   <div className="absolute inset-0 flex items-center px-6 sm:px-12 md:px-16 lg:px-24">
                     <div className="max-w-2xl text-white">
-                      <motion.span
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.05, duration: 0.35 }}
-                        className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] md:text-[11px] font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white px-2.5 py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 rounded-full uppercase tracking-widest mb-2 sm:mb-3 md:mb-6 transform-gpu"
-                        style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
-                      >
+                      <span className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] md:text-[11px] font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white px-2.5 py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 rounded-full uppercase tracking-widest mb-2 sm:mb-3 md:mb-6">
                         <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#0088FF] animate-pulse" />
                         {slides[currentSlide].badge[language] || slides[currentSlide].badge['en']}
-                      </motion.span>
+                      </span>
 
-                      <motion.h1
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1, duration: 0.45 }}
-                        className="text-base sm:text-2xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-2 sm:mb-3 md:mb-6 leading-[1.15] md:leading-[1.05] tracking-tight text-white drop-shadow-sm pt-2 pb-1 transform-gpu"
-                        style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
-                      >
+                      <h1 className="text-base sm:text-2xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-2 sm:mb-3 md:mb-6 leading-[1.15] md:leading-[1.05] tracking-tight text-white drop-shadow-sm pt-2 pb-1">
                         {slides[currentSlide].title[language] || slides[currentSlide].title['en']}
-                      </motion.h1>
+                      </h1>
 
-                      <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.15, duration: 0.35 }}
-                        className="text-[10px] sm:text-sm md:text-lg font-body-lg text-white/85 mb-3 sm:mb-4 md:mb-8 max-w-xl leading-relaxed line-clamp-2 sm:line-clamp-none transform-gpu"
-                        style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
-                      >
+                      <p className="text-[10px] sm:text-sm md:text-lg font-body-lg text-white/85 mb-3 sm:mb-4 md:mb-8 max-w-xl leading-relaxed line-clamp-2 sm:line-clamp-none">
                         {slides[currentSlide].desc[language] || slides[currentSlide].desc['en']}
-                      </motion.p>
+                      </p>
 
                       <div className="flex items-center gap-2 sm:gap-4">
                         <MagneticWrap>
