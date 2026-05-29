@@ -142,7 +142,7 @@ export default function ProductDetailsView({
   const galleryImages = [product.image, ...(product.images || [])];
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 md:space-y-12">
       {/* JSON-LD Structured Data */}
       <script type="application/ld+json">
         {JSON.stringify({
@@ -195,7 +195,7 @@ export default function ProductDetailsView({
       </script>
 
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs font-semibold text-on-surface-variant/80 border-b border-outline-variant/30 pb-4">
+      <div className="flex items-center gap-1.5 md:gap-2 text-[11px] md:text-xs font-semibold text-on-surface-variant/80 border-b border-outline-variant/30 pb-3 md:pb-4 overflow-hidden">
         <button onClick={() => setCurrentTab('home')} className="hover:text-[#0088FF] transition-all">{t('nav.home')}</button>
         <span className="material-symbols-outlined text-[14px]">chevron_right</span>
         <button onClick={() => setCurrentTab('shop')} className="hover:text-[#0088FF] transition-all">{t('nav.shop')}</button>
@@ -204,10 +204,10 @@ export default function ProductDetailsView({
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-12">
         {/* Left column: Image Gallery */}
-        <div className="lg:col-span-6 space-y-4">
-          <div className="relative aspect-square w-full rounded-2xl bg-white border border-outline-variant/40 overflow-hidden shadow-sm group">
+        <div className="lg:col-span-6 space-y-3 md:space-y-4">
+          <div className="relative aspect-[1/1] w-full rounded-2xl bg-white border border-outline-variant/40 overflow-hidden shadow-sm group">
             <img
               src={getOptimizedImageUrl(selectedImage, 800)}
               alt={product.name}
@@ -216,20 +216,33 @@ export default function ProductDetailsView({
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             {discountPercent > 0 && (
-              <span className="absolute top-4 left-4 bg-sale-red text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md animate-pulse z-10">
+              <span className="absolute top-3 left-3 md:top-4 md:left-4 bg-sale-red text-white text-[10px] md:text-xs font-bold px-2.5 md:px-3 py-1 md:py-1.5 rounded-full shadow-md animate-pulse z-10">
                 {language === 'en' ? 'SAVE' : 'সাশ্রয়'} {discountPercent}%
               </span>
             )}
+            <button
+              onClick={() => onToggleWishlist(product)}
+              className={`absolute top-3 right-3 md:hidden w-10 h-10 border rounded-full backdrop-blur-md flex items-center justify-center transition-all ${
+                isInWishlist
+                  ? 'border-[#FF4B7E]/30 bg-[#FF4B7E]/10 text-[#FF4B7E]'
+                  : 'border-white/60 bg-white/80 text-on-surface-variant'
+              }`}
+              aria-label={language === 'en' ? 'Add to Wishlist' : 'উইশলিস্টে যুক্ত করুন'}
+            >
+              <span className={`material-symbols-outlined text-[20px] ${isInWishlist ? 'fill-1' : ''}`}>
+                favorite
+              </span>
+            </button>
           </div>
 
           {/* Secondary Thumbnail Row */}
           {galleryImages.length > 1 && (
-            <div className="flex gap-2.5 overflow-x-auto pb-1 select-none scrollbar-thin scrollbar-thumb-white/10">
+            <div className="flex gap-2 overflow-x-auto pb-1 select-none scrollbar-thin scrollbar-thumb-white/10">
               {galleryImages.map((imgUrl, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(imgUrl)}
-                  className={`relative w-20 h-20 rounded-xl overflow-hidden bg-white border-2 transition-all flex-shrink-0 ${
+                  className={`relative w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden bg-white border-2 transition-all flex-shrink-0 ${
                     selectedImage === imgUrl ? 'border-[#0088FF] shadow-sm scale-[0.98]' : 'border-outline-variant/40 hover:border-[#0088FF]/50'
                   }`}
                 >
@@ -247,17 +260,17 @@ export default function ProductDetailsView({
         </div>
 
         {/* Right column: Purchase & Specs */}
-        <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
+        <div className="lg:col-span-6 flex flex-col justify-between space-y-5 md:space-y-6">
           <div>
-            <span className="text-[11px] font-bold bg-[#0088FF]/10 text-[#0088FF] px-3.5 py-1.5 rounded-full uppercase tracking-wider">
+            <span className="text-[10px] md:text-[11px] font-bold bg-[#0088FF]/10 text-[#0088FF] px-3.5 py-1.5 rounded-full uppercase tracking-wider">
               {getCategoryName(product.category)}
             </span>
-            <h1 className="text-2xl md:text-3xl font-display-md font-bold text-deep-navy mt-4 leading-snug">
+            <h1 className="text-[1.55rem] md:text-3xl font-display-md font-bold text-deep-navy mt-3 md:mt-4 leading-tight md:leading-snug">
               {product.name}
             </h1>
 
             {/* Rating Stars */}
-            <div className="flex items-center gap-1.5 mt-3">
+            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 mt-3">
               <div className="flex text-gold-accent">
                 {[1, 2, 3, 4, 5].map((s) => (
                   <span key={s} className="material-symbols-outlined fill-1 text-[18px]">
@@ -265,7 +278,7 @@ export default function ProductDetailsView({
                   </span>
                 ))}
               </div>
-              <span className="text-xs font-bold text-on-surface-variant">
+              <span className="text-[11px] md:text-xs font-bold text-on-surface-variant">
                 {language === 'en' 
                   ? `(${localReviews.length} Verified Reviews)` 
                   : `(${localReviews.length} টি ভেরিফাইড রিভিউ)`}
@@ -273,16 +286,16 @@ export default function ProductDetailsView({
             </div>
 
             {/* Pricing Section */}
-            <div className="flex items-baseline gap-4 mt-6 py-4 px-5 bg-surface-container-low rounded-2xl border border-outline-variant/20">
-              <span className="text-3xl font-extrabold text-[#0088FF]">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mt-5 md:mt-6 py-3.5 md:py-4 px-4 md:px-5 bg-surface-container-low rounded-2xl border border-outline-variant/20">
+              <span className="text-2xl md:text-3xl font-extrabold text-[#0088FF]">
                 ৳ {product.salePrice.toLocaleString()}
               </span>
               {product.originalPrice > product.salePrice && (
                 <>
-                  <span className="text-lg text-outline line-through">
+                  <span className="text-sm md:text-lg text-outline line-through">
                     ৳ {product.originalPrice.toLocaleString()}
                   </span>
-                  <span className="text-xs font-bold text-sale-red">
+                  <span className="basis-full text-[11px] md:text-xs font-bold text-sale-red">
                     {language === 'en' 
                       ? `You save ৳ ${(product.originalPrice - product.salePrice).toLocaleString()}` 
                       : `আপনি সাশ্রয় করছেন ৳ ${(product.originalPrice - product.salePrice).toLocaleString()}`}
@@ -292,7 +305,7 @@ export default function ProductDetailsView({
             </div>
 
             {/* Stock Count bar */}
-            <div className="mt-6 space-y-1.5">
+            <div className="mt-5 md:mt-6 space-y-1.5">
               <div className="flex justify-between text-xs font-bold">
                 <span className="text-[#0088FF]">{language === 'en' ? 'In Stock' : 'স্টকে আছে'}</span>
                 <span className="text-on-surface-variant">
@@ -307,27 +320,27 @@ export default function ProductDetailsView({
               </div>
             </div>
 
-            <p className="text-sm text-on-surface-variant leading-relaxed mt-6">
+            <p className="text-sm text-on-surface-variant leading-relaxed mt-5 md:mt-6">
               {product.description}
             </p>
           </div>
 
           {/* User actions */}
-          <div className="border-t border-outline-variant/30 pt-6 space-y-4">
-            <div className="flex items-center gap-4">
+          <div className="border-t border-outline-variant/30 pt-5 md:pt-6 space-y-4">
+            <div className="flex items-center justify-between md:justify-start gap-3 md:gap-4">
               <div className="flex items-center border border-outline-variant rounded-xl overflow-hidden bg-white">
                 <button
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="px-4 py-2 hover:bg-surface-container-low font-bold text-lg text-on-surface-variant transition-colors"
+                  className="px-4 py-2.5 md:py-2 hover:bg-surface-container-low font-bold text-lg text-on-surface-variant transition-colors"
                 >
                   -
                 </button>
-                <span className="px-4 py-2 font-semibold text-sm w-12 text-center text-deep-navy">
+                <span className="px-4 py-2.5 md:py-2 font-semibold text-sm w-12 text-center text-deep-navy">
                   {quantity}
                 </span>
                 <button
                   onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                  className="px-4 py-2 hover:bg-surface-container-low font-bold text-lg text-on-surface-variant transition-colors"
+                  className="px-4 py-2.5 md:py-2 hover:bg-surface-container-low font-bold text-lg text-on-surface-variant transition-colors"
                 >
                   +
                 </button>
@@ -335,7 +348,7 @@ export default function ProductDetailsView({
 
               <button
                 onClick={() => onToggleWishlist(product)}
-                className={`p-3 border rounded-xl flex items-center justify-center transition-all ${
+                className={`hidden md:flex p-3 border rounded-xl items-center justify-center transition-all ${
                   isInWishlist 
                     ? 'border-[#FF4B7E]/30 bg-[#FF4B7E]/5 text-[#FF4B7E]' 
                     : 'border-outline-variant hover:bg-surface-container-low text-on-surface-variant'
@@ -348,34 +361,35 @@ export default function ProductDetailsView({
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
               <button
                 onClick={() => onAddToCart(product, quantity)}
-                className="w-full py-4 border border-[#0088FF] text-[#0088FF] rounded-xl hover:bg-[#0088FF]/5 transition-all font-semibold flex items-center justify-center gap-2"
+                className="w-full py-3.5 md:py-4 border border-[#0088FF] text-[#0088FF] rounded-xl hover:bg-[#0088FF]/5 transition-all text-xs md:text-base font-semibold flex items-center justify-center gap-1.5 md:gap-2"
               >
                 <span className="material-symbols-outlined text-lg">shopping_cart</span>
                 {t('prod.addToCart')}
               </button>
               <button
                 onClick={() => onBuyNow(product, quantity)}
-                className="w-full py-4 bg-[#0088FF] text-white rounded-xl hover:bg-[#0088FF]/90 transition-all font-semibold flex items-center justify-center gap-2 shadow-md shadow-[#0088FF]/10"
+                className="w-full py-3.5 md:py-4 bg-[#0088FF] text-white rounded-xl hover:bg-[#0088FF]/90 transition-all text-xs md:text-base font-semibold flex items-center justify-center gap-1.5 md:gap-2 shadow-md shadow-[#0088FF]/10"
               >
                 <span className="material-symbols-outlined text-lg text-white">flash_on</span>
-                {t('prod.buyNow')} ({language === 'en' ? 'Cash on Delivery' : 'ক্যাশ অন ডেলিভারি'})
+                <span className="md:hidden">{t('prod.buyNow')}</span>
+                <span className="hidden md:inline">{t('prod.buyNow')} ({language === 'en' ? 'Cash on Delivery' : 'ক্যাশ অন ডেলিভারি'})</span>
               </button>
             </div>
 
             {/* Quick trust badges */}
-            <div className="flex justify-between items-center bg-surface-container-low border border-outline-variant/20 rounded-xl p-4 text-[11px] font-semibold text-on-surface-variant">
-              <div className="flex items-center gap-1.5">
+            <div className="grid grid-cols-3 gap-2 bg-surface-container-low border border-outline-variant/20 rounded-xl p-3 md:p-4 text-[10px] md:text-[11px] font-semibold text-on-surface-variant">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5 text-center">
                 <span className="material-symbols-outlined text-[#0088FF] text-[18px]">local_shipping</span>
                 <span>{language === 'en' ? 'Fast Delivery' : 'দ্রুত ডেলিভারি'}</span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5 text-center">
                 <span className="material-symbols-outlined text-[#0088FF] text-[18px]">verified_user</span>
                 <span>{language === 'en' ? '100% Secure Checkout' : '১০০% নিরাপদ পেমেন্ট'}</span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5 text-center">
                 <span className="material-symbols-outlined text-[#0088FF] text-[18px]">currency_bangladesh</span>
                 <span>{language === 'en' ? 'Cash on Delivery' : 'ক্যাশ অন ডেলিভারি'}</span>
               </div>
@@ -385,11 +399,11 @@ export default function ProductDetailsView({
       </div>
 
       {/* Tabs Section (Description, Specs, Reviews) */}
-      <div className="bg-white rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden mt-12">
-        <div className="flex border-b border-outline-variant/30 bg-surface-container-low/50">
+      <div className="bg-white rounded-2xl border border-outline-variant/30 shadow-sm overflow-hidden mt-8 md:mt-12">
+        <div className="flex overflow-x-auto border-b border-outline-variant/30 bg-surface-container-low/50">
           <button
             onClick={() => setActiveTab('description')}
-            className={`px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+            className={`shrink-0 flex-1 md:flex-none px-4 md:px-6 py-3.5 md:py-4 font-semibold text-xs md:text-sm transition-all border-b-2 ${
               activeTab === 'description'
                 ? 'border-[#0088FF] text-[#0088FF] bg-white'
                 : 'border-transparent text-on-surface-variant hover:text-on-surface'
@@ -399,7 +413,7 @@ export default function ProductDetailsView({
           </button>
           <button
             onClick={() => setActiveTab('specs')}
-            className={`px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+            className={`shrink-0 flex-1 md:flex-none px-4 md:px-6 py-3.5 md:py-4 font-semibold text-xs md:text-sm transition-all border-b-2 ${
               activeTab === 'specs'
                 ? 'border-[#0088FF] text-[#0088FF] bg-white'
                 : 'border-transparent text-on-surface-variant hover:text-on-surface'
@@ -409,7 +423,7 @@ export default function ProductDetailsView({
           </button>
           <button
             onClick={() => setActiveTab('reviews')}
-            className={`px-6 py-4 font-semibold text-sm transition-all border-b-2 ${
+            className={`shrink-0 flex-1 md:flex-none px-4 md:px-6 py-3.5 md:py-4 font-semibold text-xs md:text-sm transition-all border-b-2 ${
               activeTab === 'reviews'
                 ? 'border-[#0088FF] text-[#0088FF] bg-white'
                 : 'border-transparent text-on-surface-variant hover:text-on-surface'
@@ -419,7 +433,7 @@ export default function ProductDetailsView({
           </button>
         </div>
 
-        <div className="p-6 md:p-8">
+        <div className="p-4 md:p-8">
           {activeTab === 'description' && (
             <div className="space-y-4 text-sm text-on-surface-variant leading-relaxed">
               <h3 className="text-lg font-bold text-deep-navy">{language === 'en' ? 'Product Overview' : 'পণ্য পরিচিতি'}</h3>
@@ -433,8 +447,16 @@ export default function ProductDetailsView({
           )}
 
           {activeTab === 'specs' && (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-outline-variant/35 text-sm">
+            <>
+              <div className="md:hidden space-y-2">
+                {getSpecs().map((spec, i) => (
+                  <div key={i} className="rounded-xl border border-outline-variant/30 bg-surface-container-low/30 p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-deep-navy">{spec.label}</p>
+                    <p className="text-sm text-on-surface-variant mt-1 leading-relaxed">{spec.value}</p>
+                  </div>
+                ))}
+              </div>
+              <table className="hidden md:table min-w-full divide-y divide-outline-variant/35 text-sm">
                 <tbody className="divide-y divide-outline-variant/20">
                   {getSpecs().map((spec, i) => (
                     <tr key={i} className={i % 2 === 0 ? 'bg-surface-container-low/25' : ''}>
@@ -444,23 +466,23 @@ export default function ProductDetailsView({
                   ))}
                 </tbody>
               </table>
-            </div>
+            </>
           )}
 
           {activeTab === 'reviews' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
               {/* Reviews List */}
-              <div className="lg:col-span-7 space-y-6">
+              <div className="lg:col-span-7 space-y-5 md:space-y-6">
                 {localReviews.length === 0 ? (
                   <p className="text-sm text-on-surface-variant">
                     {language === 'en' ? 'No reviews yet. Be the first to leave a review!' : 'এখনো কোনো রিভিউ দেওয়া হয়নি। প্রথম রিভিউটি আপনিই দিন!'}
                   </p>
                 ) : (
                   localReviews.map((rev, i) => (
-                    <div key={i} className="border-b border-outline-variant/20 pb-6 last:border-b-0 space-y-2">
-                      <div className="flex justify-between items-center text-xs">
+                    <div key={i} className="border-b border-outline-variant/20 pb-5 md:pb-6 last:border-b-0 space-y-2">
+                      <div className="flex justify-between items-center gap-3 text-xs">
                         <span className="font-bold text-deep-navy">{rev.name}</span>
-                        <span className="text-outline">{rev.date}</span>
+                        <span className="text-outline text-right">{rev.date}</span>
                       </div>
                       <div className="flex text-gold-accent">
                         {[1, 2, 3, 4, 5].map((s) => (
@@ -476,7 +498,7 @@ export default function ProductDetailsView({
               </div>
 
               {/* Leave a Review Form */}
-              <div className="lg:col-span-5 bg-surface-container-low rounded-2xl p-6 border border-outline-variant/35 h-fit">
+              <div className="lg:col-span-5 bg-surface-container-low rounded-2xl p-4 md:p-6 border border-outline-variant/35 h-fit">
                 <h4 className="font-bold text-deep-navy text-sm mb-4">{language === 'en' ? 'Write a Review' : 'একটি রিভিউ লিখুন'}</h4>
                 <form onSubmit={handleSubmitReview} className="space-y-4">
                   <div>
@@ -505,7 +527,7 @@ export default function ProductDetailsView({
                       value={reviewName}
                       onChange={(e) => setReviewName(e.target.value)}
                       placeholder={language === 'en' ? 'e.g. John Doe' : 'যেমন: তানজিম আহমেদ'}
-                      className="w-full px-4 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0088FF]"
+                      className="w-full px-4 py-3 md:py-2 border rounded-xl text-sm md:text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0088FF]"
                     />
                   </div>
 
@@ -517,13 +539,13 @@ export default function ProductDetailsView({
                       value={reviewComment}
                       onChange={(e) => setReviewComment(e.target.value)}
                       placeholder={language === 'en' ? 'Share your thoughts about this product...' : 'এই প্রোডাক্ট সম্পর্কে আপনার মতামত শেয়ার করুন...'}
-                      className="w-full px-4 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0088FF] resize-none"
+                      className="w-full px-4 py-3 md:py-2 border rounded-xl text-sm md:text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#0088FF] resize-none"
                     ></textarea>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 bg-[#0088FF] text-white rounded-xl text-xs font-bold hover:bg-[#0088FF]/95 transition-all shadow-sm"
+                    className="w-full py-3 md:py-2.5 bg-[#0088FF] text-white rounded-xl text-xs font-bold hover:bg-[#0088FF]/95 transition-all shadow-sm"
                   >
                     {language === 'en' ? 'Submit Review' : 'রিভিউ সাবমিট করুন'}
                   </button>
@@ -536,20 +558,20 @@ export default function ProductDetailsView({
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (
-        <div className="space-y-6">
-          <h3 className="text-xl font-bold text-deep-navy">{language === 'en' ? 'Related Tech Gear' : 'সম্পর্কিত প্রযুক্তি পণ্য'}</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="space-y-4 md:space-y-6">
+          <h3 className="text-lg md:text-xl font-bold text-deep-navy">{language === 'en' ? 'Related Tech Gear' : 'সম্পর্কিত প্রযুক্তি পণ্য'}</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
             {relatedProducts.map((related) => {
               const relDiscount = related.discountPercent || Math.round(((related.originalPrice - related.salePrice) / related.originalPrice) * 100);
               return (
                 <div
                   key={related._id}
                   onClick={() => onSelectProduct(related)}
-                  className="bg-white rounded-2xl p-4 border border-outline-variant/30 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer group text-xs"
+                  className="bg-white rounded-2xl p-3 md:p-4 border border-outline-variant/30 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer group text-xs"
                 >
-                  <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-white mb-3">
+                  <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-white mb-2.5 md:mb-3">
                     <img
-                      src={related.image}
+                      src={getOptimizedImageUrl(related.image, 300)}
                       alt={related.name}
                       width={300}
                       height={300}
@@ -557,14 +579,14 @@ export default function ProductDetailsView({
                       loading="lazy"
                     />
                     {relDiscount > 0 && (
-                      <span className="absolute top-2 left-2 bg-sale-red text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
+                      <span className="absolute top-2 left-2 bg-sale-red text-white text-[9px] font-bold px-1.5 md:px-2 py-0.5 rounded-full">
                         -{relDiscount}%
                       </span>
                     )}
                   </div>
                   <div>
-                    <h4 className="font-semibold text-deep-navy leading-snug line-clamp-2 group-hover:text-[#0088FF] transition-colors">{related.name}</h4>
-                    <div className="flex items-center gap-2 mt-2">
+                    <h4 className="font-semibold text-[11px] md:text-xs text-deep-navy leading-snug line-clamp-2 group-hover:text-[#0088FF] transition-colors">{related.name}</h4>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-2">
                       <span className="font-bold text-[#0088FF]">৳ {related.salePrice.toLocaleString()}</span>
                       {related.originalPrice > related.salePrice && (
                         <span className="text-[10px] text-outline line-through">৳ {related.originalPrice.toLocaleString()}</span>
