@@ -1,3 +1,4 @@
+import './instrument';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -148,6 +149,10 @@ app.get('/api/health/ready', async (req, res) => {
   }
 });
 
+import * as Sentry from '@sentry/node';
+
+// Sentry error handler must be before any other error-handling middleware
+Sentry.setupExpressErrorHandler(app);
 app.use(errorHandler);
 
 let server: any;
