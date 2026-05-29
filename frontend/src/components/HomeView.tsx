@@ -164,7 +164,7 @@ interface HomeViewProps {
   toggleWishlist: (product: Product) => void;
   addToCart: (product: Product, qty: number) => void;
   triggerToast: (msg: string) => void;
-  setCurrentTab: (tab: any) => void;
+  setCurrentTab: (tab: any, product?: any) => void;
   setDetailsProduct: (product: Product | null) => void;
   resetAllFilters: () => void;
   activeSearch: string;
@@ -1047,7 +1047,7 @@ export default function HomeView({
               <button
                 onClick={() => {
                   setDetailsProduct(featuredProduct);
-                  setCurrentTab('product-details');
+                  setCurrentTab('product-details', featuredProduct);
                 }}
                 className="inline-flex items-center justify-center gap-2 bg-[#0088FF] hover:bg-white hover:text-deep-navy text-white px-5 md:px-7 py-3 rounded-full text-sm md:text-base font-bold transition-all shadow-lg shadow-[#0088FF]/30"
               >
@@ -1081,7 +1081,7 @@ export default function HomeView({
                 <button
                   onClick={() => {
                     setDetailsProduct(featuredProduct);
-                    setCurrentTab('product-details');
+                    setCurrentTab('product-details', featuredProduct);
                   }}
                   className="text-xs md:text-sm font-semibold text-[#0088FF] hover:text-white transition-colors inline-flex items-center gap-1"
                 >
@@ -1160,7 +1160,7 @@ export default function HomeView({
                   }}
                   onSelect={(prod) => {
                     setDetailsProduct(prod);
-                    setCurrentTab('product-details');
+                    setCurrentTab('product-details', prod);
                   }}
                 />
               </motion.div>
@@ -1302,7 +1302,7 @@ export default function HomeView({
                   }}
                   onSelect={(prod) => {
                     setDetailsProduct(prod);
-                    setCurrentTab('product-details');
+                    setCurrentTab('product-details', prod);
                   }}
                 />
               </motion.div>
@@ -1347,7 +1347,7 @@ export default function HomeView({
                   }}
                   onSelect={(prod) => {
                     setDetailsProduct(prod);
-                    setCurrentTab('product-details');
+                    setCurrentTab('product-details', prod);
                   }}
                 />
               </motion.div>

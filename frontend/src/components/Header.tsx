@@ -29,6 +29,7 @@ interface HeaderProps {
       | 'product-details'
       | 'auth'
       | 'admin',
+    product?: any,
   ) => void;
   wishlistCount: number;
   setIsWishlistOpen: (b: boolean) => void;
@@ -407,7 +408,7 @@ export default function Header({
                             onClick={() => {
                               if (setDetailsProduct) {
                                 setDetailsProduct(prod);
-                                setCurrentTab('product-details');
+                                setCurrentTab('product-details', prod);
                               }
                               setIsSearchFocused(false);
                             }}
@@ -781,7 +782,7 @@ export default function Header({
                               onClick={() => {
                                 if (setDetailsProduct) {
                                   setDetailsProduct(prod);
-                                  setCurrentTab('product-details');
+                                  setCurrentTab('product-details', prod);
                                 }
                                 setIsSearchFocused(false);
                                 setIsSearchExpanded(false);

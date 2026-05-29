@@ -10,6 +10,7 @@ interface ShopViewProps {
   onToggleWishlist: (product: Product) => void;
   wishlist: string[];
   initialCategory?: string;
+  onQuickView: (product: Product) => void;
 }
 
 export default function ShopView({
@@ -20,6 +21,7 @@ export default function ShopView({
   onToggleWishlist,
   wishlist,
   initialCategory = 'All',
+  onQuickView,
 }: ShopViewProps) {
   const { language, t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
@@ -554,11 +556,17 @@ export default function ShopView({
                         </span>
                       )}
 
-                      {/* Quick view hint */}
-                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold text-deep-navy opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-md flex items-center gap-1">
+                      {/* Quick view button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onQuickView(prod);
+                        }}
+                        className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold text-deep-navy opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-md flex items-center gap-1 hover:bg-[#0088FF] hover:text-white transition-colors cursor-pointer z-10"
+                      >
                         <span className="material-symbols-outlined text-[12px]">visibility</span>
                         {language === 'en' ? 'Quick view' : 'কুইক ভিউ'}
-                      </div>
+                      </button>
                     </div>
 
                     {/* Description and metadata */}

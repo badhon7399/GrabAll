@@ -76,13 +76,17 @@ function App() {
   const [activePaymentOrder, setActivePaymentOrder] = useState<Order | null>(null);
   const [detailsProduct, setDetailsProduct] = useState<Product | null>(null);
 
-  const setCurrentTab = useCallback((tab: typeof currentTabState) => {
+  const setCurrentTab = useCallback((tab: typeof currentTabState, product?: Product) => {
     setCurrentTabState(tab);
+    if (product) {
+      setDetailsProduct(product);
+    }
     if (tab === 'home') navigate('/');
     else if (tab === 'contact-us') navigate('/contact');
     else if (tab === 'product-details') {
-      if (detailsProduct) {
-        navigate(`/product/${detailsProduct._id}`);
+      const prod = product || detailsProduct;
+      if (prod) {
+        navigate(`/product/${prod._id}`);
       }
     } else {
       navigate(`/${tab}`);
@@ -577,11 +581,12 @@ function App() {
       }}
       onSelectProduct={(prod) => {
         setDetailsProduct(prod);
-        setCurrentTab('product-details');
+        setCurrentTab('product-details', prod);
       }}
       onToggleWishlist={toggleWishlist}
       wishlist={wishlistItems.map((w) => w._id)}
       initialCategory={selectedCategory}
+      onQuickView={setSelectedProduct}
     />
   )
 }
@@ -600,7 +605,7 @@ function App() {
       }}
       onSelectProduct={(prod) => {
         setDetailsProduct(prod);
-        setCurrentTab('product-details');
+        setCurrentTab('product-details', prod);
       }}
       onToggleWishlist={toggleWishlist}
       wishlist={wishlistItems.map((w) => w._id)}
@@ -622,7 +627,7 @@ function App() {
       }}
       onSelectProduct={(prod) => {
         setDetailsProduct(prod);
-        setCurrentTab('product-details');
+        setCurrentTab('product-details', prod);
       }}
       onToggleWishlist={toggleWishlist}
       wishlist={wishlistItems.map((w) => w._id)}
@@ -644,7 +649,7 @@ function App() {
       }}
       onSelectProduct={(prod) => {
         setDetailsProduct(prod);
-        setCurrentTab('product-details');
+        setCurrentTab('product-details', prod);
       }}
       onToggleWishlist={toggleWishlist}
       wishlist={wishlistItems.map((w) => w._id)}
@@ -666,7 +671,7 @@ function App() {
       }}
       onSelectProduct={(prod) => {
         setDetailsProduct(prod);
-        setCurrentTab('product-details');
+        setCurrentTab('product-details', prod);
       }}
       onToggleWishlist={toggleWishlist}
       wishlist={wishlistItems.map((w) => w._id)}
