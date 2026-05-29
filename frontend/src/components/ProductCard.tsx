@@ -38,7 +38,7 @@ export default function ProductCard({
       className="bg-white rounded-xl overflow-hidden shadow-sm hover:-translate-y-1 hover:shadow-xl transition-all duration-300 border border-surface-container group flex flex-col h-full relative cursor-pointer"
     >
       {/* Discount Badge */}
-      <div className="absolute top-3 left-3 z-10 bg-sale-red text-white text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide">
+      <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10 bg-sale-red text-white text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-sm uppercase tracking-wide">
         -{product.discountPercent}% {t('prod.discount')}
       </div>
 
@@ -48,9 +48,9 @@ export default function ProductCard({
           e.stopPropagation();
           onToggleWishlist(product);
         }}
-        className="absolute top-3 right-3 z-10 p-2 bg-white/80 hover:bg-white text-on-surface rounded-full shadow-md transition-all duration-200 flex items-center justify-center focus:outline-none"
+        className="absolute top-2 right-2 md:top-3 md:right-3 z-10 p-1.5 md:p-2 bg-white/80 hover:bg-white text-on-surface rounded-full shadow-md transition-all duration-200 flex items-center justify-center focus:outline-none"
       >
-        <span className={`material-symbols-outlined text-lg ${isInWishlist ? 'text-sale-red fill-1 font-semibold' : 'text-on-surface-variant'}`}>
+        <span className={`material-symbols-outlined text-base md:text-lg ${isInWishlist ? 'text-sale-red fill-1 font-semibold' : 'text-on-surface-variant'}`}>
           favorite
         </span>
       </button>
@@ -80,18 +80,18 @@ export default function ProductCard({
       </div>
 
       {/* Product Content Details */}
-      <div className="p-4 flex flex-col flex-grow text-xs">
-        <span className="text-[10px] font-bold text-gold-accent uppercase tracking-wider mb-1">
+      <div className="p-3 md:p-4 flex flex-col flex-grow text-xs">
+        <span className="text-[9px] md:text-[10px] font-bold text-gold-accent uppercase tracking-wider mb-1 truncate">
           {getCategoryName(product.category)}
         </span>
-        <h3 className="text-xs md:text-sm font-semibold text-deep-navy mb-2 line-clamp-2 leading-snug min-h-[2.5rem]">
+        <h3 className="text-[11px] md:text-sm font-semibold text-deep-navy mb-2 line-clamp-2 leading-snug min-h-[2.35rem] md:min-h-[2.5rem]">
           {product.name}
         </h3>
-        <div className="mt-auto pt-2 flex items-center gap-2">
+        <div className="mt-auto pt-1 md:pt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className="text-sm md:text-base text-deep-navy font-bold">
             ৳ {product.salePrice.toLocaleString()}
           </span>
-          <span className="text-xs text-outline line-through">
+          <span className="text-[10px] md:text-xs text-outline line-through">
             ৳ {product.originalPrice.toLocaleString()}
           </span>
         </div>
@@ -100,9 +100,10 @@ export default function ProductCard({
             e.stopPropagation();
             onAddToCart(product);
           }}
-          className="mt-4 w-full py-2 bg-deep-navy text-white text-xs font-semibold rounded-lg hover:bg-[#0088FF] transition-colors flex justify-center items-center gap-2"
+          className="mt-3 md:mt-4 w-full py-2 bg-deep-navy text-white text-[11px] md:text-xs font-semibold rounded-lg hover:bg-[#0088FF] transition-colors flex justify-center items-center gap-2"
         >
-          <span className="material-symbols-outlined text-sm">shopping_cart</span> {t('prod.addToCart')}
+          <span className="material-symbols-outlined text-sm">shopping_cart</span>
+          <span className="hidden min-[380px]:inline">{t('prod.addToCart')}</span>
         </button>
       </div>
     </div>

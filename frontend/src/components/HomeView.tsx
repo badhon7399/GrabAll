@@ -105,24 +105,24 @@ const MagneticWrap: React.FC<MagneticWrapProps> = ({ children, range = 35 }) => 
 
 export function HeroSkeleton() {
   return (
-    <section className="mb-section-gap">
-      <div className="relative w-full aspect-[16/9] md:aspect-auto md:h-[72vh] rounded-[1rem] md:rounded-[2rem] overflow-hidden bg-slate-900 border border-white/5 animate-pulse flex items-center px-6 sm:px-12 md:px-16 lg:px-24">
+    <section className="mb-10 md:mb-section-gap">
+      <div className="relative w-full min-h-[460px] aspect-[4/5] sm:aspect-[16/9] md:aspect-auto md:h-[72vh] rounded-[1.25rem] md:rounded-[2rem] overflow-hidden bg-slate-900 border border-white/5 animate-pulse flex items-end md:items-center px-5 sm:px-8 md:px-16 lg:px-24 pb-14 sm:pb-16 md:pb-0">
         {/* Gradients to look like the real hero background */}
         <div className="absolute inset-0 bg-gradient-to-r from-deep-navy/95 via-deep-navy/60 to-transparent" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:36px_36px] pointer-events-none" />
         
         {/* Glow placeholders */}
-        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#0088FF]/10 blur-3xl" />
-        <div className="absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-purple-500/5 blur-3xl" />
+        <div className="hidden md:block absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#0088FF]/10 blur-3xl" />
+        <div className="hidden md:block absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-purple-500/5 blur-3xl" />
 
         <div className="max-w-2xl text-white space-y-4 md:space-y-6 relative z-10 w-full">
           {/* Badge skeleton */}
-          <div className="h-6 w-32 bg-white/10 border border-white/20 rounded-full" />
+          <div className="h-7 w-32 bg-white/10 border border-white/20 rounded-full" />
           
           {/* Title skeleton */}
           <div className="space-y-3">
-            <div className="h-8 md:h-16 w-3/4 bg-white/15 rounded-xl" />
-            <div className="h-8 md:h-16 w-1/2 bg-white/15 rounded-xl" />
+            <div className="h-10 md:h-16 w-5/6 bg-white/15 rounded-xl" />
+            <div className="h-10 md:h-16 w-2/3 bg-white/15 rounded-xl" />
           </div>
 
           {/* Description skeleton */}
@@ -133,7 +133,7 @@ export function HeroSkeleton() {
           </div>
 
           {/* CTA Button skeleton */}
-          <div className="h-8 md:h-14 w-28 md:w-44 bg-white/20 rounded-full" />
+          <div className="h-11 md:h-14 w-36 md:w-44 bg-white/20 rounded-full" />
         </div>
 
         {/* Stats skeleton (right) */}
@@ -726,11 +726,11 @@ export default function HomeView({
       {loadingProducts ? (
         <HeroSkeleton />
       ) : (
-        <section className="mb-section-gap">
+        <section className="mb-10 md:mb-section-gap">
           <motion.div
             ref={heroRef}
             style={{ opacity: heroOpacity }}
-            className="relative w-full aspect-[16/9] md:aspect-auto md:h-[72vh] rounded-[1rem] md:rounded-[2rem] overflow-hidden shadow-2xl border border-white/10"
+            className="relative w-full min-h-[460px] aspect-[4/5] sm:aspect-[16/9] md:aspect-auto md:h-[72vh] rounded-[1.25rem] md:rounded-[2rem] overflow-hidden shadow-2xl border border-white/10"
             onMouseEnter={() => setIsSlideHovered(true)}
             onMouseLeave={() => setIsSlideHovered(false)}
           >
@@ -772,13 +772,13 @@ export default function HomeView({
                       decoding={currentSlide === 0 ? 'sync' : 'async'}
                     />
                   </motion.div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-deep-navy/95 via-deep-navy/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-deep-navy/95 via-deep-navy/70 to-deep-navy/10 md:to-transparent" />
 
                   {/* Static glow orbs to prevent animating-blur text repaint flickers */}
-                  <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#0088FF]/20 blur-3xl pointer-events-none" />
-                  <div className="absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
+                  <div className="hidden md:block absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#0088FF]/20 blur-3xl pointer-events-none" />
+                  <div className="hidden md:block absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-purple-500/10 blur-3xl pointer-events-none" />
 
-                  <div className="absolute inset-0 flex items-center px-6 sm:px-12 md:px-16 lg:px-24 pointer-events-none">
+                  <div className="absolute inset-0 flex items-end md:items-center px-5 sm:px-8 md:px-16 lg:px-24 pb-14 sm:pb-16 md:pb-0 pointer-events-none">
                     <div 
                       className="max-w-2xl text-white pointer-events-auto transform-gpu"
                       style={{
@@ -789,13 +789,13 @@ export default function HomeView({
                         willChange: 'transform, opacity'
                       }}
                     >
-                      <span className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] md:text-[11px] font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white px-2.5 py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 rounded-full uppercase tracking-widest mb-2 sm:mb-3 md:mb-6">
+                      <span className="inline-flex items-center gap-1.5 text-[10px] md:text-[11px] font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white px-3 py-1.5 md:px-4 md:py-1.5 rounded-full uppercase tracking-widest mb-3 md:mb-6">
                         <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#0088FF] animate-pulse" />
                         {slides[currentSlide].badge[language] || slides[currentSlide].badge['en']}
                       </span>
 
                       <h1 
-                        className="text-base sm:text-2xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-2 sm:mb-3 md:mb-6 leading-[1.15] md:leading-[1.05] tracking-tight text-white pt-2 pb-1 transform-gpu"
+                        className="text-[2.15rem] sm:text-5xl md:text-6xl lg:text-7xl font-display-lg font-bold mb-3 md:mb-6 leading-[1.05] tracking-tight text-white pt-1 pb-1 transform-gpu"
                         style={{
                           transform: 'translate3d(0,0,0)',
                           WebkitTransform: 'translate3d(0,0,0)',
@@ -808,7 +808,7 @@ export default function HomeView({
                       </h1>
 
                       <p 
-                        className="text-[10px] sm:text-sm md:text-lg font-body-lg text-white/85 mb-3 sm:mb-4 md:mb-8 max-w-xl leading-relaxed line-clamp-2 sm:line-clamp-none transform-gpu"
+                        className="text-sm md:text-lg font-body-lg text-white/85 mb-5 md:mb-8 max-w-xl leading-relaxed line-clamp-3 sm:line-clamp-none transform-gpu"
                         style={{
                           transform: 'translate3d(0,0,0)',
                           WebkitTransform: 'translate3d(0,0,0)',
@@ -829,12 +829,12 @@ export default function HomeView({
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={slides[currentSlide].action}
-                            className="relative inline-flex items-center justify-center px-3 py-1 sm:px-8 sm:py-3 md:px-10 md:py-4 bg-white text-deep-navy text-[8px] sm:text-sm md:text-label-md font-bold rounded-full overflow-hidden hover:bg-[#0088FF] hover:text-white transition-colors duration-300 shadow-xl shadow-black/20 group cursor-pointer transform-gpu"
+                            className="relative inline-flex items-center justify-center px-6 py-3 md:px-10 md:py-4 bg-white text-deep-navy text-xs sm:text-sm md:text-label-md font-bold rounded-full overflow-hidden hover:bg-[#0088FF] hover:text-white transition-colors duration-300 shadow-xl shadow-black/20 group cursor-pointer transform-gpu"
                             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
                           >
                             <span className="relative z-10 flex items-center gap-1 sm:gap-2">
                               {slides[currentSlide].cta[language] || slides[currentSlide].cta['en']}
-                              <span className="material-symbols-outlined text-[8px] sm:text-sm font-bold transition-transform duration-300 group-hover:translate-x-1">
+                              <span className="material-symbols-outlined text-sm font-bold transition-transform duration-300 group-hover:translate-x-1">
                                 arrow_forward
                               </span>
                             </span>
@@ -864,7 +864,7 @@ export default function HomeView({
             </div>
 
             {/* Dots */}
-            <div className="absolute bottom-3 left-6 sm:bottom-6 sm:left-12 md:left-16 flex gap-1.5 md:gap-3 z-10">
+            <div className="absolute bottom-5 left-5 sm:left-8 md:bottom-6 md:left-16 flex gap-1.5 md:gap-3 z-10">
               {slides.map((_, index) => (
                 <button
                   key={index}
@@ -890,17 +890,17 @@ export default function HomeView({
       )}
 
       {/* BRAND STRIP */}
-      <Reveal className="mb-section-gap">
-        <div className="bg-white rounded-2xl border border-outline-variant/40 py-6 overflow-hidden">
+      <Reveal className="mb-10 md:mb-section-gap">
+        <div className="bg-white rounded-2xl border border-outline-variant/40 py-3 md:py-6 overflow-hidden">
           <motion.div
-            className="flex gap-16 whitespace-nowrap items-center"
+            className="flex gap-10 md:gap-16 whitespace-nowrap items-center"
             animate={{ x: ['0%', '-50%'] }}
             transition={{ duration: 25, ease: 'linear', repeat: Infinity }}
           >
             {[...brandLogos, ...brandLogos].map((b, i) => (
               <span
                 key={i}
-                className="text-xl md:text-2xl font-display-lg font-extrabold tracking-widest text-on-surface-variant/60 hover:text-deep-navy transition-colors px-4"
+                className="text-sm md:text-2xl font-display-lg font-extrabold tracking-widest text-on-surface-variant/60 hover:text-deep-navy transition-colors px-2 md:px-4"
               >
                 {b}
               </span>
@@ -910,10 +910,10 @@ export default function HomeView({
       </Reveal>
 
       {/* CATEGORIES */}
-      <Reveal className="mb-section-gap">
-        <div className="flex justify-between items-end mb-6">
+      <Reveal className="mb-10 md:mb-section-gap">
+        <div className="flex justify-between items-end mb-4 md:mb-6">
           <div>
-            <p className="text-[11px] tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'Browse Categories' : 'ক্যাটাগরি সমূহ'}</p>
+            <p className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'Browse Categories' : 'ক্যাটাগরি সমূহ'}</p>
             <h2 className="text-2xl md:text-3xl font-bold text-deep-navy">{language === 'en' ? 'Shop by Passion' : 'পছন্দ অনুযায়ী কেনাকাটা করুন'}</h2>
           </div>
           <button
@@ -925,7 +925,7 @@ export default function HomeView({
         </div>
 
         <div className="relative">
-          <div className="flex overflow-x-auto pb-4 scrollbar-none gap-8 md:gap-10 justify-start md:justify-center px-1">
+          <div className="flex overflow-x-auto pb-4 scrollbar-none gap-4 md:gap-10 justify-start md:justify-center px-1">
             {/* All option */}
             <motion.button
               whileHover={{ y: -4 }}
@@ -935,18 +935,18 @@ export default function HomeView({
               }}
               className="flex flex-col items-center flex-shrink-0 cursor-pointer group focus:outline-none"
             >
-              <div className={`w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-2 flex items-center justify-center transition-all duration-300 relative shadow-sm ${
+              <div className={`w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 flex items-center justify-center transition-all duration-300 relative shadow-sm ${
                 selectedCategory === 'All'
                   ? 'border-[#0088FF] ring-4 ring-[#0088FF]/10 scale-105 bg-gradient-to-br from-[#0088FF]/10 to-purple-500/10'
                   : 'border-outline-variant/40 hover:border-[#0088FF]/50 bg-white'
               }`}>
-                <span className={`material-symbols-outlined text-4xl transition-colors ${
+                <span className={`material-symbols-outlined text-3xl md:text-4xl transition-colors ${
                   selectedCategory === 'All' ? 'text-[#0088FF]' : 'text-deep-navy/70 group-hover:text-[#0088FF]'
                 }`}>
                   apps
                 </span>
               </div>
-              <span className={`text-[11px] md:text-xs font-bold text-center mt-3 truncate w-24 md:w-28 transition-colors ${
+              <span className={`text-[10px] md:text-xs font-bold text-center mt-2 md:mt-3 truncate w-16 sm:w-20 md:w-28 transition-colors ${
                 selectedCategory === 'All' ? 'text-[#0088FF]' : 'text-on-surface-variant group-hover:text-deep-navy'
               }`}>
                 {t('All') || 'All'}
@@ -966,7 +966,7 @@ export default function HomeView({
                   }}
                   className="flex flex-col items-center flex-shrink-0 cursor-pointer group focus:outline-none"
                 >
-                  <div className={`w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-2 transition-all duration-300 relative shadow-sm ${
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 transition-all duration-300 relative shadow-sm ${
                     isSelected
                       ? 'border-[#0088FF] ring-4 ring-[#0088FF]/10 scale-105'
                       : 'border-outline-variant/40 hover:border-[#0088FF]/50 bg-white'
@@ -985,7 +985,7 @@ export default function HomeView({
                       </div>
                     )}
                   </div>
-                  <span className={`text-[11px] md:text-xs font-bold text-center mt-3 truncate w-24 md:w-28 transition-colors ${
+                  <span className={`text-[10px] md:text-xs font-bold text-center mt-2 md:mt-3 truncate w-16 sm:w-20 md:w-28 transition-colors ${
                     isSelected ? 'text-[#0088FF]' : 'text-on-surface-variant group-hover:text-deep-navy'
                   }`}>
                     {c.name}
@@ -999,44 +999,44 @@ export default function HomeView({
 
       {/* FLASH SALE + COUNTDOWN */}
       {featuredProduct && (
-        <Reveal className="mb-section-gap">
-          <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-deep-navy via-deep-navy to-black p-8 md:p-12 text-white shadow-2xl">
+        <Reveal className="mb-10 md:mb-section-gap">
+          <div className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-deep-navy via-deep-navy to-black p-5 md:p-12 text-white shadow-2xl">
             <motion.div
-              className="absolute -top-32 -right-20 w-96 h-96 rounded-full bg-[#0088FF]/30 blur-3xl"
+              className="hidden md:block absolute -top-32 -right-20 w-96 h-96 rounded-full bg-[#0088FF]/30 blur-3xl"
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 6, repeat: Infinity }}
             />
             <motion.div
-              className="absolute -bottom-32 -left-20 w-96 h-96 rounded-full bg-purple-500/20 blur-3xl"
+              className="hidden md:block absolute -bottom-32 -left-20 w-96 h-96 rounded-full bg-purple-500/20 blur-3xl"
               animate={{ scale: [1.2, 1, 1.2] }}
               transition={{ duration: 7, repeat: Infinity }}
             />
 
             <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
               <div>
-                <span className="inline-flex items-center gap-2 bg-red-500/20 text-red-300 border border-red-500/30 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4">
+                <span className="inline-flex items-center gap-2 bg-red-500/20 text-red-300 border border-red-500/30 px-3 py-1 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-widest mb-4">
                   {language === 'en' ? '🔥 Flash Sale' : '🔥 ফ্ল্যাশ সেল'}
                 </span>
-                <h3 className="text-3xl md:text-5xl font-bold mb-3 leading-tight">{language === 'en' ? 'Up to 50% OFF' : '৫০% পর্যন্ত ছাড়'}</h3>
-                <p className="text-white/70 mb-6 max-w-md">
+                <h3 className="text-2xl md:text-5xl font-bold mb-3 leading-tight">{language === 'en' ? 'Up to 50% OFF' : '৫০% পর্যন্ত ছাড়'}</h3>
+                <p className="text-sm md:text-base text-white/70 mb-5 md:mb-6 max-w-md">
                   {language === 'en'
                     ? "Limited stock. Limited time. Don't miss out on premium creator gear at unbelievable prices."
                     : 'সীমিত স্টক, সীমিত সময়। অবিশ্বাস্য মূল্যে প্রিমিয়াম ক্রিয়েটর গিয়ার লুফে নেওয়ার সুযোগ হাতছাড়া করবেন না।'}
                 </p>
 
-                <div className="flex gap-3 mb-6">
+                <div className="grid grid-cols-4 gap-2 md:flex md:gap-3 mb-5 md:mb-6">
                   {(['d', 'h', 'm', 's'] as const).map((k, idx) => (
                     <motion.div
                       key={k}
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="bg-white/10 backdrop-blur-md border border-white/20 px-4 py-3 rounded-xl min-w-[70px] text-center"
+                      className="bg-white/10 backdrop-blur-md border border-white/20 px-2 md:px-4 py-2.5 md:py-3 rounded-xl md:min-w-[70px] text-center"
                     >
-                      <div className="text-2xl md:text-3xl font-bold tabular-nums">
+                      <div className="text-xl md:text-3xl font-bold tabular-nums">
                         {String(countdown[k]).padStart(2, '0')}
                       </div>
-                      <div className="text-[10px] uppercase tracking-widest text-white/60 mt-1">
+                      <div className="text-[8px] md:text-[10px] uppercase tracking-widest text-white/60 mt-1">
                         {k === 'd' ? (language === 'en' ? 'Days' : 'দিন') : k === 'h' ? (language === 'en' ? 'Hours' : 'ঘণ্টা') : k === 'm' ? (language === 'en' ? 'Mins' : 'মিনিট') : (language === 'en' ? 'Secs' : 'সেকেন্ড')}
                       </div>
                     </motion.div>
@@ -1049,7 +1049,7 @@ export default function HomeView({
                   setDetailsProduct(featuredProduct);
                   setCurrentTab('product-details');
                 }}
-                className="inline-flex items-center gap-2 bg-[#0088FF] hover:bg-white hover:text-deep-navy text-white px-7 py-3 rounded-full font-bold transition-all shadow-lg shadow-[#0088FF]/30"
+                className="inline-flex items-center justify-center gap-2 bg-[#0088FF] hover:bg-white hover:text-deep-navy text-white px-5 md:px-7 py-3 rounded-full text-sm md:text-base font-bold transition-all shadow-lg shadow-[#0088FF]/30"
               >
                 {language === 'en' ? 'Shop Deals' : 'ডিলসমূহ দেখুন'}
                 <span className="material-symbols-outlined">arrow_forward</span>
@@ -1060,20 +1060,20 @@ export default function HomeView({
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7 }}
-              className="relative bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-6 flex items-center gap-5 mt-8"
+              className="relative bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-3 md:p-6 flex items-center gap-3 md:gap-5 mt-6 md:mt-8"
             >
               <img
                 src={getOptimizedImageUrl(featuredProduct.image, 300)}
                 alt={featuredProduct.name}
                 width={128}
                 height={128}
-                className="w-32 h-32 rounded-xl object-cover bg-white/10"
+                className="w-20 h-20 md:w-32 md:h-32 rounded-xl object-cover bg-white/10"
               />
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] uppercase tracking-widest text-[#0088FF] font-bold mb-1">{language === 'en' ? 'Featured Deal' : 'বিশেষ অফার'}</p>
-                <h4 className="font-bold text-lg mb-2 truncate">{featuredProduct.name}</h4>
+                <p className="text-[9px] md:text-[11px] uppercase tracking-widest text-[#0088FF] font-bold mb-1">{language === 'en' ? 'Featured Deal' : 'বিশেষ অফার'}</p>
+                <h4 className="font-bold text-sm md:text-lg mb-1 md:mb-2 line-clamp-2 md:truncate">{featuredProduct.name}</h4>
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-2xl font-bold">৳{featuredProduct.salePrice}</span>
+                  <span className="text-lg md:text-2xl font-bold">৳{featuredProduct.salePrice}</span>
                   {featuredProduct.originalPrice && (
                     <span className="text-sm line-through text-white/40">৳{featuredProduct.originalPrice}</span>
                   )}
@@ -1083,7 +1083,7 @@ export default function HomeView({
                     setDetailsProduct(featuredProduct);
                     setCurrentTab('product-details');
                   }}
-                  className="text-sm font-semibold text-[#0088FF] hover:text-white transition-colors inline-flex items-center gap-1"
+                  className="text-xs md:text-sm font-semibold text-[#0088FF] hover:text-white transition-colors inline-flex items-center gap-1"
                 >
                   {language === 'en' ? 'View Product' : 'পণ্য দেখুন'} <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </button>
@@ -1094,17 +1094,17 @@ export default function HomeView({
       )}
 
       {/* PRODUCT LISTING */}
-      <Reveal className="mb-section-gap">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-8 border-b border-outline-variant/60 pb-4 gap-4">
+      <Reveal className="mb-10 md:mb-section-gap">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-5 md:mb-8 border-b border-outline-variant/60 pb-4 gap-3 md:gap-4">
           <div>
-            <p className="text-[11px] tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'Curated For You' : 'আপনার জন্য বিশেষ আয়োজন'}</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-deep-navy flex items-center gap-2">
+            <p className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'Curated For You' : 'আপনার জন্য বিশেষ আয়োজন'}</p>
+            <h2 className="text-[1.35rem] md:text-3xl font-bold text-deep-navy flex items-center gap-2 leading-tight">
               {sortFilter === 'top-selling' && `🔥 ${t('nav.topSelling')}`}
               {sortFilter === 'new-arrival' && `✨ ${t('nav.newArrival')}`}
               {sortFilter === 'offers-deals' && `🏷️ ${t('nav.offersDeals')}`}
               {sortFilter === 'none' && (selectedCategory === 'All' ? t('home.loved') : getCategoryName(selectedCategory))}
             </h2>
-            <p className="text-body-sm text-on-surface-variant mt-1">{t('home.subloved')}</p>
+            <p className="text-sm text-on-surface-variant mt-1">{t('home.subloved')}</p>
           </div>
 
           <button
@@ -1113,7 +1113,7 @@ export default function HomeView({
               setSortFilter('none');
               setCurrentTab('shop');
             }}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold text-[#0088FF] bg-[#0088FF]/5 hover:bg-[#0088FF]/10 border border-[#0088FF]/20 hover:border-[#0088FF]/30 transition-all active:scale-[0.97] group"
+            className="self-start flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-full text-xs font-bold text-[#0088FF] bg-[#0088FF]/5 hover:bg-[#0088FF]/10 border border-[#0088FF]/20 hover:border-[#0088FF]/30 transition-all active:scale-[0.97] group"
           >
             <span>{language === 'en' ? 'View All' : 'সব দেখুন'}</span>
             <span className="material-symbols-outlined text-base group-hover:translate-x-0.5 transition-transform">
@@ -1123,7 +1123,7 @@ export default function HomeView({
         </div>
 
         {loadingProducts ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
             {Array.from({ length: 8 }).map((_, index) => (
               <ProductCardSkeleton key={index} />
             ))}
@@ -1145,7 +1145,7 @@ export default function HomeView({
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: '-80px' }}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5"
           >
             {displayedProducts.map((product, i) => (
               <motion.div key={product._id} variants={fadeUp} custom={i} whileHover={{ y: -6 }} className="h-full">
@@ -1170,11 +1170,11 @@ export default function HomeView({
       </Reveal>
 
       {/* STATS BAND */}
-      <Reveal className="mb-section-gap">
-        <div className="rounded-3xl bg-gradient-to-br from-deep-navy to-[#001a33] text-white p-8 md:p-12 shadow-xl relative overflow-hidden">
+      <Reveal className="mb-10 md:mb-section-gap">
+        <div className="rounded-2xl md:rounded-3xl bg-gradient-to-br from-deep-navy to-[#001a33] text-white p-5 md:p-12 shadow-xl relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,136,255,0.25),transparent_50%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.18),transparent_50%)]" />
-          <div className="relative grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="relative grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-center">
             {stats.map((s, i) => (
               <motion.div
                 key={s.label}
@@ -1183,10 +1183,10 @@ export default function HomeView({
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.6 }}
               >
-                <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                <div className="text-2xl md:text-5xl font-bold mb-1 md:mb-2 bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                   {s.value}
                 </div>
-                <div className="text-xs uppercase tracking-widest text-white/60">{s.label}</div>
+                <div className="text-[9px] md:text-xs uppercase tracking-widest text-white/60">{s.label}</div>
               </motion.div>
             ))}
           </div>
@@ -1194,10 +1194,10 @@ export default function HomeView({
       </Reveal>
 
       {/* DUAL PROMO BANNERS */}
-      <Reveal className="mb-section-gap">
-        <div className="grid md:grid-cols-2 gap-6">
+      <Reveal className="mb-10 md:mb-section-gap">
+        <div className="grid md:grid-cols-2 gap-4 md:gap-6">
           {/* Promo 1 */}
-          <div className="relative h-[320px] rounded-3xl overflow-hidden group shadow-xl">
+          <div className="relative min-h-[260px] md:h-[320px] rounded-2xl md:rounded-3xl overflow-hidden group shadow-xl">
             <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"
               style={{
@@ -1205,9 +1205,9 @@ export default function HomeView({
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-deep-navy/95 via-deep-navy/55 to-transparent" />
-            <div className="relative z-10 p-8 md:p-10 max-w-md h-full flex flex-col justify-center">
+            <div className="relative z-10 p-5 md:p-10 max-w-md h-full flex flex-col justify-center">
               <span className="text-[11px] uppercase tracking-widest text-[#0088FF] font-bold mb-3">{promo1.badge || 'New Arrivals'}</span>
-              <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight">{promo1.title}</h3>
+              <h3 className="text-xl md:text-3xl font-bold text-white mb-3 leading-tight">{promo1.title}</h3>
               <p className="text-sm text-white/75 mb-5">{promo1.desc}</p>
               <button
                 onClick={() => {
@@ -1220,7 +1220,7 @@ export default function HomeView({
                   }
                   setSortFilter('none');
                 }}
-                className="self-start inline-flex items-center gap-2 px-6 py-3 bg-[#0088FF] hover:bg-white hover:text-deep-navy text-white text-xs font-bold rounded-full transition-all shadow-lg"
+                className="self-start inline-flex items-center gap-2 px-5 md:px-6 py-3 bg-[#0088FF] hover:bg-white hover:text-deep-navy text-white text-xs font-bold rounded-full transition-all shadow-lg"
               >
                 {promo1.ctaText}
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -1230,19 +1230,19 @@ export default function HomeView({
 
           {/* Promo 2 */}
           <div
-            className="relative h-[320px] rounded-3xl overflow-hidden group shadow-xl flex items-center justify-between p-8 md:p-10"
+            className="relative min-h-[260px] md:h-[320px] rounded-2xl md:rounded-3xl overflow-hidden group shadow-xl flex items-center justify-between p-5 md:p-10"
             style={{
               background: `linear-gradient(135deg, ${promo2.bgGradientFrom || '#9333ea'}, ${promo2.bgGradientTo || '#4f46e5'})`
             }}
           >
             <motion.div
-              className="absolute -top-10 -right-10 w-72 h-72 rounded-full bg-white/10 blur-3xl"
+              className="hidden md:block absolute -top-10 -right-10 w-72 h-72 rounded-full bg-white/10 blur-3xl"
               animate={{ scale: [1, 1.3, 1] }}
               transition={{ duration: 6, repeat: Infinity }}
             />
             <div className="relative z-10 max-w-sm">
               <span className="text-[11px] uppercase tracking-widest text-white/80 font-bold mb-3 block">{promo2.badge || 'Bundle & Save'}</span>
-              <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight">{promo2.title}</h3>
+              <h3 className="text-xl md:text-3xl font-bold text-white mb-3 leading-tight">{promo2.title}</h3>
               <p className="text-sm text-white/85 mb-5">{promo2.desc}</p>
               <button
                 onClick={() => {
@@ -1268,12 +1268,12 @@ export default function HomeView({
 
       {/* BEST SELLERS */}
       {bestSellers.length > 0 && (
-        <Reveal className="mb-section-gap">
-          <div className="flex justify-between items-end mb-8 border-b border-outline-variant/60 pb-4">
+        <Reveal className="mb-10 md:mb-section-gap">
+          <div className="flex justify-between items-end mb-5 md:mb-8 border-b border-outline-variant/60 pb-4">
             <div>
-              <p className="text-[11px] tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'Top Choice' : 'সেরা পছন্দ'}</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-deep-navy">{language === 'en' ? '🔥 Best Sellers' : '🔥 সর্বাধিক বিক্রিত'}</h2>
-              <p className="text-body-sm text-on-surface-variant mt-1">{language === 'en' ? 'Tried, tested and loved by thousands of creators.' : 'হাজারো ক্রিয়েটর দ্বারা পরীক্ষিত এবং সমাদৃত।'}</p>
+              <p className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'Top Choice' : 'সেরা পছন্দ'}</p>
+              <h2 className="text-[1.35rem] md:text-3xl font-bold text-deep-navy leading-tight">{language === 'en' ? '🔥 Best Sellers' : '🔥 সর্বাধিক বিক্রিত'}</h2>
+              <p className="text-sm text-on-surface-variant mt-1">{language === 'en' ? 'Tried, tested and loved by thousands of creators.' : 'হাজারো ক্রিয়েটর দ্বারা পরীক্ষিত এবং সমাদৃত।'}</p>
             </div>
             <button
               onClick={() => setSortFilter('top-selling')}
@@ -1287,7 +1287,7 @@ export default function HomeView({
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: '-80px' }}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5"
           >
             {bestSellers.map((product, i) => (
               <motion.div key={product._id} variants={fadeUp} custom={i} whileHover={{ y: -6 }}>
@@ -1313,12 +1313,12 @@ export default function HomeView({
 
       {/* NEW ARRIVALS */}
       {newArrivals.length > 0 && (
-        <Reveal className="mb-section-gap">
-          <div className="flex justify-between items-end mb-8 border-b border-outline-variant/60 pb-4">
+        <Reveal className="mb-10 md:mb-section-gap">
+          <div className="flex justify-between items-end mb-5 md:mb-8 border-b border-outline-variant/60 pb-4">
             <div>
-              <p className="text-[11px] tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'Just Landed' : 'সদ্য আগত'}</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-deep-navy">{language === 'en' ? '✨ New Arrivals' : '✨ নতুন সংযোজন'}</h2>
-              <p className="text-body-sm text-on-surface-variant mt-1">{language === 'en' ? 'Fresh gear engineered for the next generation of creators.' : 'পরবর্তী প্রজন্মের ক্রিয়েটরদের জন্য নতুন গিয়ারস।'}</p>
+              <p className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'Just Landed' : 'সদ্য আগত'}</p>
+              <h2 className="text-[1.35rem] md:text-3xl font-bold text-deep-navy leading-tight">{language === 'en' ? '✨ New Arrivals' : '✨ নতুন সংযোজন'}</h2>
+              <p className="text-sm text-on-surface-variant mt-1">{language === 'en' ? 'Fresh gear engineered for the next generation of creators.' : 'পরবর্তী প্রজন্মের ক্রিয়েটরদের জন্য নতুন গিয়ারস।'}</p>
             </div>
             <button
               onClick={() => setSortFilter('new-arrival')}
@@ -1332,7 +1332,7 @@ export default function HomeView({
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: '-80px' }}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5"
           >
             {newArrivals.map((product, i) => (
               <motion.div key={product._id} variants={fadeUp} custom={i} whileHover={{ y: -6 }}>
@@ -1357,13 +1357,13 @@ export default function HomeView({
       )}
 
       {/* TESTIMONIALS */}
-      <Reveal className="mb-section-gap">
-        <div className="text-center mb-10">
-          <p className="text-[11px] tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'Loved By Creators' : 'ক্রিয়েটরদের ভালোবাসায়'}</p>
+      <Reveal className="mb-10 md:mb-section-gap">
+        <div className="text-center mb-6 md:mb-10">
+          <p className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'Loved By Creators' : 'ক্রিয়েটরদের ভালোবাসায়'}</p>
           <h2 className="text-2xl md:text-4xl font-bold text-deep-navy">{language === 'en' ? 'What Our Customers Say' : 'গ্রাহকদের মতামত'}</h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-4 md:gap-6">
           {testimonials.map((testi, i) => (
             <motion.div
               key={i}
@@ -1372,7 +1372,7 @@ export default function HomeView({
               viewport={{ once: true }}
               transition={{ delay: i * 0.12, duration: 0.6 }}
               whileHover={{ y: -6 }}
-              className="bg-white rounded-2xl p-7 shadow-sm hover:shadow-xl transition-all border border-outline-variant/30 relative"
+              className="bg-white rounded-2xl p-5 md:p-7 shadow-sm hover:shadow-xl transition-all border border-outline-variant/30 relative"
             >
               <span className="material-symbols-outlined text-5xl text-[#0088FF]/20 absolute top-4 right-5">format_quote</span>
               <div className="flex items-center gap-1 mb-4 text-yellow-400">
@@ -1382,7 +1382,7 @@ export default function HomeView({
                   </span>
                 ))}
               </div>
-              <p className="text-on-surface mb-6 leading-relaxed">"{testi.quote}"</p>
+              <p className="text-sm md:text-base text-on-surface mb-5 md:mb-6 leading-relaxed">"{testi.quote}"</p>
               <div className="flex items-center gap-3">
                 <img
                   src={testi.avatar}
@@ -1403,12 +1403,12 @@ export default function HomeView({
       </Reveal>
 
       {/* WHY US */}
-      <Reveal className="mb-section-gap">
-        <div className="text-center mb-10">
-          <p className="text-[11px] tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'The Difference' : 'পার্থক্যটি অনুভব করুন'}</p>
+      <Reveal className="mb-10 md:mb-section-gap">
+        <div className="text-center mb-6 md:mb-10">
+          <p className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">{language === 'en' ? 'The Difference' : 'পার্থক্যটি অনুভব করুন'}</p>
           <h2 className="text-2xl md:text-4xl font-bold text-deep-navy">{language === 'en' ? 'Why Creators Choose Us' : 'ক্রিয়েটররা কেন আমাদের পছন্দ করে'}</h2>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
           {[
             { icon: 'verified', title: language === 'en' ? '100% Authentic' : '১০০% আসল পণ্য', desc: language === 'en' ? 'Sourced directly from manufacturers — no replicas, ever.' : 'সরাসরি প্রস্তুতকারকদের থেকে সংগৃহীত — কোনো নকল পণ্য নেই।' },
             { icon: 'rocket_launch', title: language === 'en' ? 'Lightning Delivery' : 'ঝড়ের গতিতে ডেলিভারি', desc: language === 'en' ? 'Same-day dispatch and next-day delivery in major cities.' : 'প্রধান শহরগুলোতে একই দিনে পাঠানো হয় এবং পরের দিন ডেলিভারি।' },
@@ -1422,25 +1422,25 @@ export default function HomeView({
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.6 }}
               whileHover={{ y: -8 }}
-              className="bg-white rounded-2xl p-7 border border-outline-variant/30 hover:border-[#0088FF] hover:shadow-xl transition-all group"
+              className="bg-white rounded-2xl p-4 md:p-7 border border-outline-variant/30 hover:border-[#0088FF] hover:shadow-xl transition-all group"
             >
-              <div className="w-14 h-14 rounded-2xl bg-[#0088FF]/10 group-hover:bg-[#0088FF] flex items-center justify-center mb-4 transition-colors">
-                <span className="material-symbols-outlined text-3xl text-[#0088FF] group-hover:text-white transition-colors">
+              <div className="w-11 h-11 md:w-14 md:h-14 rounded-2xl bg-[#0088FF]/10 group-hover:bg-[#0088FF] flex items-center justify-center mb-3 md:mb-4 transition-colors">
+                <span className="material-symbols-outlined text-2xl md:text-3xl text-[#0088FF] group-hover:text-white transition-colors">
                   {f.icon}
                 </span>
               </div>
-              <h4 className="font-bold text-deep-navy text-lg mb-2">{f.title}</h4>
-              <p className="text-sm text-on-surface-variant leading-relaxed">{f.desc}</p>
+              <h4 className="font-bold text-deep-navy text-sm md:text-lg mb-1 md:mb-2 leading-tight">{f.title}</h4>
+              <p className="text-xs md:text-sm text-on-surface-variant leading-relaxed">{f.desc}</p>
             </motion.div>
           ))}
         </div>
       </Reveal>
 
       {/* INSTAGRAM / SOCIAL GRID */}
-      <Reveal className="mb-section-gap">
-        <div className="flex justify-between items-end mb-6">
+      <Reveal className="mb-10 md:mb-section-gap">
+        <div className="flex justify-between items-end mb-4 md:mb-6">
           <div>
-            <p className="text-[11px] tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">@grabAll</p>
+            <p className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">@grabAll</p>
             <h2 className="text-2xl md:text-3xl font-bold text-deep-navy">{language === 'en' ? 'Follow The Movement' : 'আমাদের সাথে যুক্ত থাকুন'}</h2>
           </div>
           <a
@@ -1451,7 +1451,7 @@ export default function HomeView({
             {language === 'en' ? 'See more' : 'আরও দেখুন'}
           </a>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
           {followMovementProducts.map((p: any, i: number) => (
             <motion.div
               key={p?._id || i}
@@ -1460,7 +1460,7 @@ export default function HomeView({
               viewport={{ once: true }}
               transition={{ delay: i * 0.06 }}
               whileHover={{ scale: 1.04 }}
-              className="aspect-square rounded-2xl overflow-hidden relative group cursor-pointer bg-gradient-to-br from-[#0088FF]/20 to-purple-500/20"
+              className="aspect-square rounded-xl md:rounded-2xl overflow-hidden relative group cursor-pointer bg-gradient-to-br from-[#0088FF]/20 to-purple-500/20"
             >
               {p?.image && (
                 <img
@@ -1483,23 +1483,23 @@ export default function HomeView({
       </Reveal>
 
       {/* FAQ SECTION */}
-      <Reveal className="mb-section-gap">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <p className="text-[11px] tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">
+      <Reveal className="mb-10 md:mb-section-gap">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-6 md:mb-12">
+            <p className="text-[10px] md:text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase text-[#0088FF] font-bold mb-2">
               {language === 'en' ? 'Got Questions?' : 'জিজ্ঞাসা আছে?'}
             </p>
             <h2 className="text-2xl md:text-4xl font-bold text-deep-navy">
               {language === 'en' ? 'Frequently Asked Questions' : 'সাধারণ জিজ্ঞাসা (FAQ)'}
             </h2>
-            <p className="text-body-sm text-on-surface-variant mt-2">
+            <p className="text-sm text-on-surface-variant mt-2">
               {language === 'en'
                 ? "Everything you need to know about our products, delivery, and services."
                 : 'আমাদের পণ্য, ডেলিভারি এবং সার্ভিস সম্পর্কে সাধারণ প্রশ্নগুলোর উত্তর।'}
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {faqs.map((faq, index) => {
               const isOpen = openFaq === index;
               return (
@@ -1513,7 +1513,7 @@ export default function HomeView({
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : index)}
-                    className="w-full flex items-center justify-between p-5 md:p-6 text-left focus:outline-none group cursor-pointer"
+                    className="w-full flex items-center justify-between gap-4 p-4 md:p-6 text-left focus:outline-none group cursor-pointer"
                   >
                     <span className={`font-bold text-sm md:text-base transition-colors duration-200 ${
                       isOpen ? 'text-[#0088FF]' : 'text-deep-navy group-hover:text-[#0088FF]'
@@ -1549,22 +1549,22 @@ export default function HomeView({
       </Reveal>
 
       {/* NEWSLETTER */}
-      <Reveal className="mb-section-gap">
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#0088FF] via-[#0066cc] to-deep-navy p-10 md:p-16 text-white text-center shadow-2xl">
+      <Reveal className="mb-10 md:mb-section-gap">
+        <div className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-[#0088FF] via-[#0066cc] to-deep-navy p-6 md:p-16 text-white text-center shadow-2xl">
           <motion.div
-            className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-white/10 blur-3xl"
+            className="hidden md:block absolute -top-20 -left-20 w-96 h-96 rounded-full bg-white/10 blur-3xl"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 6, repeat: Infinity }}
           />
           <motion.div
-            className="absolute -bottom-20 -right-20 w-96 h-96 rounded-full bg-white/10 blur-3xl"
+            className="hidden md:block absolute -bottom-20 -right-20 w-96 h-96 rounded-full bg-white/10 blur-3xl"
             animate={{ scale: [1.2, 1, 1.2] }}
             transition={{ duration: 7, repeat: Infinity }}
           />
           <div className="relative max-w-2xl mx-auto">
-            <span className="material-symbols-outlined text-5xl mb-4 inline-block">mark_email_unread</span>
-            <h3 className="text-3xl md:text-4xl font-bold mb-3 leading-tight">{language === 'en' ? 'Join the Insider Circle' : 'ইনসাইডার সার্কেলে যোগ দিন'}</h3>
-            <p className="text-white/85 mb-8 max-w-lg mx-auto">
+            <span className="material-symbols-outlined text-4xl md:text-5xl mb-3 md:mb-4 inline-block">mark_email_unread</span>
+            <h3 className="text-2xl md:text-4xl font-bold mb-3 leading-tight">{language === 'en' ? 'Join the Insider Circle' : 'ইনসাইডার সার্কেলে যোগ দিন'}</h3>
+            <p className="text-sm md:text-base text-white/85 mb-6 md:mb-8 max-w-lg mx-auto">
               {language === 'en'
                 ? 'Get exclusive drops, early access, creator tips and a 10% welcome discount delivered straight to your inbox.'
                 : 'এক্সক্লুসিভ অফার, আগাম অ্যাক্সেস, ক্রিয়েটর টিপস এবং ১০% স্বাগত ছাড় সরাসরি আপনার ইনবক্সে পেতে সাবস্ক্রাইব করুন।'}
@@ -1576,13 +1576,13 @@ export default function HomeView({
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder={language === 'en' ? 'your@email.com' : 'আপনার@ইমেইল.কম'}
-                className="flex-1 px-5 py-4 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/40 transition-all"
+                className="flex-1 px-5 py-3.5 md:py-4 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/40 transition-all"
               />
               <motion.button
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
                 type="submit"
-                className="px-7 py-4 bg-white text-deep-navy font-bold rounded-full hover:bg-deep-navy hover:text-white transition-colors whitespace-nowrap shadow-lg"
+                className="px-7 py-3.5 md:py-4 bg-white text-deep-navy font-bold rounded-full hover:bg-deep-navy hover:text-white transition-colors whitespace-nowrap shadow-lg"
               >
                 {language === 'en' ? 'Subscribe' : 'সাবস্ক্রাইব করুন'}
               </motion.button>
