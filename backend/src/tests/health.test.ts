@@ -7,6 +7,7 @@ import { checkEmailStatus } from '../services/email';
 
 vi.mock('../middleware/upload', () => ({
   checkCloudinaryStatus: vi.fn(),
+  localUploadDir: '/tmp/graball-test-uploads',
   upload: {
     single: () => (req: any, res: any, next: any) => next(),
   },

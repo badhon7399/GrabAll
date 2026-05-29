@@ -13,7 +13,7 @@ interface Banner {
 }
 
 export default function BannersTab({ triggerToast }: { triggerToast: (msg: string) => void }) {
-  const { user, fetchWithAuth } = useAuth();
+  const { fetchWithAuth } = useAuth();
   const [logoUrl, setLogoUrl] = useState('https://raw.githubusercontent.com/shadcn.png');
   const [banners, setBanners] = useState<Banner[]>([]);
   

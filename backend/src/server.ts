@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { localUploadDir } from './middleware/upload';
 import { config } from './config/env';
 import authRoutes from './routes/auth';
 import productRoutes from './routes/products';
@@ -37,6 +38,11 @@ app.use(cookieParser());
 app.use(express.json({ limit: '1mb' }));
 app.use(mongoSanitize);
 app.use(csrfProtection);
+app.use('/uploads', express.static(localUploadDir, {
+  setHeaders: (res) => {
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  },
+}));
 
 // Global Rate Limiting
 const apiLimiter = rateLimit({

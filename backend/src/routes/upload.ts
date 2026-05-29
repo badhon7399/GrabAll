@@ -1,9 +1,50 @@
-import { Router, Response } from 'express';
+import { Router, Response, NextFunction } from 'express';
+import multer from 'multer';
 import { AuthRequest, protect, admin } from '../middleware/auth';
 import { upload } from '../middleware/upload';
-import { config } from '../config/env';
 
 const router = Router();
+
+const handleUpload = (req: AuthRequest, res: Response, next: NextFunction) => {
+  upload.single('image')(req, res, (err: any) => {
+    if (!err) {
+      next();
+      return;
+    }
+
+    if (err instanceof multer.MulterError) {
+      const message = err.code === 'LIMIT_FILE_SIZE'
+        ? 'File is too large. Max size is 5MB.'
+        : err.message;
+      res.status(400).json({ message });
+      return;
+    }
+
+    res.status(400).json({ message: err.message || 'Failed to upload image.' });
+  });
+};
+
+const getLocalFileUrl = (req: AuthRequest): string | undefined => {
+  if (!req.file || !(req.file as Express.Multer.File).filename) {
+    return undefined;
+  }
+
+  const forwardedProto = req.headers['x-forwarded-proto'];
+  const protocol = Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto || req.protocol;
+  return `${protocol}://${req.get('host')}/uploads/${(req.file as Express.Multer.File).filename}`;
+};
+
+const getProviderFileUrl = (file: Express.Multer.File): string | undefined => {
+  const possibleUrl = 
+    (file as any).secure_url ||
+    (file as any).url ||
+    (file as any).location ||
+    (file as any).path;
+
+  return typeof possibleUrl === 'string' && /^https?:\/\//.test(possibleUrl)
+    ? possibleUrl
+    : undefined;
+};
 
 // @desc    Upload an image
 // @route   POST /api/upload
@@ -12,17 +53,7 @@ router.post(
   '/',
   protect,
   admin,
-  (req: AuthRequest, res: Response, next) => {
-    // Check if Cloudinary credentials are configured
-    if (!config.CLOUDINARY.CLOUD_NAME || !config.CLOUDINARY.API_KEY || !config.CLOUDINARY.API_SECRET) {
-      res.status(500).json({ 
-        message: 'Cloudinary credentials are not configured in the server environment (.env file).' 
-      });
-      return;
-    }
-    next();
-  },
-  upload.single('image'),
+  handleUpload,
   (req: AuthRequest, res: Response): void => {
     if (!req.file) {
       res.status(400).json({ message: 'No file uploaded' });
@@ -42,12 +73,8 @@ router.post(
       location: (req.file as any).location
     });
 
-    // Extract the Cloudinary URL using multiple property fallbacks
-    const fileUrl = 
-      (req.file as any).path || 
-      (req.file as any).secure_url || 
-      (req.file as any).url ||
-      (req.file as any).location;
+    // Extract the storage provider URL, falling back to a local static file URL in development.
+    const fileUrl = getProviderFileUrl(req.file) || getLocalFileUrl(req);
 
     if (!fileUrl) {
       console.error('[Upload Route] Error: Could not extract URL from uploaded file object.');

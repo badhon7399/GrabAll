@@ -87,7 +87,7 @@ export default function InventoryTab({
   categories,
   triggerToast,
 }: InventoryTabProps) {
-  const { user, fetchWithAuth } = useAuth();
+  const { fetchWithAuth } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCatFilter, setSelectedCatFilter] = useState('All');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
